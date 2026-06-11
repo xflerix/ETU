@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -181,6 +181,85 @@ header {
 }
 .daily-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
 .daily-xp { color: var(--accent); }
+
+/* Сложность дневной цели */
+.daily-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.daily-title { font-size: 13px; font-weight: 700; }
+.daily-change-btn {
+  background: rgba(79,142,255,.15); color: var(--accent);
+  border: 1px solid rgba(79,142,255,.3); padding: 3px 10px;
+  border-radius: 8px; font-size: 11px; font-weight: 800;
+  cursor: pointer; transition: var(--t); letter-spacing: .3px;
+}
+.daily-change-btn:hover { background: rgba(79,142,255,.28); }
+.daily-difficulty-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 800; padding: 2px 9px;
+  border-radius: 8px; margin-bottom: 6px;
+}
+.daily-progress-row { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+.daily-xp-done { color: var(--ok); }
+.daily-xp-goal { color: var(--text2); }
+.daily-complete-banner {
+  background: linear-gradient(135deg, rgba(34,216,143,.15), rgba(79,142,255,.1));
+  border: 1px solid rgba(34,216,143,.4); border-radius: 10px;
+  padding: 6px 12px; font-size: 12px; font-weight: 800; color: var(--ok);
+  text-align: center; margin-top: 8px; display: none;
+}
+
+/* Модальное окно выбора сложности */
+.diff-modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(8,12,20,.88); backdrop-filter: blur(14px);
+  z-index: 200; justify-content: center; align-items: center;
+  animation: fadeIn .25s ease;
+}
+.diff-modal-overlay.open { display: flex; }
+.diff-modal {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: 24px; padding: 28px 24px; max-width: 400px; width: 94%;
+  backdrop-filter: blur(20px); box-shadow: 0 30px 60px rgba(0,0,0,.5);
+  animation: screenIn .3s ease;
+}
+.diff-modal-title { font-size: 22px; font-weight: 900; margin-bottom: 4px; }
+.diff-modal-sub { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
+.diff-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.diff-option {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--muted2); border: 2px solid var(--card-border);
+  border-radius: var(--r2); padding: 14px 16px;
+  cursor: pointer; transition: var(--t);
+}
+.diff-option:hover { border-color: var(--accent); transform: translateX(4px); }
+.diff-option.selected { border-color: var(--accent); background: rgba(79,142,255,.12); }
+.diff-option-icon { font-size: 28px; flex-shrink: 0; }
+.diff-option-info { flex: 1; text-align: left; }
+.diff-option-name { font-size: 15px; font-weight: 800; }
+.diff-option-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.diff-option-xp {
+  font-size: 14px; font-weight: 900; padding: 4px 10px;
+  border-radius: 8px; white-space: nowrap; flex-shrink: 0;
+}
+.diff-modal-close {
+  width: 100%; padding: 13px; background: var(--muted); color: var(--text);
+  border: 1px solid var(--card-border); border-radius: var(--r2);
+  font-weight: 700; font-size: 15px; cursor: pointer; transition: var(--t);
+}
+.diff-modal-close:hover { border-color: var(--accent); }
+
+/* Цветовые схемы для уровней */
+.diff-easy   { background: rgba(34,216,143,.12) !important; }
+.diff-easy.selected, .diff-easy:hover { border-color: var(--ok) !important; }
+.diff-easy .diff-option-xp { background: rgba(34,216,143,.2); color: var(--ok); }
+.diff-medium { background: rgba(79,142,255,.08) !important; }
+.diff-medium.selected, .diff-medium:hover { border-color: var(--accent) !important; }
+.diff-medium .diff-option-xp { background: rgba(79,142,255,.2); color: var(--accent); }
+.diff-hard   { background: rgba(255,194,71,.08) !important; }
+.diff-hard.selected, .diff-hard:hover { border-color: var(--warn) !important; }
+.diff-hard .diff-option-xp { background: rgba(255,194,71,.2); color: var(--warn); }
+.diff-ultra  { background: rgba(255,79,109,.08) !important; }
+.diff-ultra.selected, .diff-ultra:hover { border-color: var(--err) !important; }
+.diff-ultra .diff-option-xp { background: rgba(255,79,109,.2); color: var(--err); }
 
 /* Цитата дня */
 .quote-box {
@@ -655,6 +734,63 @@ select:focus { border-color: var(--accent); }
 
 /* Разделитель */
 .divider { height: 1px; background: var(--card-border); margin: 16px 0; }
+
+/* ════════════════════════════════════
+   ПРОИЗНОШЕНИЕ
+════════════════════════════════════ */
+.pronun-input-row {
+  display: flex; gap: 8px; margin-bottom: 14px;
+}
+.pronun-input-row input {
+  flex: 1; font-size: 17px; text-align: left;
+}
+.pronun-speak-btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff; border: none; border-radius: var(--r2);
+  padding: 0 20px; font-size: 22px; cursor: pointer;
+  flex-shrink: 0; transition: var(--t);
+  display: flex; align-items: center; justify-content: center;
+}
+.pronun-speak-btn:hover { filter: brightness(1.15); transform: scale(1.05); }
+.pronun-speak-btn:active { transform: scale(0.97); }
+.pronun-speak-btn.speaking { animation: speakPulse .6s ease-in-out infinite alternate; }
+@keyframes speakPulse {
+  from { box-shadow: 0 0 0 0 rgba(79,142,255,.4); }
+  to   { box-shadow: 0 0 0 12px rgba(79,142,255,0); }
+}
+.pronun-voice-row {
+  display: flex; gap: 8px; align-items: center; margin-bottom: 14px; flex-wrap: wrap;
+}
+.pronun-voice-row label { font-size: 12px; font-weight: 800; color: var(--text2); text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; }
+.pronun-voice-row select { flex: 1; min-width: 140px; font-size: 13px; }
+.pronun-speed-row {
+  display: flex; gap: 8px; align-items: center; margin-bottom: 14px;
+}
+.pronun-speed-row label { font-size: 12px; font-weight: 800; color: var(--text2); text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; }
+.pronun-speed-row input[type=range] {
+  flex: 1; accent-color: var(--accent);
+  background: transparent; border: none; padding: 0; outline: none; box-shadow: none;
+  height: 6px; cursor: pointer;
+}
+.pronun-speed-val { font-size: 13px; font-weight: 800; color: var(--accent); width: 32px; text-align: right; }
+.pronun-history {
+  max-height: 160px; overflow-y: auto; margin-top: 6px;
+}
+.pronun-history::-webkit-scrollbar { width: 4px; }
+.pronun-history::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+.pronun-hist-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px; background: var(--muted2); border: 1px solid var(--card-border);
+  border-radius: 10px; margin-bottom: 6px; font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: var(--t);
+}
+.pronun-hist-item:hover { border-color: var(--accent); background: rgba(79,142,255,.08); }
+.pronun-hist-repeat { font-size: 16px; color: var(--accent); }
+.pronun-no-support {
+  background: rgba(255,79,109,.1); border: 1px solid rgba(255,79,109,.3);
+  border-radius: var(--r2); padding: 12px 16px; font-size: 13px; font-weight: 700;
+  color: var(--err); text-align: center; margin-bottom: 14px;
+}
 .section-title { font-size: 13px; font-weight: 800; color: var(--text2); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 12px; }
 
 /* Полоска ввода анаграммы */
@@ -682,7 +818,7 @@ select:focus { border-color: var(--accent); }
   <header>
     <div class="logo">
       <span class="logo-icon">📚</span>
-      ETU <span style="opacity:.5;font-weight:400;font-size:14px">v3</span>
+      ETU by BV <span style="opacity:.5;font-weight:400;font-size:14px">v3</span>
     </div>
     <div class="header-actions">
       <button class="icon-btn" onclick="showStatsScreen();event.stopPropagation();" title="Статистика">📊</button>
@@ -720,13 +856,19 @@ select:focus { border-color: var(--accent); }
     </div>
 
     <div class="daily-box">
-      <div class="daily-row">
-        <span>📅 Дневная цель</span>
-        <span class="daily-xp" id="dailyGoalText">0 / 50 XP</span>
+      <div class="daily-header">
+        <span class="daily-title">📅 Дневная цель</span>
+        <button class="daily-change-btn" onclick="openDiffModal();event.stopPropagation();">⚙️ Сложность</button>
       </div>
-      <div class="prog-wrap" style="margin-bottom:0;height:8px;">
+      <div class="daily-difficulty-badge" id="dailyDiffBadge">🌱 Легко</div>
+      <div class="daily-progress-row">
+        <span class="daily-xp-done" id="dailyXpDone">0 XP набрано</span>
+        <span class="daily-xp-goal" id="dailyGoalText">цель: 50 XP</span>
+      </div>
+      <div class="prog-wrap" style="margin-bottom:0;height:10px;">
         <div class="prog-bar" id="dailyGoalBar"></div>
       </div>
+      <div class="daily-complete-banner" id="dailyCompleteBanner">🎉 Дневная цель выполнена! Отличная работа!</div>
     </div>
 
     <div class="quote-box" id="quoteBox">
@@ -735,6 +877,7 @@ select:focus { border-color: var(--accent); }
 
     <div class="menu-btns">
       <button class="btn-primary" onclick="showModeSelect()" style="font-size:17px;padding:16px;">🚀 Начать тренировку</button>
+      <button class="btn-secondary" onclick="showScreen('pronounceScreen');initPronunScreen();">🗣️ Произношение</button>
       <button class="btn-secondary" onclick="showScreen('myWordsScreen')">📝 Мои слова</button>
     </div>
   </div>
@@ -1029,7 +1172,91 @@ select:focus { border-color: var(--accent); }
     </div>
   </div>
 
+
+  <!-- ═══ ПРОИЗНОШЕНИЕ ═══ -->
+  <div id="pronounceScreen" class="card screen">
+    <div style="font-size:20px;font-weight:900;margin-bottom:6px;">🗣️ Произношение</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">Введи слово, букву или фразу — и услышишь, как это звучит по-английски.</div>
+
+    <div id="pronunNoSupport" class="pronun-no-support" style="display:none;">
+      ⚠️ Твой браузер не поддерживает синтез речи. Попробуй Chrome или Edge.
+    </div>
+
+    <div class="pronun-input-row">
+      <input type="text" id="pronunInput" placeholder="Введи слово или букву…" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter') pronounceWord()">
+      <button class="pronun-speak-btn" id="pronunSpeakBtn" onclick="pronounceWord()" title="Произнести">🔊</button>
+    </div>
+
+    <div class="pronun-voice-row">
+      <label>Голос</label>
+      <select id="pronunVoice"></select>
+    </div>
+
+    <div class="pronun-speed-row">
+      <label>Скорость</label>
+      <input type="range" id="pronunSpeed" min="0.5" max="2" step="0.1" value="1" oninput="document.getElementById('pronunSpeedVal').textContent=parseFloat(this.value).toFixed(1)+'×'">
+      <span class="pronun-speed-val" id="pronunSpeedVal">1.0×</span>
+    </div>
+
+    <div class="pronun-speed-row" style="margin-bottom:6px;">
+      <label>Тональность</label>
+      <input type="range" id="pronunPitch" min="0.5" max="2" step="0.1" value="1" oninput="document.getElementById('pronunPitchVal').textContent=parseFloat(this.value).toFixed(1)+'×'">
+      <span class="pronun-speed-val" id="pronunPitchVal">1.0×</span>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-title">История 🕐</div>
+    <div class="pronun-history" id="pronunHistory">
+      <div class="empty-state" id="pronunHistEmpty">Ещё ничего не произносилось.</div>
+    </div>
+
+    <button class="btn-secondary" style="width:100%;margin-top:14px;" onclick="showScreen('menuScreen')">← Назад</button>
+  </div>
+
 </div><!-- /container -->
+
+<!-- ═══ МОДАЛЬНОЕ ОКНО СЛОЖНОСТИ ═══ -->
+<div class="diff-modal-overlay" id="diffModalOverlay" onclick="if(event.target===this)closeDiffModal()">
+  <div class="diff-modal">
+    <div class="diff-modal-title">🎯 Дневная цель</div>
+    <div class="diff-modal-sub">Выбери нагрузку — XP сбрасываются каждый день</div>
+    <div class="diff-options">
+      <div class="diff-option diff-easy" id="diff-easy" onclick="selectDifficulty('easy')">
+        <span class="diff-option-icon">🌱</span>
+        <div class="diff-option-info">
+          <div class="diff-option-name">Лёгкая</div>
+          <div class="diff-option-desc">Для начинающих и занятых людей</div>
+        </div>
+        <span class="diff-option-xp">30 XP</span>
+      </div>
+      <div class="diff-option diff-medium" id="diff-medium" onclick="selectDifficulty('medium')">
+        <span class="diff-option-icon">⚡</span>
+        <div class="diff-option-info">
+          <div class="diff-option-name">Обычная</div>
+          <div class="diff-option-desc">Оптимальный ежедневный прогресс</div>
+        </div>
+        <span class="diff-option-xp">75 XP</span>
+      </div>
+      <div class="diff-option diff-hard" id="diff-hard" onclick="selectDifficulty('hard')">
+        <span class="diff-option-icon">🔥</span>
+        <div class="diff-option-info">
+          <div class="diff-option-name">Усиленная</div>
+          <div class="diff-option-desc">Серьёзный подход к изучению</div>
+        </div>
+        <span class="diff-option-xp">150 XP</span>
+      </div>
+      <div class="diff-option diff-ultra" id="diff-ultra" onclick="selectDifficulty('ultra')">
+        <span class="diff-option-icon">💀</span>
+        <div class="diff-option-info">
+          <div class="diff-option-name">Ультра</div>
+          <div class="diff-option-desc">Только для настоящих чемпионов</div>
+        </div>
+        <span class="diff-option-xp">300 XP</span>
+      </div>
+    </div>
+    <button class="diff-modal-close" onclick="closeDiffModal()">Закрыть</button>
+  </div>
+</div>
 
 <!-- ═══ ПАУЗА ═══ -->
 <div class="overlay" id="pauseOverlay">
@@ -1224,6 +1451,40 @@ if (savedDay !== TODAY) {
 }
 
 try { categories.myWords = JSON.parse(localStorage.getItem("myWords")) || []; } catch(e){}
+
+// ════════════════════════════════════
+//  СИСТЕМА СЛОЖНОСТИ ДНЕВНОЙ ЦЕЛИ
+// ════════════════════════════════════
+const DAILY_GOALS = {
+  easy:   { xp: 30,  name: "Лёгкая",   icon: "🌱", color: "var(--ok)",   bg: "rgba(34,216,143,.15)" },
+  medium: { xp: 75,  name: "Обычная",  icon: "⚡",  color: "var(--accent)",bg: "rgba(79,142,255,.15)" },
+  hard:   { xp: 150, name: "Усиленная",icon: "🔥",  color: "var(--warn)",  bg: "rgba(255,194,71,.15)" },
+  ultra:  { xp: 300, name: "Ультра",   icon: "💀",  color: "var(--err)",   bg: "rgba(255,79,109,.15)" },
+};
+let dailyDifficulty = localStorage.getItem("etu_difficulty") || "easy";
+
+function openDiffModal() {
+  playClick();
+  document.getElementById("diffModalOverlay").classList.add("open");
+  // Подсветить текущий
+  ['easy','medium','hard','ultra'].forEach(d => {
+    document.getElementById("diff-"+d).classList.toggle("selected", d === dailyDifficulty);
+  });
+}
+function closeDiffModal() {
+  document.getElementById("diffModalOverlay").classList.remove("open");
+}
+function selectDifficulty(d) {
+  dailyDifficulty = d;
+  localStorage.setItem("etu_difficulty", d);
+  ['easy','medium','hard','ultra'].forEach(k => {
+    document.getElementById("diff-"+k).classList.toggle("selected", k === d);
+  });
+  playCorrect();
+  updateMenu();
+  setTimeout(closeDiffModal, 350);
+  alertPop(`Цель: ${DAILY_GOALS[d].icon} ${DAILY_GOALS[d].name} — ${DAILY_GOALS[d].xp} XP`);
+}
 
 let earnedAchievements = [];
 try { earnedAchievements = JSON.parse(localStorage.getItem("achievements")) || []; } catch(e){}
@@ -1433,8 +1694,19 @@ function updateMenu() {
   const rank = getRankObj(xp);
   document.getElementById("userRank").textContent = rank.label;
   document.getElementById("menuAvatar").textContent = rank.avatar;
-  document.getElementById("dailyGoalText").textContent = `${dailyXp} / 50 XP`;
-  document.getElementById("dailyGoalBar").style.width = Math.min(dailyXp/50*100,100)+"%";
+  document.getElementById("dailyGoalText").textContent = `цель: ${DAILY_GOALS[dailyDifficulty].xp} XP`;
+  document.getElementById("dailyXpDone").textContent = `${dailyXp} XP набрано`;
+  const pctDaily = Math.min(dailyXp / DAILY_GOALS[dailyDifficulty].xp * 100, 100);
+  document.getElementById("dailyGoalBar").style.width = pctDaily + "%";
+  const d = DAILY_GOALS[dailyDifficulty];
+  const badge = document.getElementById("dailyDiffBadge");
+  badge.textContent = `${d.icon} ${d.name}`;
+  badge.style.background = d.bg; badge.style.color = d.color;
+  const done = dailyXp >= DAILY_GOALS[dailyDifficulty].xp;
+  document.getElementById("dailyCompleteBanner").style.display = done ? "block" : "none";
+  document.getElementById("dailyGoalBar").style.background = done
+    ? "linear-gradient(90deg, #22d88f, #4f8eff)"
+    : "linear-gradient(90deg, #4f8eff, #a78bfa)";
 
   // Цитата
   const q = quotes[new Date().getDate() % quotes.length];
@@ -1447,7 +1719,7 @@ function updateStats() {
   document.getElementById("stCorrect").textContent = correct;
   document.getElementById("stTotal").textContent = total;
   document.getElementById("stStreak").textContent = maxStreak;
-  document.getElementById("stDailyXp").textContent = dailyXp;
+  document.getElementById("stDailyXp").textContent = `${dailyXp} / ${DAILY_GOALS[dailyDifficulty].xp}`;
   const acc = total ? Math.round(correct/total*100) : 0;
   document.getElementById("stAccPct").textContent = acc + "%";
   document.getElementById("stAccDetail").textContent = `${correct} из ${total}`;
@@ -2108,7 +2380,11 @@ function alertPop(msg) {
 // ════════════════════════════════════
 function confirmReset() {
   if(!confirm("Сбросить весь прогресс, XP, достижения и ошибки?")) return;
+  const savedDiff = localStorage.getItem("etu_difficulty");
+  const savedTheme = localStorage.getItem("etu_theme");
   localStorage.clear();
+  if (savedDiff) localStorage.setItem("etu_difficulty", savedDiff);
+  if (savedTheme) localStorage.setItem("etu_theme", savedTheme);
   xp=correct=total=maxStreak=streak=dailyXp=0;
   earnedAchievements=[]; mistakes=[]; wordWeights=[];
   categories.myWords=[];
@@ -2127,9 +2403,103 @@ document.addEventListener("keydown",e=>{
   if(e.key==="Enter"){ unlockAudio(); checkAnswer(); }
 });
 
+
 // ════════════════════════════════════
-//  ИНИЦИАЛИЗАЦИЯ
+//  ПРОИЗНОШЕНИЕ
 // ════════════════════════════════════
+let pronunHistory = [];
+let pronunVoicesLoaded = false;
+
+function initPronunScreen() {
+  if (!('speechSynthesis' in window)) {
+    document.getElementById('pronunNoSupport').style.display = 'block';
+    return;
+  }
+  loadPronunVoices();
+  renderPronunHistory();
+  setTimeout(() => document.getElementById('pronunInput').focus(), 200);
+}
+
+function loadPronunVoices() {
+  const sel = document.getElementById('pronunVoice');
+  const populate = () => {
+    const voices = speechSynthesis.getVoices();
+    const engVoices = voices.filter(v => v.lang.startsWith('en'));
+    sel.innerHTML = '';
+    if (engVoices.length === 0) {
+      const opt = document.createElement('option');
+      opt.textContent = 'По умолчанию'; opt.value = '';
+      sel.appendChild(opt);
+    } else {
+      engVoices.forEach((v, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = `${v.name} (${v.lang})`;
+        sel.appendChild(opt);
+      });
+    }
+    pronunVoicesLoaded = true;
+  };
+  if (speechSynthesis.getVoices().length) { populate(); }
+  else { speechSynthesis.onvoiceschanged = populate; }
+}
+
+function pronounceWord(text) {
+  if (!('speechSynthesis' in window)) return;
+  const input = text || document.getElementById('pronunInput').value.trim();
+  if (!input) { alertPop('Введи слово или букву!'); return; }
+
+  speechSynthesis.cancel();
+
+  const utt = new SpeechSynthesisUtterance(input);
+  const sel = document.getElementById('pronunVoice');
+  const voices = speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
+  if (voices.length && sel.value !== '') {
+    utt.voice = voices[parseInt(sel.value)] || voices[0];
+  }
+  utt.rate  = parseFloat(document.getElementById('pronunSpeed').value);
+  utt.pitch = parseFloat(document.getElementById('pronunPitch').value);
+  utt.lang  = 'en-US';
+
+  const btn = document.getElementById('pronunSpeakBtn');
+  btn.classList.add('speaking');
+  utt.onend = () => btn.classList.remove('speaking');
+  utt.onerror = () => btn.classList.remove('speaking');
+
+  speechSynthesis.speak(utt);
+
+  // сохранить в историю (без дублей подряд)
+  if (!pronunHistory.length || pronunHistory[0] !== input) {
+    pronunHistory.unshift(input);
+    if (pronunHistory.length > 20) pronunHistory.pop();
+    renderPronunHistory();
+  }
+}
+
+function renderPronunHistory() {
+  const wrap = document.getElementById('pronunHistory');
+  const empty = document.getElementById('pronunHistEmpty');
+  if (!pronunHistory.length) {
+    empty.style.display = 'block';
+    // remove old items
+    wrap.querySelectorAll('.pronun-hist-item').forEach(el => el.remove());
+    return;
+  }
+  empty.style.display = 'none';
+  wrap.querySelectorAll('.pronun-hist-item').forEach(el => el.remove());
+  pronunHistory.forEach(word => {
+    const div = document.createElement('div');
+    div.className = 'pronun-hist-item';
+    div.innerHTML = `<span>${word}</span><span class="pronun-hist-repeat">🔊</span>`;
+    div.onclick = () => {
+      document.getElementById('pronunInput').value = word;
+      pronounceWord(word);
+    };
+    wrap.appendChild(div);
+  });
+}
+
+
 loadTheme();
 document.getElementById("soundBtn").textContent=soundEnabled?"🔊":"🔇";
 loadPrefs();
