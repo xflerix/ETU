@@ -1,8 +1,11 @@
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>English Trainer Ultimate v3</title>
 <style>
 /* ════════════════════════════════════
@@ -48,19 +51,30 @@ body.light {
 }
 
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+button, .mode-card, .diff-option, .letter-tile, .answer-tile, .option-btn, .icon-btn {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
 
 body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   padding: 16px 12px 40px;
+  padding-left: max(12px, env(safe-area-inset-left));
+  padding-right: max(12px, env(safe-area-inset-right));
+  padding-bottom: max(40px, env(safe-area-inset-bottom));
   overflow-x: hidden;
   transition: background .4s, color .3s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 /* Анимированный фон */
@@ -701,7 +715,7 @@ select:focus { border-color: var(--accent); }
   background: linear-gradient(135deg, var(--accent), var(--accent2));
   color: #fff; padding: 12px 24px; border-radius: 16px;
   font-weight: 800; font-size: 14px; box-shadow: 0 10px 30px rgba(79,142,255,.3);
-  z-index: 99999; white-space: nowrap; animation: notifIn .4s ease;
+  z-index: 99999; white-space: nowrap; animation: notifIn .4s ease; max-width: calc(100vw - 32px);
 }
 @keyframes notifIn { from{opacity:0;transform:translateX(-50%) translateY(-10px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
 
@@ -802,6 +816,242 @@ select:focus { border-color: var(--accent); }
   background: var(--card-border);
 }
 .blank-slot.filled { background: var(--accent); }
+
+/* ════════════════════════════════════
+   АДАПТИВНАЯ ВЁРСТКА
+════════════════════════════════════ */
+
+/* ── Базовые улучшения для мобильных ── */
+@media (max-width: 480px) {
+  body { padding: 10px 8px 60px; }
+
+  .container { max-width: 100%; }
+
+  /* Шапка */
+  header { margin-bottom: 12px; padding: 0; }
+  .logo { font-size: 18px; gap: 6px; }
+  .logo-icon { font-size: 22px; }
+  .icon-btn { padding: 8px 10px; font-size: 14px; border-radius: 10px; }
+  .header-actions { gap: 6px; }
+
+  /* Карточки */
+  .card { padding: 16px 14px; border-radius: 16px; margin-bottom: 12px; }
+
+  /* Главное меню */
+  .avatar { width: 52px; height: 52px; font-size: 24px; border-radius: 14px; }
+  .menu-name { font-size: 17px; }
+  .menu-stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-card .s-val { font-size: 20px; }
+
+  /* Сетка режимов */
+  .mode-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .mode-card { padding: 14px 8px; font-size: 13px; border-radius: 12px; }
+  .mode-card .mc-icon { font-size: 28px; margin-bottom: 6px; }
+  .mode-card .mc-sub { font-size: 10px; }
+
+  /* Спринт кнопки */
+  .sprint-opts { gap: 6px; }
+  .sprint-opt-btn { padding: 10px 14px; font-size: 16px; border-radius: 12px; }
+
+  /* Игровой экран */
+  .game-header { gap: 6px; flex-wrap: wrap; }
+  .pause-btn { padding: 7px 10px; font-size: 12px; }
+  .stats-bar { gap: 4px; }
+  .mini-stat { padding: 5px 8px; font-size: 11px; border-radius: 8px; }
+
+  /* Слово */
+  .word-display { font-size: 26px; margin: 10px 0; min-height: 44px; gap: 8px; }
+
+  /* Переключатель режима */
+  .g-mode-selector { gap: 4px; }
+  .g-mode-btn { padding: 8px 6px; font-size: 11px; }
+
+  /* Инпут */
+  input[type=text] { padding: 13px 14px; font-size: 16px; border-radius: 12px; }
+
+  /* Варианты ответов */
+  .options-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .option-btn { padding: 12px 8px; font-size: 13px; border-radius: 12px; }
+
+  /* Кнопки действий */
+  .actions { flex-direction: column; gap: 8px; }
+  .actions button { width: 100%; flex: none; padding: 13px; font-size: 14px; }
+
+  /* Флэшкарты */
+  .flashcard-wrap { height: 160px; margin: 10px 0; }
+  .fc-face { font-size: 22px; padding: 14px; }
+  .fc-progress-row { gap: 6px; }
+  .fc-prog-item { padding: 6px; font-size: 11px; border-radius: 8px; }
+  .flashcard-actions { gap: 8px; }
+  .fc-btn-know, .fc-btn-unknown { padding: 12px; font-size: 13px; border-radius: 12px; }
+
+  /* Анаграмма */
+  .letter-tile, .answer-tile { width: 36px; height: 42px; font-size: 16px; border-radius: 8px; }
+  .anagram-word { font-size: 18px; }
+  .anagram-letters, .anagram-answer { gap: 6px; }
+
+  /* Результаты */
+  .result-hero { font-size: 60px; }
+  .result-title { font-size: 22px; }
+  .result-pct { font-size: 44px; }
+  .result-stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .result-stat { padding: 10px; }
+  .result-stat strong { font-size: 20px; }
+
+  /* Достижения/ошибки */
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stats-cell .sc-val { font-size: 20px; }
+  .rank-levels { gap: 6px; }
+  .rank-item { font-size: 12px; padding: 6px 10px; }
+
+  /* Мои слова */
+  .mw-add-row { flex-direction: column; gap: 8px; }
+  .mw-add-row input { width: 100%; }
+  .mw-add-btn { width: 100%; padding: 12px; }
+
+  /* Произношение */
+  .pronun-input-row { gap: 6px; }
+  .pronun-speak-btn { padding: 0 14px; font-size: 20px; }
+  .pronun-voice-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .pronun-voice-row select { width: 100%; }
+  .pronun-speed-row { flex-wrap: wrap; }
+
+  /* Модальное окно */
+  .diff-modal { padding: 20px 16px; border-radius: 18px; }
+  .diff-modal-title { font-size: 18px; }
+  .diff-option { gap: 10px; padding: 12px 12px; border-radius: 12px; }
+  .diff-option-icon { font-size: 22px; }
+  .diff-option-name { font-size: 13px; }
+  .diff-option-xp { font-size: 12px; padding: 3px 8px; }
+
+  /* Попап достижения */
+  .ach-pop { bottom: 16px; right: 12px; left: 12px; max-width: none; font-size: 12px; padding: 12px 14px; }
+
+  /* Уведомление */
+  .notif { font-size: 13px; padding: 10px 18px; white-space: normal; text-align: center; max-width: 90vw; }
+
+  /* Пауза */
+  .pause-card { padding: 20px 16px; border-radius: 18px; }
+  .pause-title { font-size: 18px; }
+
+  /* Серия-баннер */
+  .streak-banner { font-size: 36px; }
+
+  /* Дневная цель */
+  .daily-box { padding: 12px 12px; }
+  .daily-row { font-size: 12px; }
+  .daily-complete-banner { font-size: 11px; padding: 5px 10px; }
+
+  /* Табы */
+  .tab { padding: 8px 6px; font-size: 12px; }
+  li { padding: 8px 10px; font-size: 12px; }
+
+  /* Таймер */
+  .timer-box { font-size: 14px; }
+}
+
+/* ── Средние планшеты (481–768px) ── */
+@media (min-width: 481px) and (max-width: 768px) {
+  body { padding: 14px 16px 50px; }
+
+  .container { max-width: 540px; }
+
+  .logo { font-size: 20px; }
+  .card { padding: 20px 18px; }
+
+  .avatar { width: 58px; height: 58px; font-size: 27px; }
+  .menu-name { font-size: 18px; }
+
+  .mode-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .mode-card { padding: 16px 12px; }
+
+  .word-display { font-size: 30px; }
+
+  .flashcard-wrap { height: 180px; }
+  .fc-face { font-size: 24px; }
+
+  .result-pct { font-size: 48px; }
+  .result-hero { font-size: 70px; }
+
+  .mw-add-row { flex-wrap: wrap; }
+  .mw-add-btn { flex-shrink: 0; }
+
+  .ach-pop { right: 14px; max-width: 300px; }
+}
+
+/* ── Большие планшеты (769–1024px) ── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  body { padding: 20px 24px 50px; }
+  .container { max-width: 580px; }
+  .card { padding: 26px 22px; }
+  .word-display { font-size: 36px; }
+}
+
+/* ── Десктоп (1025px+) ── */
+@media (min-width: 1025px) {
+  body { padding: 28px 24px 60px; }
+  .container { max-width: 640px; }
+  .card { padding: 28px 26px; }
+  .word-display { font-size: 38px; }
+  .mode-grid { grid-template-columns: 1fr 1fr; }
+  .card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.25); }
+}
+
+/* ── Широкие экраны (1440px+) ── */
+@media (min-width: 1440px) {
+  .container { max-width: 680px; }
+  body { padding: 36px 24px 70px; }
+}
+
+/* ── Ориентация: альбомная на маленьких устройствах ── */
+@media (max-width: 768px) and (orientation: landscape) {
+  body { padding: 8px 12px 30px; }
+  .card { padding: 14px 16px; margin-bottom: 10px; }
+  .menu-top { gap: 12px; }
+  .avatar { width: 44px; height: 44px; font-size: 20px; }
+  .flashcard-wrap { height: 140px; }
+  .word-display { font-size: 24px; margin: 8px 0; min-height: 38px; }
+  .timer-ring { width: 32px; height: 32px; }
+  .mode-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .mode-card .mc-icon { font-size: 22px; margin-bottom: 4px; }
+  .result-hero { font-size: 48px; margin-bottom: 6px; }
+  .result-pct { font-size: 36px; margin-bottom: 10px; }
+}
+
+/* ── Тёмная тема системы ── */
+@media (prefers-color-scheme: light) {
+  body:not(.light):not(.dark-forced) {
+    /* Уважаем явный выбор пользователя */
+  }
+}
+
+/* ── Уменьшение анимаций ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .bg-orb { animation: none !important; }
+  .level-bar::after { animation: none !important; }
+}
+
+/* ── Тонкие экраны (SE, fold) ── */
+@media (max-width: 360px) {
+  body { padding: 8px 6px 50px; }
+  .logo { font-size: 16px; }
+  .logo-icon { font-size: 18px; }
+  .icon-btn { padding: 7px 8px; font-size: 13px; }
+  .card { padding: 14px 10px; border-radius: 14px; }
+  .word-display { font-size: 22px; }
+  input[type=text] { font-size: 14px; padding: 11px 10px; }
+  .letter-tile, .answer-tile { width: 32px; height: 38px; font-size: 14px; }
+  .mode-grid { gap: 6px; }
+  .mode-card { padding: 12px 6px; font-size: 12px; }
+  .mode-card .mc-icon { font-size: 24px; }
+  .stat-card .s-val { font-size: 18px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .result-pct { font-size: 38px; }
+  .result-title { font-size: 18px; }
+  .diff-option { padding: 10px 10px; gap: 8px; }
+  .diff-option-icon { font-size: 18px; }
+}
 </style>
 </head>
 <body onclick="unlockAudio()">
