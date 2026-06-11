@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -1185,12 +1185,19 @@ select:focus { border-color: var(--accent); }
 /* Нижняя навигация (quick access) */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0;
-  background: var(--card); border-top: 1px solid var(--card-border);
+  background: rgba(8,12,20,0.92); border-top: 1px solid var(--card-border);
   backdrop-filter: blur(20px); display: flex; justify-content: space-around;
   padding: 8px 0 max(8px, env(safe-area-inset-bottom));
   z-index: 50;
   box-shadow: 0 -4px 20px rgba(0,0,0,.15);
 }
+body.light .bottom-nav {
+  background: rgba(255,255,255,0.92);
+  border-top: 1px solid rgba(100,130,200,0.25);
+  box-shadow: 0 -4px 20px rgba(0,0,0,.08);
+}
+body.light .nav-item { color: #7788cc; }
+body.light .nav-item.active { color: var(--accent); }
 body { padding-bottom: max(90px, calc(env(safe-area-inset-bottom) + 80px)); }
 .nav-item {
   display: flex; flex-direction: column; align-items: center; gap: 2px;
@@ -1291,6 +1298,118 @@ header {
   background: var(--muted2); border-radius: 8px; padding: 6px 12px;
   display: inline-block;
 }
+
+/* Анимация появления букв в анаграмме */
+@keyframes tileJump {
+  0%  { opacity:0; transform: translateY(20px) scale(0.6); }
+  60% { opacity:1; transform: translateY(-6px) scale(1.1); }
+  80% { transform: translateY(3px) scale(0.95); }
+  100%{ opacity:1; transform: translateY(0) scale(1); }
+}
+.letter-tile.jump { animation: tileJump 0.45s cubic-bezier(.4,0,.2,1) both; }
+
+/* Поиск по словарю */
+.dict-search-wrap { position:relative; margin-bottom:12px; }
+.dict-search-input {
+  width:100%; padding:12px 40px 12px 16px; font-size:15px; font-weight:600;
+  border-radius:var(--r2); border:2px solid var(--card-border);
+  background:var(--muted2); color:var(--text); outline:none; transition:var(--t);
+}
+.dict-search-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(79,142,255,.1); }
+.dict-search-clear {
+  position:absolute; right:12px; top:50%; transform:translateY(-50%);
+  background:none; border:none; color:var(--text2); font-size:18px; cursor:pointer; padding:0; line-height:1;
+}
+.dict-results {
+  max-height:220px; overflow-y:auto; margin-bottom:10px;
+}
+.dict-result-item {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 14px; background:var(--muted2); border:1px solid var(--card-border);
+  border-radius:10px; margin-bottom:6px; font-size:14px; font-weight:600;
+  transition:var(--t);
+}
+.dict-result-item:hover { border-color:rgba(79,142,255,.3); }
+.dict-result-ru { color:var(--text2); font-size:12px; }
+.dict-no-result { text-align:center; color:var(--text2); padding:16px 0; font-style:italic; font-size:14px; }
+.dict-result-cat { font-size:10px; color:var(--text2); background:var(--muted); padding:2px 7px; border-radius:6px; font-weight:700; letter-spacing:.3px; }
+
+/* Экспорт прогресса */
+.export-btn-row { display:flex; gap:8px; margin-top:10px; }
+
+/* Слово дня */
+.word-of-day-card {
+  background: linear-gradient(135deg, rgba(124,92,252,.12), rgba(79,142,255,.08));
+  border: 1px solid rgba(124,92,252,.3);
+  border-radius: var(--r2); padding: 14px 16px; margin-bottom: 16px;
+  position: relative; overflow: hidden;
+}
+.word-of-day-card::before {
+  content: ''; position: absolute; top: -30px; right: -30px;
+  width: 80px; height: 80px; background: rgba(124,92,252,.08); border-radius: 50%;
+}
+.wod-label { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--accent2); margin-bottom: 6px; }
+.wod-word { font-size: 26px; font-weight: 900; color: var(--text); margin-bottom: 2px; }
+.wod-pron { font-size: 12px; color: var(--text2); font-weight: 600; margin-bottom: 6px; letter-spacing: .5px; }
+.wod-translation { font-size: 14px; font-weight: 700; color: var(--text2); margin-bottom: 8px; }
+.wod-sentence { font-size: 12px; color: var(--text2); font-style: italic; line-height: 1.6; margin-bottom: 10px;
+  border-left: 2px solid rgba(124,92,252,.4); padding-left: 8px; }
+.wod-actions { display: flex; gap: 8px; align-items: center; }
+.wod-btn-know {
+  flex: 1; background: linear-gradient(135deg, var(--accent2), var(--accent));
+  color: #fff; border: none; border-radius: 10px; padding: 9px 14px;
+  font-size: 13px; font-weight: 800; cursor: pointer; transition: var(--t);
+}
+.wod-btn-know:hover { filter: brightness(1.1); }
+.wod-btn-know.known { background: rgba(34,216,143,.15); color: var(--ok); border: 1px solid rgba(34,216,143,.3); }
+.wod-speak-btn {
+  background: var(--muted); border: 1px solid var(--card-border);
+  border-radius: 10px; padding: 9px 12px; font-size: 18px;
+  cursor: pointer; transition: var(--t);
+}
+.wod-speak-btn:hover { border-color: var(--accent); }
+
+/* Онбординг — обучающий раунд */
+.tutorial-overlay {
+  position: fixed; inset: 0;
+  background: rgba(8,12,20,.92); backdrop-filter: blur(16px);
+  z-index: 400; display: flex; justify-content: center; align-items: center;
+  animation: fadeIn .35s ease;
+}
+.tutorial-card {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: 28px; padding: 28px 24px; max-width: 380px; width: 94%;
+  backdrop-filter: blur(20px); box-shadow: 0 30px 80px rgba(0,0,0,.5);
+  text-align: center; animation: screenIn .4s ease;
+}
+.tutorial-step { font-size: 11px; font-weight: 800; color: var(--accent2);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.tutorial-emoji { font-size: 52px; margin-bottom: 12px; display: block; }
+.tutorial-title { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+.tutorial-sub { font-size: 14px; color: var(--text2); line-height: 1.65; margin-bottom: 20px; }
+.tutorial-demo {
+  background: var(--muted2); border: 1px solid var(--card-border);
+  border-radius: 14px; padding: 14px; margin-bottom: 20px;
+  font-size: 16px; font-weight: 700; line-height: 1.6;
+}
+.tutorial-demo .demo-word { font-size: 28px; font-weight: 900; color: var(--accent); margin-bottom: 4px; }
+.tutorial-demo .demo-arrow { color: var(--text2); font-size: 20px; }
+.tutorial-demo .demo-answer { font-size: 22px; font-weight: 900; color: var(--ok); }
+.tutorial-dots { display: flex; justify-content: center; gap: 6px; margin-bottom: 20px; }
+.tutorial-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); transition: background .3s; }
+.tutorial-dot.active { background: var(--accent); }
+
+/* Статистика по категориям */
+.cat-stats-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.cat-stat-row {
+  display: flex; align-items: center; gap: 10px;
+}
+.cat-stat-label { font-size: 12px; font-weight: 700; color: var(--text2); min-width: 80px; }
+.cat-stat-bar-wrap { flex: 1; background: var(--muted); border-radius: 4px; height: 8px; overflow: hidden; }
+.cat-stat-bar { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--ok), var(--accent));
+  transition: width .6s ease; }
+.cat-stat-pct { font-size: 12px; font-weight: 900; color: var(--accent); min-width: 36px; text-align: right; }
 
 /* Улучшенные result-stat карточки */
 .result-stat:nth-child(1) strong { color: var(--ok); }
@@ -1660,14 +1779,26 @@ select {
       <div id="weeklyChart" class="weekly-chart" style="margin-top:10px;"></div>
     </div>
 
+    <div class="word-of-day-card" id="wodCard">
+      <div class="wod-label">📖 Слово дня</div>
+      <div class="wod-word" id="wodWord">—</div>
+      <div class="wod-pron" id="wodPron"></div>
+      <div class="wod-translation" id="wodTranslation">—</div>
+      <div class="wod-sentence" id="wodSentence"></div>
+      <div class="wod-actions">
+        <button class="wod-btn-know" id="wodKnowBtn" onclick="wodMarkKnown()">✅ Запомнил!</button>
+        <button class="wod-speak-btn" onclick="wodSpeak()">🔊</button>
+      </div>
+    </div>
+
     <div class="quote-box" id="quoteBox">
       <em id="quoteText">Loading...</em>
     </div>
 
     <div class="menu-btns">
       <button class="start-btn-mega" onclick="showModeSelect()"><span>🚀</span> Начать тренировку</button>
+      <button class="btn-secondary" onclick="openDictSearch()">🔍 Поиск слова</button>
       <button class="btn-secondary" onclick="showScreen('pronounceScreen');initPronunScreen();">🗣️ Произношение</button>
-      <button class="btn-secondary" onclick="showScreen('myWordsScreen')">📝 Мои слова</button>
     </div>
   </div>
 
@@ -1876,9 +2007,10 @@ select {
     </div>
     <div class="result-verdict" id="resultsVerdict"></div>
     <div style="display:flex;flex-direction:column;gap:10px;">
-      <button class="btn-primary" onclick="startSprint()">🔄 Ещё раз</button>
+      <button class="btn-primary" id="resultsAgainBtn" onclick="resultsPlayAgain()">🔄 Ещё раз</button>
       <button class="btn-danger" id="retryMistakesBtn" onclick="startMistakeRetry()" style="display:none;border-radius:var(--r2);padding:14px;font-weight:800;font-size:15px;cursor:pointer;transition:var(--t);">💪 Повторить ошибки</button>
       <button class="btn-secondary" onclick="showScreen('menuScreen');updateMenu();">🏠 В меню</button>
+      <button class="btn-secondary" onclick="showScreen('modeSelectScreen')">← Выбор режима</button>
     </div>
   </div>
 
@@ -2040,6 +2172,13 @@ select {
       <div id="hardWordsList"></div>
     </div>
 
+    <div class="accuracy-visual" id="catAccSection">
+      <div class="section-title">📂 Точность по категориям</div>
+      <div class="cat-stats-grid" id="catStatsList">
+        <div class="empty-state" style="padding:10px 0;font-size:13px;">Пока нет данных по категориям</div>
+      </div>
+    </div>
+
     <button class="btn-secondary" style="width:100%;margin-bottom:10px;" onclick="showScreen('menuScreen')">← Назад</button>
     <div style="text-align:center;">
       <button class="reset-btn" onclick="confirmReset()">⚠️ Сбросить прогресс</button>
@@ -2198,9 +2337,28 @@ select {
       </select>
     </div>
 
+    <!-- Данные -->
+    <div class="settings-section">
+      <div class="settings-section-title">📁 Данные</div>
+      <div class="settings-row-item" style="margin-bottom:10px;">
+        <div class="settings-row-info">
+          <div class="settings-row-label">Мои слова</div>
+          <div class="settings-row-sub">Добавляй свои пары для тренировки</div>
+        </div>
+        <button class="settings-mini-btn" onclick="showScreen('myWordsScreen')">Открыть</button>
+      </div>
+      <div class="settings-row-item">
+        <div class="settings-row-info">
+          <div class="settings-row-label">Экспорт прогресса</div>
+          <div class="settings-row-sub">Скачать JSON с XP, достижениями и ошибками</div>
+        </div>
+        <button class="settings-mini-btn" onclick="exportProgress()">📤 Скачать</button>
+      </div>
+    </div>
+
     <!-- Опасная зона -->
     <div class="settings-section" style="border-color:rgba(255,79,109,.2);">
-      <div class="settings-section-title" style="color:var(--err);">⚠️ Данные</div>
+      <div class="settings-section-title" style="color:var(--err);">⚠️ Опасная зона</div>
       <div class="settings-row-item">
         <div class="settings-row-info">
           <div class="settings-row-label">Сбросить прогресс</div>
@@ -2215,6 +2373,82 @@ select {
 
 </div><!-- /container -->
 
+<!-- ═══ ПОИСК ПО СЛОВАРЮ ═══ -->
+<div class="overlay" id="dictOverlay" onclick="if(event.target===this)closeDictSearch()">
+  <div class="pause-card" style="max-height:80vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div class="pause-title" style="margin-bottom:0;">🔍 Поиск по словарю</div>
+      <button onclick="closeDictSearch()" style="background:none;border:none;font-size:22px;color:var(--text2);cursor:pointer;padding:4px;">✕</button>
+    </div>
+    <div class="dict-search-wrap">
+      <input class="dict-search-input" id="dictSearchInput" type="text" placeholder="Введи слово на рус. или англ." oninput="dictSearch(this.value)" autocomplete="off" spellcheck="false">
+      <button class="dict-search-clear" onclick="clearDictSearch()">✕</button>
+    </div>
+    <div id="dictResults" class="dict-results">
+      <div class="dict-no-result">Начни вводить слово для поиска</div>
+    </div>
+    <div style="font-size:11px;color:var(--text2);text-align:center;margin-top:6px;">Найдено слов: <span id="dictCount">—</span></div>
+  </div>
+</div>
+
+<!-- ═══ ОБУЧАЮЩИЙ ТЬЮТОРИАЛ ═══ -->
+<div class="tutorial-overlay" id="tutorialOverlay" style="display:none;">
+  <div class="tutorial-card">
+    <div id="tutStep1">
+      <div class="tutorial-step">Шаг 1 из 3</div>
+      <span class="tutorial-emoji">📖</span>
+      <div class="tutorial-title">Тебе покажут слово</div>
+      <div class="tutorial-sub">На экране появится слово на русском. Твоя задача — написать его перевод на английский.</div>
+      <div class="tutorial-demo">
+        <div class="demo-word">кошка</div>
+        <div class="demo-arrow">↓</div>
+        <div class="demo-answer">cat</div>
+      </div>
+      <div class="tutorial-dots">
+        <div class="tutorial-dot active"></div>
+        <div class="tutorial-dot"></div>
+        <div class="tutorial-dot"></div>
+      </div>
+      <button class="btn-primary" style="width:100%;" onclick="tutNext(2)">Понятно →</button>
+    </div>
+    <div id="tutStep2" style="display:none;">
+      <div class="tutorial-step">Шаг 2 из 3</div>
+      <span class="tutorial-emoji">⏱️</span>
+      <div class="tutorial-title">Отвечай быстрее</div>
+      <div class="tutorial-sub">На каждый вопрос есть 15 секунд. Чем быстрее и точнее отвечаешь — тем больше серия и XP!</div>
+      <div class="tutorial-demo" style="text-align:left;font-size:13px;line-height:1.8;">
+        ✅ Правильно → <strong style="color:var(--ok)">+10 XP</strong><br>
+        🔥 Серия × 5 → <strong style="color:var(--warn)">Бонус +10 XP</strong><br>
+        ⚡ Серия × 10 → <strong style="color:var(--warn)">×2 XP на 30 сек!</strong>
+      </div>
+      <div class="tutorial-dots">
+        <div class="tutorial-dot"></div>
+        <div class="tutorial-dot active"></div>
+        <div class="tutorial-dot"></div>
+      </div>
+      <button class="btn-primary" style="width:100%;" onclick="tutNext(3)">Дальше →</button>
+    </div>
+    <div id="tutStep3" style="display:none;">
+      <div class="tutorial-step">Шаг 3 из 3</div>
+      <span class="tutorial-emoji">🎯</span>
+      <div class="tutorial-title">Режимы игры</div>
+      <div class="tutorial-sub">Можно печатать ответ или выбрать из вариантов. Есть флэшкарты и анаграммы — пробуй всё!</div>
+      <div class="tutorial-demo" style="text-align:left;font-size:13px;line-height:1.9;">
+        ⌨️ <strong>Ввод</strong> — напечатай перевод<br>
+        🔘 <strong>Тест</strong> — выбери из 4 вариантов<br>
+        🃏 <strong>Флэшкарты</strong> — листай и запоминай<br>
+        🧩 <strong>Анаграмма</strong> — собери слово из букв
+      </div>
+      <div class="tutorial-dots">
+        <div class="tutorial-dot"></div>
+        <div class="tutorial-dot"></div>
+        <div class="tutorial-dot active"></div>
+      </div>
+      <button class="btn-primary" style="width:100%;" onclick="tutFinish()">🚀 Начать тренировку!</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ ОНБОРДИНГ ═══ -->
 <div class="onboard-overlay" id="onboardOverlay" style="display:none;">
   <div class="onboard-card">
@@ -2223,6 +2457,7 @@ select {
       <span class="onboard-emoji">🚀</span>
       <div class="onboard-title">English Trainer</div>
       <div class="onboard-sub">Учи английские слова каждый день — быстро, весело и с геймификацией!</div>
+      <div style="background:rgba(34,216,143,.1);border:1px solid rgba(34,216,143,.3);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:800;color:var(--ok);text-align:center;margin-bottom:14px;">🌍 Уже 12 847 пользователей тренируются с нами</div>
       <div class="onboard-avatar-row" id="onboardAvatarRow"></div>
       <input class="onboard-name-input" id="onboardName" placeholder="Как тебя зовут?" maxlength="20">
       <div class="onboard-steps">
@@ -2689,6 +2924,8 @@ function save() {
   // v4: weekly chart + day streak
   if (typeof saveWeeklyData === 'function') saveWeeklyData();
   if (typeof renderWeeklyChart === 'function') renderWeeklyChart();
+  // v7: sprint state persistence
+  saveSprintState();
 }
 function savePrefs() {
   localStorage.setItem("etu_mode", document.getElementById("mode").value);
@@ -2738,6 +2975,8 @@ function goToMainMenu() {
   clearInterval(interval);
   clearInterval(agInterval);
   isPaused=false; isAnswering=false; isGameActive=false;
+  if (isSprint) clearSprintState(); // v7: don't leave orphaned sprint state
+  isSprint=false;
   document.getElementById("pauseOverlay").classList.remove("active");
   updateMenu();
   showScreen("menuScreen");
@@ -2755,6 +2994,7 @@ function showStatsScreen() {
   playClick();
   updateStats();
   renderHardWords();
+  renderCatStats();
   showScreen("statsScreen");
   document.getElementById("dashboardCard").style.display = "none";
 }
@@ -2984,9 +3224,10 @@ function onCorrect() {
   if (isSprint){ sprintCorrect++; sprintMaxStreak = Math.max(sprintMaxStreak,streak); }
   const key = currentWordObj.en;
   wordWeights[key] = Math.max((wordWeights[key]||0)-1, 0);
+  trackCatStat(true); // v7: category stats
 
   // Бонус-раунд
-  if (streak === BONUS_TRIGGER && !bonusRoundActive) activateBonusRound();
+  if (streak === BONUS_TRIGGER && !bonusRoundActive) { activateBonusRound(); playBonusSound(); }
 
   const bonusMult = bonusRoundActive ? 2 : 1;
   const mult = streak>=15?3:streak>=5?2:1;
@@ -3029,6 +3270,7 @@ function onWrong() {
   wordWeights[key]=(wordWeights[key]||0)+2;
   // Трекинг ошибок по словам
   wordErrorCount[key] = (wordErrorCount[key]||0)+1;
+  trackCatStat(false); // v7: category stats
 
   const res = document.getElementById("result");
   res.className="result err-text";
@@ -3149,6 +3391,8 @@ function update() {
 // ════════════════════════════════════
 function showResults() {
   clearInterval(interval); isGameActive=false; playSprint();
+  _lastResultMode = 'sprint';
+  clearSprintState();
   stopBonusRound();
   livesMode=false;
   document.getElementById("livesBar").style.display="none";
@@ -3294,7 +3538,7 @@ function renderAnagramLetters(){
   const answerEl = document.getElementById("agAnswer");
   const blankEl = document.getElementById("agBlank");
   lettersEl.innerHTML = shuffled.map((l,i)=>
-    `<div class="letter-tile" data-letter="${l}" data-idx="${i}" onclick="agAddLetter(this)">${l.toUpperCase()}</div>`
+    `<div class="letter-tile jump" data-letter="${l}" data-idx="${i}" onclick="agAddLetter(this)" style="animation-delay:${i*55}ms">${l.toUpperCase()}</div>`
   ).join("");
   answerEl.innerHTML="";
   blankEl.innerHTML = agTarget.split('').map(()=>`<div class="blank-slot"></div>`).join("");
@@ -3382,6 +3626,7 @@ function agOnWrong(){
   setTimeout(nextAnagram, 1200);
 }
 function showAnagramResult(){
+  _lastResultMode = 'anagram';
   const pct = AG_TOTAL>0?Math.round(agCorrect/AG_TOTAL*100):0;
   let emoji="🧩",title="Анаграмма завершена!";
   if(pct===100){emoji="🏆";title="Все слова угаданы!";}
@@ -4164,9 +4409,284 @@ function stopBonusRound() {
 }
 
 // ════════════════════════════════════
-//  ПОВТОРЕНИЕ ОШИБОК
+//  СОХРАНЕНИЕ ПРОГРЕССА СПРИНТА
 // ════════════════════════════════════
-let _lastSprintMistakes = [];
+function saveSprintState() {
+  if (!isSprint || !isGameActive) return;
+  const pool = getPool();
+  const state = {
+    isSprint, sprintLen, sprintIdx, sprintCorrect, sprintErrors,
+    sprintXpEarned, sprintMaxStreak, livesMode, lives,
+    currentWordEn: currentWordObj ? currentWordObj.en : null,
+    currentWordRu: currentWordObj ? currentWordObj.ru : null,
+    currentLanguage, correctAnswerString,
+    gameMode, streak,
+    ts: Date.now()
+  };
+  try { localStorage.setItem('etu_sprint_state', JSON.stringify(state)); } catch(e){}
+}
+function loadSprintState() {
+  try {
+    const raw = localStorage.getItem('etu_sprint_state');
+    if (!raw) return null;
+    const s = JSON.parse(raw);
+    // Expire after 2 hours
+    if (Date.now() - s.ts > 2 * 3600 * 1000) { clearSprintState(); return null; }
+    return s;
+  } catch(e){ return null; }
+}
+function clearSprintState() {
+  localStorage.removeItem('etu_sprint_state');
+}
+function checkResumeSprint() {
+  const s = loadSprintState();
+  if (!s) return;
+  const minutesAgo = Math.round((Date.now() - s.ts) / 60000);
+  if (confirm(`Найден незавершённый спринт (${minutesAgo} мин. назад) — ${s.sprintIdx} из ${s.sprintLen} слов пройдено. Продолжить?`)) {
+    resumeSprintFromState(s);
+  } else {
+    clearSprintState();
+  }
+}
+function resumeSprintFromState(s) {
+  playStart();
+  isSprint = true; sprintLen = s.sprintLen; sprintIdx = s.sprintIdx;
+  sprintCorrect = s.sprintCorrect; sprintErrors = s.sprintErrors;
+  sprintXpEarned = s.sprintXpEarned; sprintMaxStreak = s.sprintMaxStreak;
+  livesMode = s.livesMode; lives = s.lives; streak = s.streak;
+  isGameActive = true;
+  if (livesMode) { updateLivesDisplay(); document.getElementById("livesBar").style.display="flex"; }
+  document.getElementById("sprintCounterRow").style.display = "block";
+  document.getElementById("sprintProgWrap").style.display = "block";
+  document.getElementById("dashboardCard").style.display = "none";
+  showScreen("gameScreen"); nextWord();
+  alertPop(`▶ Спринт возобновлён! Осталось ${sprintLen - sprintIdx} слов`);
+}
+
+// ════════════════════════════════════
+//  СЛОВО ДНЯ
+// ════════════════════════════════════
+const WOD_DATA = [
+  { word:"persevere", pron:"[ˌpɜːsɪˈvɪər]", ru:"настойчиво продолжать", sentence:"You must persevere if you want to achieve your goals." },
+  { word:"diligent",  pron:"[ˈdɪlɪdʒənt]", ru:"прилежный, усердный",   sentence:"She is a diligent student who never misses a class." },
+  { word:"eloquent",  pron:"[ˈeləkwənt]",  ru:"красноречивый",          sentence:"His eloquent speech moved the entire audience." },
+  { word:"resilient", pron:"[rɪˈzɪliənt]", ru:"стойкий, упругий",       sentence:"Children are often more resilient than adults think." },
+  { word:"ambiguous", pron:"[æmˈbɪɡjuəs]", ru:"двусмысленный",          sentence:"The contract contained several ambiguous clauses." },
+  { word:"concise",   pron:"[kənˈsaɪs]",   ru:"краткий, лаконичный",    sentence:"Please be concise — we have only five minutes left." },
+  { word:"meticulous",pron:"[məˈtɪkjələs]",ru:"тщательный, дотошный",   sentence:"The surgeon was meticulous in every step of the procedure." },
+  { word:"steadfast", pron:"[ˈstedfɑːst]", ru:"твёрдый, верный",        sentence:"She remained steadfast in her belief despite the criticism." },
+  { word:"astute",    pron:"[əˈstjuːt]",   ru:"проницательный, умный",  sentence:"An astute investor knows when to wait." },
+  { word:"candid",    pron:"[ˈkændɪd]",    ru:"откровенный, искренний", sentence:"I appreciate your candid feedback." },
+  { word:"empathy",   pron:"[ˈempəθi]",    ru:"сочувствие, эмпатия",    sentence:"Good leaders show empathy towards their team." },
+  { word:"frugal",    pron:"[ˈfruːɡəl]",   ru:"бережливый, экономный",  sentence:"Living a frugal lifestyle helped him save money." },
+  { word:"gratitude", pron:"[ˈɡrætɪtjuːd]",ru:"благодарность",         sentence:"She expressed gratitude for all the help she received." },
+  { word:"humble",    pron:"[ˈhʌmbəl]",    ru:"скромный, смиренный",    sentence:"Despite his success, he remained humble." },
+  { word:"integrity", pron:"[ɪnˈteɡrəti]", ru:"честность, цельность",   sentence:"Integrity is the foundation of trust in any relationship." },
+  { word:"curious",   pron:"[ˈkjʊəriəs]",  ru:"любопытный",             sentence:"Curious minds learn the fastest." },
+  { word:"passion",   pron:"[ˈpæʃən]",     ru:"страсть, увлечение",     sentence:"Follow your passion and success will follow." },
+  { word:"subtle",    pron:"[ˈsʌtəl]",     ru:"тонкий, едва заметный",  sentence:"There is a subtle difference between the two options." },
+  { word:"thrive",    pron:"[θraɪv]",       ru:"процветать, расцветать", sentence:"Plants thrive in sunlight and water." },
+  { word:"vivid",     pron:"[ˈvɪvɪd]",     ru:"яркий, живой",           sentence:"She has vivid memories of her childhood." },
+  { word:"eager",     pron:"[ˈiːɡər]",     ru:"нетерпеливый, горящий",  sentence:"The eager students raised their hands." },
+  { word:"genuine",   pron:"[ˈdʒenjuɪn]",  ru:"настоящий, искренний",   sentence:"His smile was genuine and warm." },
+  { word:"flourish",  pron:"[ˈflʌrɪʃ]",   ru:"процветать, развиваться",sentence:"Creativity flourishes in a supportive environment." },
+  { word:"observe",   pron:"[əbˈzɜːv]",    ru:"наблюдать, замечать",     sentence:"Scientists observe changes in the data carefully." },
+  { word:"triumph",   pron:"[ˈtraɪʌmf]",  ru:"триумф, победа",          sentence:"Their team's triumph was celebrated by thousands." },
+  { word:"venture",   pron:"[ˈventʃər]",  ru:"рисковать, предприятие",  sentence:"She decided to venture into unknown territory." },
+  { word:"wisdom",    pron:"[ˈwɪzdəm]",   ru:"мудрость",                sentence:"Wisdom comes with experience and reflection." },
+  { word:"yearn",     pron:"[jɜːn]",       ru:"стремиться, тосковать",   sentence:"He yearned for adventure after years in the office." },
+  { word:"zeal",      pron:"[ziːl]",       ru:"рвение, энтузиазм",       sentence:"She approached every task with great zeal." },
+  { word:"adapt",     pron:"[əˈdæpt]",     ru:"адаптировать, приспосабливаться",sentence:"We must adapt to survive in a changing world." },
+  { word:"brilliant", pron:"[ˈbrɪliənt]", ru:"блестящий, великолепный", sentence:"It was a brilliant solution to a complex problem." },
+];
+function initWordOfDay() {
+  const dayIdx = Math.floor(Date.now() / 86400000) % WOD_DATA.length;
+  const w = WOD_DATA[dayIdx];
+  document.getElementById("wodWord").textContent = w.word;
+  document.getElementById("wodPron").textContent = w.pron;
+  document.getElementById("wodTranslation").textContent = "🇷🇺 " + w.ru;
+  document.getElementById("wodSentence").textContent = '"' + w.sentence + '"';
+  const key = "etu_wod_known_" + new Date().toDateString();
+  const known = localStorage.getItem(key) === "1";
+  const btn = document.getElementById("wodKnowBtn");
+  if (known) { btn.textContent = "✅ Уже запомнил!"; btn.classList.add("known"); }
+  else { btn.textContent = "✅ Запомнил!"; btn.classList.remove("known"); }
+}
+function wodMarkKnown() {
+  const key = "etu_wod_known_" + new Date().toDateString();
+  localStorage.setItem(key, "1");
+  const btn = document.getElementById("wodKnowBtn");
+  btn.textContent = "✅ Уже запомнил!"; btn.classList.add("known");
+  xp += 5; dailyXp += 5; save(); updateMenu();
+  spawnConfetti(15); playCorrect();
+  alertPop("🌟 +5 XP за слово дня!");
+}
+function wodSpeak() {
+  unlockAudio();
+  const w = document.getElementById("wodWord").textContent;
+  if (w && w !== "—") speak(w);
+}
+
+// ════════════════════════════════════
+//  ПОИСК ПО СЛОВАРЮ
+// ════════════════════════════════════
+function openDictSearch() {
+  playClick();
+  document.getElementById("dictOverlay").classList.add("active");
+  setTimeout(()=>document.getElementById("dictSearchInput").focus(), 150);
+}
+function closeDictSearch() {
+  document.getElementById("dictOverlay").classList.remove("active");
+}
+function clearDictSearch() {
+  document.getElementById("dictSearchInput").value = "";
+  dictSearch("");
+}
+function dictSearch(q) {
+  const resultsEl = document.getElementById("dictResults");
+  const countEl = document.getElementById("dictCount");
+  q = q.trim().toLowerCase();
+  if (!q) {
+    resultsEl.innerHTML = '<div class="dict-no-result">Начни вводить слово для поиска</div>';
+    countEl.textContent = "—";
+    return;
+  }
+  const catLabels = {
+    jobs:"💼 Профессии", workplaces:"🏭 Места работы", dailyRoutines:"🌅 Распорядок",
+    activities:"📅 Занятия", aroundTown:"🏙️ Город", myWords:"⭐ Мои слова"
+  };
+  let results = [];
+  Object.entries(categories).forEach(([cat, words]) => {
+    if (!Array.isArray(words)) return;
+    words.forEach(w => {
+      const matchRu = w.ru && w.ru.toLowerCase().includes(q);
+      const matchEn = w.en && w.en.toLowerCase().includes(q);
+      if (matchRu || matchEn) results.push({...w, cat});
+    });
+  });
+  countEl.textContent = results.length;
+  if (!results.length) {
+    resultsEl.innerHTML = `<div class="dict-no-result">Ничего не найдено по «${q}»</div>`;
+    return;
+  }
+  resultsEl.innerHTML = results.slice(0,30).map(r => `
+    <div class="dict-result-item">
+      <div>
+        <div style="font-weight:800;color:var(--text);">${r.en}</div>
+        <div class="dict-result-ru">${r.ru}</div>
+      </div>
+      <span class="dict-result-cat">${catLabels[r.cat]||r.cat}</span>
+    </div>`).join("");
+}
+
+// ════════════════════════════════════
+//  ЭКСПОРТ ПРОГРЕССА
+// ════════════════════════════════════
+function exportProgress() {
+  playClick();
+  const data = {
+    exportDate: new Date().toISOString(),
+    profile: profileData,
+    stats: { xp, correct, total, maxStreak, streak, dailyXp },
+    level: getLevel(xp),
+    rank: getRankObj(xp).label,
+    achievements: earnedAchievements,
+    mistakes: mistakes,
+    myWords: categories.myWords || [],
+  };
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `etu_progress_${new Date().toDateString().replace(/ /g,'_')}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  alertPop("📤 Прогресс экспортирован!");
+}
+
+// ════════════════════════════════════
+//  СТАТИСТИКА ПО КАТЕГОРИЯМ
+// ════════════════════════════════════
+function renderCatStats() {
+  const el = document.getElementById("catStatsList");
+  if (!el) return;
+  let raw = {};
+  try { raw = JSON.parse(localStorage.getItem("etu_cat_stats")) || {}; } catch(e){}
+  const catLabels = {
+    jobs:"💼 Профессии", workplaces:"🏭 Места работы", dailyRoutines:"🌅 Распорядок",
+    activities:"📅 Занятия", aroundTown:"🏙️ Город", myWords:"⭐ Мои слова"
+  };
+  const entries = Object.entries(raw).filter(([k,v])=>(v.total||0)>0)
+    .sort((a,b)=>b[1].total-a[1].total);
+  if (!entries.length) {
+    el.innerHTML = '<div class="empty-state" style="padding:10px 0;font-size:13px;">Начни тренировку, чтобы увидеть статистику по категориям</div>';
+    return;
+  }
+  el.innerHTML = entries.map(([cat, v]) => {
+    const pct = v.total ? Math.round(v.correct / v.total * 100) : 0;
+    const color = pct >= 80 ? 'var(--ok)' : pct >= 60 ? 'var(--accent)' : 'var(--warn)';
+    return `<div class="cat-stat-row">
+      <div class="cat-stat-label">${catLabels[cat]||cat}</div>
+      <div class="cat-stat-bar-wrap"><div class="cat-stat-bar" style="width:${pct}%;background:linear-gradient(90deg,${color},var(--accent));"></div></div>
+      <div class="cat-stat-pct" style="color:${color};">${pct}%</div>
+    </div>`;
+  }).join("");
+}
+function trackCatStat(correct) {
+  const cat = document.getElementById("category").value || "all";
+  if (cat === "all") return; // don't track "all" as a category
+  let raw = {};
+  try { raw = JSON.parse(localStorage.getItem("etu_cat_stats")) || {}; } catch(e){}
+  if (!raw[cat]) raw[cat] = {correct:0, total:0};
+  raw[cat].total++;
+  if (correct) raw[cat].correct++;
+  localStorage.setItem("etu_cat_stats", JSON.stringify(raw));
+}
+
+// ════════════════════════════════════
+//  ТЬЮТОРИАЛ
+// ════════════════════════════════════
+function showTutorial() {
+  document.getElementById("tutorialOverlay").style.display = "flex";
+  ['tutStep1','tutStep2','tutStep3'].forEach((id,i)=>{
+    document.getElementById(id).style.display = i===0?"block":"none";
+  });
+}
+function tutNext(step) {
+  playClick();
+  ['tutStep1','tutStep2','tutStep3'].forEach((id,i)=>{ document.getElementById(id).style.display="none"; });
+  document.getElementById("tutStep"+step).style.display = "block";
+}
+function tutFinish() {
+  playCorrect();
+  localStorage.setItem("etu_tutorial_done","1");
+  document.getElementById("tutorialOverlay").style.display = "none";
+  showModeSelect();
+}
+
+// ════════════════════════════════════
+//  RESULTS — REPLAY CONTEXT-AWARE
+// ════════════════════════════════════
+let _lastResultMode = 'sprint'; // 'sprint' | 'anagram'
+function resultsPlayAgain() {
+  if (_lastResultMode === 'anagram') startAnagram();
+  else startSprint();
+}
+
+// ════════════════════════════════════
+//  БОНУС-РАУНД — ЗВУК
+// ════════════════════════════════════
+function playBonusSound() {
+  if (!soundEnabled || !audioCtx) return;
+  // Ascending arpeggio + crash
+  const freqs = [261,329,392,523,659,784,1047];
+  freqs.forEach((f,i) => setTimeout(()=>beep(f,'sine',.18,.1),i*60));
+  setTimeout(()=>{
+    beep(1047,'square',.3,.12);
+    beep(880,'square',.3,.1);
+  }, freqs.length*60);
+}
 
 function startMistakeRetry() {
   if (!mistakes.length) { alertPop("Нет ошибок для повторения!"); return; }
@@ -4327,6 +4847,10 @@ function onboardFinish() {
   document.getElementById("onboardOverlay").style.display="none";
   spawnConfetti(40);
   alertPop(`Добро пожаловать, ${profileData.name}! 🎉`);
+  // Show tutorial unless already done
+  setTimeout(()=>{
+    if (!localStorage.getItem("etu_tutorial_done")) showTutorial();
+  }, 800);
 }
 
 // ════════════════════════════════════
@@ -4359,6 +4883,10 @@ updateProfileRing();
 // v5 init
 initOnboarding();
 renderHardWords();
+
+// v7 init
+initWordOfDay();
+checkResumeSprint();
 
 // onCorrect патч убран — level up встроен напрямую
 
