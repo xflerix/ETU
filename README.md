@@ -1,10 +1,11 @@
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#080c14" id="metaThemeColor">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>English Trainer Ultimate v3</title>
 <style>
@@ -1811,22 +1812,27 @@ select {
       <div class="mode-card" onclick="startEndless()">
         <span class="mc-icon">♾️</span>
         Бесконечный
-        <div class="mc-sub">Слова без остановки</div>
+        <div class="mc-sub">Слова идут подряд, сам останавливаешь</div>
       </div>
       <div class="mode-card" onclick="showSprintSelect()">
         <span class="mc-icon">⚡</span>
         Спринт
-        <div class="mc-sub">N слов — итог в конце</div>
+        <div class="mc-sub">10, 20 или 30 слов — итог в конце</div>
       </div>
       <div class="mode-card new-badge" onclick="startFlashcards()">
         <span class="mc-icon">🃏</span>
         Флэшкарты
-        <div class="mc-sub">Переверни и запомни</div>
+        <div class="mc-sub">Смотришь слово, переворачиваешь — видишь перевод</div>
       </div>
       <div class="mode-card new-badge" onclick="startAnagram()">
         <span class="mc-icon">🧩</span>
         Анаграмма
-        <div class="mc-sub">Составь слово из букв</div>
+        <div class="mc-sub">Буквы перемешаны — собери слово правильно</div>
+      </div>
+      <div class="mode-card new-badge" onclick="startDictant()" style="grid-column:span 2;">
+        <span class="mc-icon">🎧</span>
+        Диктант
+        <div class="mc-sub">Слово произносится вслух — напиши перевод на русском</div>
       </div>
     </div>
 
@@ -1882,6 +1888,9 @@ select {
     <div class="word-display">
       <span id="word"></span>
       <button class="speaker-btn" onclick="speakCurrent()" id="speakBtn" style="display:none;">🔊</button>
+    </div>
+    <div id="dictantRepeatWrap" style="display:none;text-align:center;margin:-4px 0 10px;">
+      <button onclick="speakDictantAgain()" style="background:var(--muted);border:1px solid var(--card-border);color:var(--accent);border-radius:12px;padding:8px 22px;font-size:13px;font-weight:800;cursor:pointer;transition:var(--t);">🔊 Повторить слово</button>
     </div>
 
     <div id="inputSection">
@@ -2345,14 +2354,14 @@ select {
           <div class="settings-row-label">Мои слова</div>
           <div class="settings-row-sub">Добавляй свои пары для тренировки</div>
         </div>
-        <button class="settings-mini-btn" onclick="showScreen('myWordsScreen')">Открыть</button>
+        <button class="settings-mini-btn" onclick="showScreen('myWordsScreen')">Добавить</button>
       </div>
       <div class="settings-row-item">
         <div class="settings-row-info">
-          <div class="settings-row-label">Экспорт прогресса</div>
-          <div class="settings-row-sub">Скачать JSON с XP, достижениями и ошибками</div>
+          <div class="settings-row-label">Сертификат прогресса</div>
+          <div class="settings-row-sub">Скачать HTML-файл со своей статистикой</div>
         </div>
-        <button class="settings-mini-btn" onclick="exportProgress()">📤 Скачать</button>
+        <button class="settings-mini-btn" onclick="exportProgress()">🎓 Сертификат</button>
       </div>
     </div>
 
@@ -2368,7 +2377,7 @@ select {
       </div>
     </div>
 
-    <div style="text-align:center;font-size:12px;color:var(--text2);margin-top:8px;opacity:.5;">ETU by BV · v4</div>
+    <div style="text-align:center;font-size:12px;color:var(--text2);margin-top:8px;opacity:.5;">ETU by BV · v1.0</div>
   </div>
 
 </div><!-- /container -->
@@ -2397,7 +2406,7 @@ select {
     <div id="tutStep1">
       <div class="tutorial-step">Шаг 1 из 3</div>
       <span class="tutorial-emoji">📖</span>
-      <div class="tutorial-title">Тебе покажут слово</div>
+      <div class="tutorial-title" id="tutGreetTitle">Тебе покажут слово</div>
       <div class="tutorial-sub">На экране появится слово на русском. Твоя задача — написать его перевод на английский.</div>
       <div class="tutorial-demo">
         <div class="demo-word">кошка</div>
@@ -2859,7 +2868,11 @@ function playHint(){ beep(440,'triangle',.15,.07); }
 function playSprint(){ [523,587,659,698,784,880,988,1047].forEach((f,i)=>setTimeout(()=>beep(f,'sine',.2,.1),i*90)); }
 function playStart(){ beep(440,'sine',.1); setTimeout(()=>beep(550,'sine',.1),100); setTimeout(()=>beep(660,'sine',.2),200); }
 function playClick(){ beep(600,'square',.05,.04); }
-function playFlip(){ beep(800,'sine',.08,.05); }
+function playFlip(){
+  beep(500,'sine',.05,.06);
+  setTimeout(()=>beep(900,'sine',.07,.07), 55);
+  setTimeout(()=>beep(1200,'triangle',.09,.05), 110);
+}
 
 function speak(text) {
   if ('speechSynthesis' in window) {
@@ -2974,7 +2987,8 @@ function goToMainMenu() {
   playClick();
   clearInterval(interval);
   clearInterval(agInterval);
-  isPaused=false; isAnswering=false; isGameActive=false;
+  isPaused=false; isAnswering=false; isGameActive=false; isDictant=false;
+  document.getElementById("dictantRepeatWrap").style.display = 'none';
   if (isSprint) clearSprintState(); // v7: don't leave orphaned sprint state
   isSprint=false;
   document.getElementById("pauseOverlay").classList.remove("active");
@@ -3139,6 +3153,7 @@ function setGameMode(mode) {
 // ════════════════════════════════════
 function nextWord() {
   if (isPaused) return;
+  if (isDictant) { nextDictantWord(); return; }
   if (isMistakeRetry) { nextMistakeRetryWord(); return; }
   if (isSprint && sprintIdx >= sprintLen) { showResults(); return; }
   isAnswering=false; toggleBtns(false);
@@ -3174,7 +3189,8 @@ function nextWord() {
 // ════════════════════════════════════
 function genOptions() {
   const pool = getPool();
-  const key = currentLanguage==='ru'?'en':'ru';
+  // В диктанте: слышим английское, отвечаем русским
+  const key = isDictant ? 'ru' : (currentLanguage==='ru'?'en':'ru');
   const corr = currentWordObj[key];
   let opts = [corr];
   const uniq = [...new Set(pool.map(w=>w[key]))].filter(v=>v!==corr);
@@ -3222,6 +3238,8 @@ function checkAnswer() {
 function onCorrect() {
   total++; correct++; streak++;
   if (isSprint){ sprintCorrect++; sprintMaxStreak = Math.max(sprintMaxStreak,streak); }
+  // Диктант
+  if (isDictant) { dictantCorrect++; }
   const key = currentWordObj.en;
   wordWeights[key] = Math.max((wordWeights[key]||0)-1, 0);
   trackCatStat(true); // v7: category stats
@@ -3260,7 +3278,14 @@ function onCorrect() {
   update(); save(); checkAchievements();
   if (typeof checkLevelUp === 'function') checkLevelUp(_prevXp, xp);
   if (typeof updateProfileRing === 'function') updateProfileRing();
-  if (isSprint){ sprintIdx++; if(isMistakeRetry) mistakeRetryIdx++; setTimeout(nextWord, sprintIdx>=sprintLen?600:250); }
+  if (isDictant) {
+    // Reveal the English word that was spoken
+    const enWord = currentWordObj.en.split('/')[0].trim();
+    res.innerHTML += ` 🔤 <em style="color:var(--accent)">${enWord}</em>`;
+    dictantXp += earned; dictantIdx++;
+    document.getElementById("dictantRepeatWrap").style.display = 'none';
+    setTimeout(nextWord, 800);
+  } else if (isSprint){ sprintIdx++; if(isMistakeRetry) mistakeRetryIdx++; setTimeout(nextWord, sprintIdx>=sprintLen?600:250); }
   else setTimeout(nextWord,250);
 }
 function onWrong() {
@@ -3301,7 +3326,11 @@ function onWrong() {
   }
 
   update(); save(); checkAchievements();
-  if (isSprint){ sprintIdx++; if(isMistakeRetry) mistakeRetryIdx++; setTimeout(nextWord,sprintIdx>=sprintLen?600:1200); }
+  if (isDictant) {
+    dictantErrors++; dictantIdx++;
+    document.getElementById("dictantRepeatWrap").style.display = 'none';
+    setTimeout(nextWord, 1400);
+  } else if (isSprint){ sprintIdx++; if(isMistakeRetry) mistakeRetryIdx++; setTimeout(nextWord,sprintIdx>=sprintLen?600:1200); }
   else setTimeout(nextWord,1500);
 }
 
@@ -3765,10 +3794,12 @@ function toggleTheme() {
   const l=document.body.classList.contains("light");
   localStorage.setItem("etu_theme",l?"light":"dark");
   document.getElementById("themeBtn").textContent=l?"☀️":"🌙";
+  _syncThemeColor();
 }
 function loadTheme() {
   const t=localStorage.getItem("etu_theme");
   if(t==="light"){ document.body.classList.add("light"); document.getElementById("themeBtn").textContent="☀️"; }
+  _syncThemeColor();
 }
 function toggleSound() {
   unlockAudio(); soundEnabled=!soundEnabled;
@@ -4186,6 +4217,8 @@ function checkLevelUp(prevXp, newXp) {
 }
 
 function showLevelUpBanner(lvl) {
+  // Haptic on level up — triple pulse
+  if (navigator.vibrate) navigator.vibrate([60, 40, 60, 40, 120]);
   const el = document.createElement('div');
   el.className = 'lvlup-banner';
   el.innerHTML = `⬆️ Уровень ${lvl}!<br><span style="font-size:14px;opacity:.85;font-weight:700;">Ты растёшь 🚀</span>`;
@@ -4340,6 +4373,19 @@ function toggleSoundSetting() {
   if (soundEnabled) playClick();
 }
 
+function _syncThemeColor() {
+  const isLight = document.body.classList.contains('light');
+  const color = isLight ? '#f0f4ff' : '#080c14';
+  let meta = document.getElementById('metaThemeColor');
+  if (!meta) {
+    meta = document.createElement('meta');
+    meta.name = 'theme-color';
+    meta.id = 'metaThemeColor';
+    document.head.appendChild(meta);
+  }
+  meta.setAttribute('content', color);
+}
+
 function setTheme(theme) {
   playClick();
   if (theme === 'dark') {
@@ -4354,6 +4400,7 @@ function setTheme(theme) {
     document.body.classList.toggle('light', !prefersDark);
     localStorage.setItem('etu_theme', 'auto');
   }
+  _syncThemeColor();
   // Update labels and active states
   const labels = { dark: 'Тёмная тема активна', light: 'Светлая тема активна', auto: 'Авто (системная тема)' };
   const subEl = document.getElementById('themeSubLabel');
@@ -4580,29 +4627,171 @@ function dictSearch(q) {
 }
 
 // ════════════════════════════════════
-//  ЭКСПОРТ ПРОГРЕССА
+//  ЭКСПОРТ ПРОГРЕССА — СЕРТИФИКАТ
 // ════════════════════════════════════
 function exportProgress() {
   playClick();
-  const data = {
-    exportDate: new Date().toISOString(),
-    profile: profileData,
-    stats: { xp, correct, total, maxStreak, streak, dailyXp },
-    level: getLevel(xp),
-    rank: getRankObj(xp).label,
-    achievements: earnedAchievements,
-    mistakes: mistakes,
-    myWords: categories.myWords || [],
-  };
-  const json = JSON.stringify(data, null, 2);
-  const blob = new Blob([json], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
+  const level = getLevel(xp);
+  const rank  = getRankObj(xp).label;
+  const acc   = total ? Math.round(correct / total * 100) : 0;
+  const name  = profileData.name || "Тренер";
+  const avatar= profileData.avatar || "🦁";
+  const date  = new Date().toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'});
+  const achCount = earnedAchievements.length;
+
+  const html = `<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сертификат — ${name}</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:linear-gradient(135deg,#080c14 0%,#0d1525 50%,#080c14 100%);
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  .cert{
+    background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:28px; padding:48px 44px; max-width:600px; width:100%;
+    box-shadow:0 40px 80px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.1);
+    position:relative; overflow:hidden; text-align:center;
+  }
+  .cert::before{
+    content:''; position:absolute; top:-120px; left:-80px;
+    width:400px; height:400px; border-radius:50%;
+    background:radial-gradient(circle,rgba(79,142,255,.18),transparent 70%);
+    pointer-events:none;
+  }
+  .cert::after{
+    content:''; position:absolute; bottom:-100px; right:-60px;
+    width:320px; height:320px; border-radius:50%;
+    background:radial-gradient(circle,rgba(124,92,252,.15),transparent 70%);
+    pointer-events:none;
+  }
+  .logo-line{
+    font-size:11px; font-weight:800; letter-spacing:3px; text-transform:uppercase;
+    color:rgba(255,255,255,.35); margin-bottom:28px;
+  }
+  .badge-wrap{
+    display:inline-flex; align-items:center; gap:8px;
+    background:linear-gradient(135deg,rgba(79,142,255,.15),rgba(124,92,252,.1));
+    border:1px solid rgba(79,142,255,.3); border-radius:40px;
+    padding:6px 18px; margin-bottom:24px; font-size:12px; font-weight:800;
+    color:#a78bfa; letter-spacing:.5px; text-transform:uppercase;
+  }
+  .avatar-big{font-size:72px; display:block; margin-bottom:12px; line-height:1;}
+  .cert-name{
+    font-size:36px; font-weight:900; color:#fff;
+    background:linear-gradient(135deg,#f0f4ff,#a78bfa);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    margin-bottom:8px; letter-spacing:-.5px;
+  }
+  .cert-sub{font-size:14px; color:rgba(255,255,255,.45); margin-bottom:32px; font-weight:600;}
+  .divider{
+    height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
+    margin:28px 0;
+  }
+  .stats-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:28px;
+  }
+  .stat-box{
+    background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08);
+    border-radius:16px; padding:16px 10px;
+  }
+  .stat-val{
+    font-size:28px; font-weight:900;
+    background:linear-gradient(135deg,#4f8eff,#a78bfa);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    margin-bottom:4px;
+  }
+  .stat-label{font-size:10px; font-weight:700; color:rgba(255,255,255,.35); text-transform:uppercase; letter-spacing:.6px;}
+  .rank-box{
+    background:linear-gradient(135deg,rgba(255,194,71,.12),rgba(255,140,50,.08));
+    border:1px solid rgba(255,194,71,.3); border-radius:16px;
+    padding:16px 20px; margin-bottom:28px;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  .rank-label{font-size:18px; font-weight:900; color:#ffc247;}
+  .ach-line{
+    font-size:13px; color:rgba(255,255,255,.4); font-weight:600; margin-bottom:28px;
+  }
+  .ach-line b{color:#22d88f;}
+  .seal{
+    display:inline-flex; align-items:center; justify-content:center; flex-direction:column;
+    width:90px; height:90px; border-radius:50%;
+    background:linear-gradient(135deg,#4f8eff,#7c5cfc);
+    box-shadow:0 0 0 6px rgba(79,142,255,.15), 0 0 30px rgba(79,142,255,.3);
+    margin-bottom:16px;
+  }
+  .seal-icon{font-size:36px;}
+  .date-line{font-size:12px; color:rgba(255,255,255,.25); font-weight:600; letter-spacing:.5px;}
+  @media print{
+    body{background:#080c14!important; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+<div class="cert">
+  <div class="logo-line">English Trainer Ultimate · ETU by BV</div>
+  <div class="badge-wrap">🏅 Сертификат прогресса</div>
+  <span class="avatar-big">${avatar}</span>
+  <div class="cert-name">${name}</div>
+  <div class="cert-sub">достиг уровня ${level} и продолжает учиться</div>
+
+  <div class="divider"></div>
+
+  <div class="stats-grid">
+    <div class="stat-box">
+      <div class="stat-val">${xp}</div>
+      <div class="stat-label">⭐ Всего XP</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">${level}</div>
+      <div class="stat-label">📈 Уровень</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">${acc}%</div>
+      <div class="stat-label">🎯 Точность</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">${correct}</div>
+      <div class="stat-label">✅ Правильно</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">${maxStreak}</div>
+      <div class="stat-label">🔥 Макс. серия</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">${achCount}</div>
+      <div class="stat-label">🏆 Достижений</div>
+    </div>
+  </div>
+
+  <div class="rank-box">
+    <div class="rank-label">${rank}</div>
+  </div>
+
+  <div class="ach-line">Разблокировано достижений: <b>${achCount} из ${Object.keys(achievementList).length}</b></div>
+
+  <div class="seal"><span class="seal-icon">✦</span></div>
+  <div class="date-line">Выдан ${date} · ETU v1.0</div>
+</div>
+</body>
+</html>`;
+
+  const blob = new Blob([html], {type:"text/html;charset=utf-8"});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
   a.href = url;
-  a.download = `etu_progress_${new Date().toDateString().replace(/ /g,'_')}.json`;
+  a.download = `ETU_certificate_${name}_${new Date().toDateString().replace(/ /g,'_')}.html`;
   a.click();
   URL.revokeObjectURL(url);
-  alertPop("📤 Прогресс экспортирован!");
+  alertPop("🎓 Сертификат скачан!");
 }
 
 // ════════════════════════════════════
@@ -4652,6 +4841,13 @@ function showTutorial() {
   ['tutStep1','tutStep2','tutStep3'].forEach((id,i)=>{
     document.getElementById(id).style.display = i===0?"block":"none";
   });
+  // Персональное приветствие по имени
+  const greetEl = document.getElementById("tutGreetTitle");
+  if (greetEl && profileData.name) {
+    greetEl.textContent = `${profileData.name}, тебе покажут слово`;
+  } else if (greetEl) {
+    greetEl.textContent = "Тебе покажут слово";
+  }
 }
 function tutNext(step) {
   playClick();
@@ -4671,6 +4867,7 @@ function tutFinish() {
 let _lastResultMode = 'sprint'; // 'sprint' | 'anagram'
 function resultsPlayAgain() {
   if (_lastResultMode === 'anagram') startAnagram();
+  else if (_lastResultMode === 'dictant') startDictant();
   else startSprint();
 }
 
@@ -4861,6 +5058,99 @@ const _tabOrder = { menuScreen:0, statsScreen:1, dashboardCard:2, settingsScreen
 
 // ════════════════════════════════════
 //  ИНИЦИАЛИЗАЦИЯ
+// ════════════════════════════════════
+//  РЕЖИМ «ДИКТАНТ»
+// ════════════════════════════════════
+let isDictant = false;
+let dictantPool = [];
+let dictantIdx = 0;
+let dictantCorrect = 0;
+let dictantErrors = 0;
+let dictantXp = 0;
+const DICTANT_LEN = 10;
+
+function startDictant() {
+  playStart();
+  const pool = getPool().filter(w => w.en && w.en.trim());
+  if (pool.length < 5) { alertPop("Мало слов для диктанта!"); return; }
+  isDictant = true;
+  dictantPool = pool.sort(() => Math.random() - .5).slice(0, DICTANT_LEN);
+  dictantIdx = 0; dictantCorrect = 0; dictantErrors = 0; dictantXp = 0;
+  document.getElementById("dashboardCard").style.display = "none";
+  showScreen("gameScreen");
+  document.getElementById("sprintCounterRow").style.display = "block";
+  document.getElementById("sprintProgWrap").style.display = "block";
+  isGameActive = true; isSprint = false;
+  nextDictantWord();
+}
+
+function nextDictantWord() {
+  if (dictantIdx >= dictantPool.length) { showDictantResult(); return; }
+  const w = dictantPool[dictantIdx];
+  currentWordObj = w;
+  // Диктант: произносим английское слово, пользователь пишет РУССКИЙ перевод
+  correctAnswerString = w.ru;
+  currentLanguage = 'ru'; // ответ на русском → speak() не сработает в onCorrect автоматически
+
+  // Show mic icon, hide Russian word
+  document.getElementById("word").innerHTML = `<span style="font-size:42px;letter-spacing:0;">🎧</span>`;
+  document.getElementById("speakBtn").style.display = 'none';
+  document.getElementById("dictantRepeatWrap").style.display = 'block';
+
+  document.getElementById("answer").value = "";
+  document.getElementById("answer").placeholder = "Напечатай услышанное слово…";
+  document.getElementById("result").innerHTML = `<span style="font-size:12px;color:var(--text2);">Диктант — слушай внимательно 🎧</span>`;
+  document.getElementById("result").className = "result";
+  document.getElementById("sprintCurrent").textContent = dictantIdx + 1;
+  document.getElementById("sprintTotal").textContent = dictantPool.length;
+  document.getElementById("sprintBar").style.width = (dictantIdx / dictantPool.length * 100) + "%";
+
+  // Pronounce the word automatically
+  setTimeout(() => {
+    speak(currentWordObj.en.split('/')[0].trim());
+    if (navigator.vibrate) navigator.vibrate(30);
+  }, 400);
+
+  if (gameMode === 'test') genOptions();
+  isAnswering = false; toggleBtns(false); resetTimer();
+}
+
+function speakDictantAgain() {
+  if (currentWordObj && isDictant) {
+    speak(currentWordObj.en.split('/')[0].trim());
+  }
+}
+
+function showDictantResult() {
+  clearInterval(interval);
+  isGameActive = false; isDictant = false;
+  _lastResultMode = 'dictant';
+  playSprint();
+  const pct = dictantPool.length > 0 ? Math.round(dictantCorrect / dictantPool.length * 100) : 0;
+  let emoji = "😅", title = "Тренируй слух!";
+  if (pct === 100) { emoji = "🏆"; title = "Идеальный диктант! 🎉"; }
+  else if (pct >= 80) { emoji = "🌟"; title = "Отличный слух!"; }
+  else if (pct >= 60) { emoji = "👍"; title = "Неплохо!"; }
+
+  document.getElementById("resultsEmoji").textContent = emoji;
+  document.getElementById("resultsTitle").textContent = title;
+  document.getElementById("resultsPct").textContent = pct + "%";
+  document.getElementById("resCorrect").textContent = dictantCorrect;
+  document.getElementById("resErrors").textContent = dictantErrors;
+  document.getElementById("resXp").textContent = dictantXp;
+  document.getElementById("resStreak").textContent = "—";
+  document.getElementById("resultsVerdict").innerHTML =
+    `Правильно: <b>${dictantCorrect} из ${dictantPool.length}</b> (${pct}%)<br>Заработано: <b>+${dictantXp} XP</b>`;
+  document.getElementById("dailyRecordBadge").style.display = "none";
+  document.getElementById("retryMistakesBtn").style.display = "none";
+  showScreen("resultsScreen");
+  document.getElementById("dashboardCard").style.display = "none";
+  spawnConfetti(25);
+  xp += dictantXp; dailyXp += dictantXp; save(); updateMenu();
+}
+
+// ════════════════════════════════════
+
 // ════════════════════════════════════
 loadTheme();
 document.getElementById("soundBtn").textContent=soundEnabled?"🔊":"🔇";
