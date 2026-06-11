@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -1524,17 +1524,11 @@ select:focus { border-color: var(--accent); }
       <label>Категория</label>
       <select id="category" onchange="savePrefs();">
         <option value="all">🌍 Все категории</option>
-        <option value="countries">🌎 Страны</option>
-        <option value="family">👨‍👩‍👧 Семья</option>
-        <option value="animals">🐶 Животные</option>
-        <option value="things">📱 Вещи</option>
-        <option value="personal">🎒 Личные вещи</option>
-        <option value="colors">🎨 Цвета</option>
-        <option value="numbers">🔢 Числа</option>
-        <option value="food">🍕 Еда</option>
-        <option value="professions">👨‍⚕️ Профессии</option>
-        <option value="verbs">💪 Глаголы</option>
-        <option value="phrases">💬 Фразы</option>
+        <option value="jobs">💼 Профессии (Jobs)</option>
+        <option value="workplaces">🏭 Места работы</option>
+        <option value="dailyRoutines">🌅 Распорядок дня</option>
+        <option value="activities">📅 Занятия и дни недели</option>
+        <option value="aroundTown">🏙️ По городу</option>
         <option value="myWords">⭐ Мои слова</option>
       </select>
     </div>
@@ -1550,120 +1544,89 @@ select:focus { border-color: var(--accent); }
 //  ДАННЫЕ — СЛОВАРИ
 // ════════════════════════════════════
 const categories = {
-  countries:[
-    {ru:"Аргентина",en:"Argentina"},{ru:"Австралия",en:"Australia"},{ru:"Австрия",en:"Austria"},
-    {ru:"Бразилия",en:"Brazil"},{ru:"Канада",en:"Canada"},{ru:"Китай",en:"China"},
-    {ru:"Чехия",en:"Czech Republic"},{ru:"Египет",en:"Egypt"},{ru:"Франция",en:"France"},
-    {ru:"Германия",en:"Germany"},{ru:"Греция",en:"Greece"},{ru:"Индия",en:"India"},
-    {ru:"Япония",en:"Japan"},{ru:"Мексика",en:"Mexico"},{ru:"Нидерланды",en:"Netherlands"},
-    {ru:"Польша",en:"Poland"},{ru:"Португалия",en:"Portugal"},{ru:"Россия",en:"Russia"},
-    {ru:"Испания",en:"Spain"},{ru:"Швейцария",en:"Switzerland"},{ru:"Таиланд",en:"Thailand"},
-    {ru:"Турция",en:"Turkey"},{ru:"Великобритания",en:"United Kingdom"},{ru:"США",en:"United States"},
-    {ru:"Южная Корея",en:"South Korea"},{ru:"ОАЭ",en:"United Arab Emirates"},
-    {ru:"Сингапур",en:"Singapore"},{ru:"Монголия",en:"Mongolia"},{ru:"Норвегия",en:"Norway"},
-    {ru:"Швеция",en:"Sweden"},{ru:"Финляндия",en:"Finland"},{ru:"Дания",en:"Denmark"},
-    {ru:"Бельгия",en:"Belgium"},{ru:"Венгрия",en:"Hungary"},{ru:"Румыния",en:"Romania"}
+  // Theme 9 — Jobs
+  jobs:[
+    {ru:"уборщик / уборщица",en:"cleaner"},{ru:"водитель",en:"driver"},
+    {ru:"продавец-консультант",en:"sales assistant"},{ru:"парикмахер",en:"hairdresser"},
+    {ru:"шеф-повар",en:"chef"},{ru:"садовник",en:"gardener"},
+    {ru:"ветеринар",en:"vet"},{ru:"актёр",en:"actor"},
+    {ru:"врач",en:"doctor"},{ru:"медсестра / медбрат",en:"nurse"},
+    {ru:"стоматолог",en:"dentist"},{ru:"полицейский",en:"police officer"},
+    {ru:"пожарный",en:"firefighter"},{ru:"фермер",en:"farmer"},
+    {ru:"строитель",en:"construction worker / builder"},{ru:"художник",en:"artist"},
+    {ru:"администратор / секретарь",en:"receptionist"},{ru:"механик",en:"mechanic"},
+    {ru:"инженер",en:"engineer"},{ru:"учёный",en:"scientist"},
+    {ru:"учитель",en:"teacher"},{ru:"бизнесвумен",en:"businesswoman"},
+    {ru:"бизнесмен",en:"businessman"},{ru:"официант",en:"waiter"},
+    {ru:"официантка",en:"waitress"},{ru:"электрик",en:"electrician"},
+    {ru:"пилот",en:"pilot"},{ru:"судья",en:"judge"}
   ],
-  family:[
-    {ru:"тётя",en:"aunt"},{ru:"брат",en:"brother"},{ru:"зять / шурин",en:"brother-in-law"},
-    {ru:"дети",en:"children"},{ru:"двоюродный брат / сестра",en:"cousin"},{ru:"дочь",en:"daughter"},
-    {ru:"отец / папа",en:"father / dad"},{ru:"дедушка",en:"grandfather"},{ru:"бабушка",en:"grandmother"},
-    {ru:"внук",en:"grandson"},{ru:"внучка",en:"granddaughter"},{ru:"муж",en:"husband"},
-    {ru:"мать / мама",en:"mother / mom"},{ru:"племянник",en:"nephew"},{ru:"племянница",en:"niece"},
-    {ru:"родители",en:"parents"},{ru:"сестра",en:"sister"},{ru:"сын",en:"son"},
-    {ru:"дядя",en:"uncle"},{ru:"жена",en:"wife"},{ru:"сводный брат",en:"stepbrother"},
-    {ru:"мачеха",en:"stepmother"},{ru:"сводная сестра",en:"stepsister"}
+  // Theme 10 — Workplaces / Work with
+  workplaces:[
+    {ru:"ферма",en:"farm"},{ru:"офис",en:"office"},
+    {ru:"театр",en:"theater / theatre"},{ru:"школа",en:"school"},
+    {ru:"лаборатория",en:"laboratory"},{ru:"ресторан",en:"restaurant"},
+    {ru:"строительная площадка",en:"construction site"},{ru:"больница",en:"hospital"},
+    {ru:"животные",en:"animals"},{ru:"дети",en:"children"},
+    {ru:"пациенты",en:"patients"},{ru:"растения",en:"plants"},
+    {ru:"еда",en:"food"},{ru:"люди",en:"people"}
   ],
-  animals:[
-    {ru:"кошка",en:"cat"},{ru:"курица",en:"chicken"},{ru:"корова",en:"cow"},
-    {ru:"собака",en:"dog"},{ru:"осёл",en:"donkey"},{ru:"рыба",en:"fish"},
-    {ru:"морская свинка",en:"guinea pig"},{ru:"хомяк",en:"hamster"},{ru:"лошадь",en:"horse"},
-    {ru:"попугай",en:"parrot"},{ru:"свинья",en:"pig"},{ru:"кролик",en:"rabbit"},
-    {ru:"овца",en:"sheep"},{ru:"змея",en:"snake"},{ru:"черепаха",en:"tortoise"},
-    {ru:"лев",en:"lion"},{ru:"тигр",en:"tiger"},{ru:"слон",en:"elephant"},
-    {ru:"медведь",en:"bear"},{ru:"волк",en:"wolf"},{ru:"лиса",en:"fox"},
-    {ru:"обезьяна",en:"monkey"},{ru:"жираф",en:"giraffe"},{ru:"зебра",en:"zebra"},
-    {ru:"крокодил",en:"crocodile"},{ru:"дельфин",en:"dolphin"},{ru:"кит",en:"whale"}
+  // Theme 11 — Daily Routines / Times of Day
+  dailyRoutines:[
+    {ru:"просыпаться",en:"wake up"},{ru:"вставать",en:"get up"},
+    {ru:"принимать душ",en:"take a shower / have a shower"},
+    {ru:"принимать ванну",en:"take a bath / have a bath"},
+    {ru:"расчесывать волосы",en:"brush your hair"},
+    {ru:"завтракать",en:"have breakfast / eat breakfast"},
+    {ru:"идти на работу",en:"go to work"},{ru:"идти в школу",en:"go to school"},
+    {ru:"покупать продукты",en:"buy groceries"},{ru:"идти домой",en:"go home"},
+    {ru:"готовить ужин",en:"cook dinner"},{ru:"ужинать",en:"have dinner / eat dinner"},
+    {ru:"гладить рубашку",en:"iron a shirt"},{ru:"одеваться",en:"get dressed"},
+    {ru:"чистить зубы",en:"brush your teeth"},{ru:"умываться",en:"wash your face"},
+    {ru:"начинать работу",en:"start work"},{ru:"обедать",en:"have lunch / eat lunch"},
+    {ru:"заканчивать работу",en:"finish work"},{ru:"уходить с работы",en:"leave work"},
+    {ru:"убирать со стола",en:"clear the table"},
+    {ru:"мыть посуду",en:"do the dishes / wash the dishes"},
+    {ru:"выгуливать собаку",en:"walk the dog"},{ru:"ложиться спать",en:"go to bed"},
+    {ru:"день",en:"day"},{ru:"ночь",en:"night"},
+    {ru:"рассвет",en:"dawn"},{ru:"утро",en:"morning"},
+    {ru:"после обеда",en:"afternoon"},{ru:"сумерки",en:"dusk"},
+    {ru:"вечер",en:"evening"},{ru:"поздний вечер",en:"late evening"}
   ],
-  things:[
-    {ru:"яблоко",en:"apple"},{ru:"бутылка воды",en:"bottle of water"},{ru:"фотоаппарат",en:"camera"},
-    {ru:"мобильный телефон",en:"cell phone / mobile phone"},{ru:"монеты",en:"coins"},
-    {ru:"наушники",en:"earphones"},{ru:"ключи",en:"keys"},{ru:"ноутбук",en:"laptop"},
-    {ru:"блокнот",en:"notebook"},{ru:"ручка",en:"pen"},{ru:"карандаш",en:"pencil"},
-    {ru:"сэндвич",en:"sandwich"},{ru:"планшет",en:"tablet"},{ru:"кошелёк",en:"wallet"},
-    {ru:"зарядное устройство",en:"charger"},{ru:"пульт управления",en:"remote control"},{ru:"лампа",en:"lamp"}
+  // Theme 14 — Activities / Days of the Week
+  activities:[
+    {ru:"понедельник",en:"Monday"},{ru:"вторник",en:"Tuesday"},
+    {ru:"среда",en:"Wednesday"},{ru:"четверг",en:"Thursday"},
+    {ru:"пятница",en:"Friday"},{ru:"суббота",en:"Saturday"},
+    {ru:"воскресенье",en:"Sunday"},{ru:"выходные",en:"weekend"},
+    {ru:"ходить в спортзал",en:"go to the gym"},
+    {ru:"ходить плавать",en:"go swimming"},
+    {ru:"играть в теннис",en:"play tennis"},
+    {ru:"играть в футбол",en:"play soccer"},
+    {ru:"читать газету",en:"read the newspaper"},
+    {ru:"принимать ванну",en:"take a bath"}
   ],
-  personal:[
-    {ru:"книга / роман",en:"book / novel"},{ru:"словарь",en:"dictionary"},
-    {ru:"очки",en:"glasses"},{ru:"расчёска",en:"hairbrush"},{ru:"удостоверение личности",en:"ID card"},
-    {ru:"журнал",en:"magazine"},{ru:"карта",en:"map"},{ru:"зеркало",en:"mirror"},
-    {ru:"ожерелье",en:"necklace"},{ru:"газета",en:"newspaper"},{ru:"паспорт",en:"passport"},
-    {ru:"ежедневник",en:"planner / diary"},{ru:"солнцезащитные очки",en:"sunglasses"},
-    {ru:"зубная щётка",en:"toothbrush"},{ru:"зонт",en:"umbrella"},{ru:"часы",en:"watch"}
-  ],
-  colors:[
-    {ru:"красный",en:"red"},{ru:"синий / голубой",en:"blue"},{ru:"зелёный",en:"green"},
-    {ru:"жёлтый",en:"yellow"},{ru:"оранжевый",en:"orange"},{ru:"фиолетовый",en:"purple"},
-    {ru:"розовый",en:"pink"},{ru:"белый",en:"white"},{ru:"чёрный",en:"black"},
-    {ru:"серый",en:"grey / gray"},{ru:"коричневый",en:"brown"},{ru:"бежевый",en:"beige"},
-    {ru:"золотой",en:"gold"},{ru:"серебряный",en:"silver"},{ru:"бирюзовый",en:"turquoise"},
-    {ru:"малиновый",en:"crimson"},{ru:"лазурный",en:"azure"},{ru:"индиго",en:"indigo"}
-  ],
-  numbers:[
-    {ru:"один",en:"one"},{ru:"два",en:"two"},{ru:"три",en:"three"},{ru:"четыре",en:"four"},
-    {ru:"пять",en:"five"},{ru:"шесть",en:"six"},{ru:"семь",en:"seven"},{ru:"восемь",en:"eight"},
-    {ru:"девять",en:"nine"},{ru:"десять",en:"ten"},{ru:"одиннадцать",en:"eleven"},
-    {ru:"двенадцать",en:"twelve"},{ru:"двадцать",en:"twenty"},{ru:"тридцать",en:"thirty"},
-    {ru:"сорок",en:"forty"},{ru:"пятьдесят",en:"fifty"},{ru:"сто",en:"hundred"},
-    {ru:"тысяча",en:"thousand"},{ru:"первый",en:"first"},{ru:"второй",en:"second"},
-    {ru:"третий",en:"third"},{ru:"последний",en:"last"},{ru:"половина",en:"half"}
-  ],
-  food:[
-    {ru:"хлеб",en:"bread"},{ru:"масло",en:"butter"},{ru:"сыр",en:"cheese"},
-    {ru:"яйцо",en:"egg"},{ru:"молоко",en:"milk"},{ru:"мясо",en:"meat"},
-    {ru:"курица",en:"chicken"},{ru:"рыба",en:"fish"},{ru:"рис",en:"rice"},
-    {ru:"макароны",en:"pasta"},{ru:"суп",en:"soup"},{ru:"салат",en:"salad"},
-    {ru:"пицца",en:"pizza"},{ru:"гамбургер",en:"burger"},{ru:"торт",en:"cake"},
-    {ru:"печенье",en:"cookie"},{ru:"мороженое",en:"ice cream"},{ru:"сок",en:"juice"},
-    {ru:"кофе",en:"coffee"},{ru:"чай",en:"tea"},{ru:"вода",en:"water"},
-    {ru:"яблоко",en:"apple"},{ru:"банан",en:"banana"},{ru:"клубника",en:"strawberry"},
-    {ru:"апельсин",en:"orange"},{ru:"виноград",en:"grapes"},{ru:"помидор",en:"tomato"},
-    {ru:"картофель",en:"potato"},{ru:"морковь",en:"carrot"},{ru:"лук",en:"onion"}
-  ],
-  professions:[
-    {ru:"врач",en:"doctor"},{ru:"учитель",en:"teacher"},{ru:"инженер",en:"engineer"},
-    {ru:"программист",en:"programmer"},{ru:"юрист",en:"lawyer"},{ru:"повар",en:"cook / chef"},
-    {ru:"водитель",en:"driver"},{ru:"полицейский",en:"police officer"},{ru:"пожарный",en:"firefighter"},
-    {ru:"медсестра",en:"nurse"},{ru:"архитектор",en:"architect"},{ru:"дизайнер",en:"designer"},
-    {ru:"журналист",en:"journalist"},{ru:"актёр",en:"actor"},{ru:"певец",en:"singer"},
-    {ru:"спортсмен",en:"athlete"},{ru:"военный",en:"soldier"},{ru:"фермер",en:"farmer"},
-    {ru:"пилот",en:"pilot"},{ru:"стюардесса",en:"flight attendant"},{ru:"официант",en:"waiter"},
-    {ru:"продавец",en:"salesperson"},{ru:"менеджер",en:"manager"},{ru:"директор",en:"director"}
-  ],
-  verbs:[
-    {ru:"идти / ходить",en:"go / walk"},{ru:"бежать",en:"run"},{ru:"есть",en:"eat"},
-    {ru:"пить",en:"drink"},{ru:"спать",en:"sleep"},{ru:"работать",en:"work"},
-    {ru:"учиться",en:"study / learn"},{ru:"читать",en:"read"},{ru:"писать",en:"write"},
-    {ru:"слушать",en:"listen"},{ru:"говорить",en:"speak / talk"},{ru:"смотреть",en:"watch / look"},
-    {ru:"играть",en:"play"},{ru:"петь",en:"sing"},{ru:"танцевать",en:"dance"},
-    {ru:"плавать",en:"swim"},{ru:"готовить",en:"cook"},{ru:"покупать",en:"buy"},
-    {ru:"продавать",en:"sell"},{ru:"думать",en:"think"},{ru:"знать",en:"know"},
-    {ru:"любить",en:"love / like"},{ru:"хотеть",en:"want"},{ru:"мочь",en:"can"},
-    {ru:"помогать",en:"help"},{ru:"открывать",en:"open"},{ru:"закрывать",en:"close"},
-    {ru:"давать",en:"give"},{ru:"брать",en:"take"},{ru:"находить",en:"find"}
-  ],
-  // Новая категория — полезные фразы
-  phrases:[
-    {ru:"Как дела?",en:"How are you?"},{ru:"Всё хорошо",en:"I'm fine / I'm good"},
-    {ru:"Спасибо",en:"Thank you"},{ru:"Пожалуйста",en:"You're welcome / Please"},
-    {ru:"Извини",en:"Sorry / Excuse me"},{ru:"Не понимаю",en:"I don't understand"},
-    {ru:"Повтори, пожалуйста",en:"Please repeat that"},{ru:"Сколько это стоит?",en:"How much is it?"},
-    {ru:"Где находится...?",en:"Where is...?"},{ru:"Помогите мне",en:"Help me"},
-    {ru:"Я не знаю",en:"I don't know"},{ru:"Приятно познакомиться",en:"Nice to meet you"},
-    {ru:"До свидания",en:"Goodbye / See you"},{ru:"Доброе утро",en:"Good morning"},
-    {ru:"Добрый вечер",en:"Good evening"},{ru:"Спокойной ночи",en:"Good night"},
-    {ru:"Удачи!",en:"Good luck!"},{ru:"Поздравляю!",en:"Congratulations!"},
-    {ru:"Счастливого пути",en:"Have a safe trip"},{ru:"Будь здоров",en:"Bless you / Stay healthy"}
+  // Theme 20 — Around Town
+  aroundTown:[
+    {ru:"деревня",en:"village"},{ru:"небольшой город",en:"town"},
+    {ru:"крупный город",en:"city"},{ru:"больница",en:"hospital"},
+    {ru:"полицейский участок",en:"police station"},{ru:"автовокзал",en:"bus station"},
+    {ru:"автобусная остановка",en:"bus stop"},{ru:"железнодорожный вокзал",en:"train station"},
+    {ru:"аэропорт",en:"airport"},{ru:"школа",en:"school"},
+    {ru:"фабрика / завод",en:"factory"},{ru:"супермаркет",en:"supermarket"},
+    {ru:"магазин",en:"store / shop"},{ru:"аптека",en:"pharmacy"},
+    {ru:"банк",en:"bank"},{ru:"почтовое отделение",en:"post office"},
+    {ru:"библиотека",en:"library"},{ru:"музей",en:"museum"},
+    {ru:"мэрия / городская администрация",en:"town hall"},{ru:"замок",en:"castle"},
+    {ru:"офисное здание",en:"office building"},{ru:"парк",en:"park"},
+    {ru:"здесь",en:"here"},{ru:"мост",en:"bridge"},
+    {ru:"плавательный бассейн",en:"swimming pool"},{ru:"ресторан",en:"restaurant"},
+    {ru:"кафе",en:"cafe"},{ru:"там",en:"there"},
+    {ru:"бар",en:"bar"},{ru:"кинотеатр",en:"movie theater / cinema"},
+    {ru:"театр",en:"theater / theatre"},{ru:"отель",en:"hotel"},
+    {ru:"рядом",en:"near"},{ru:"церковь",en:"church"},
+    {ru:"мечеть",en:"mosque"},{ru:"синагога",en:"synagogue"},
+    {ru:"храм",en:"temple"},{ru:"далеко",en:"far"}
   ],
   myWords:[]
 };
