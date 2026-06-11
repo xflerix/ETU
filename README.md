@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -1071,7 +1071,8 @@ select:focus { border-color: var(--accent); }
       ETU by BV <span style="opacity:.5;font-weight:400;font-size:14px">v3</span>
     </div>
     <div class="header-actions">
-      <button class="icon-btn" onclick="showStatsScreen();event.stopPropagation();" title="Статистика">📊</button>
+      <button class="icon-btn" onclick="showScreen('statsScreen');updateStats();document.getElementById('dashboardCard').style.display='none';" title="Статистика">📊</button>
+      <button class="icon-btn" onclick="showProfileScreen();" title="Профиль">👤</button>
       <button class="icon-btn" onclick="toggleSound();event.stopPropagation();" id="soundBtn" title="Звук">🔊</button>
       <button class="icon-btn" onclick="toggleTheme();event.stopPropagation();" id="themeBtn" title="Тема">🌙</button>
     </div>
@@ -1350,6 +1351,58 @@ select:focus { border-color: var(--accent); }
     <button class="btn-secondary" style="width:100%;margin-top:6px;" onclick="showScreen('menuScreen')">← Назад</button>
   </div>
 
+  <!-- ═══ ПРОФИЛЬ ═══ -->
+  <div id="profileScreen" class="card screen">
+    <div style="font-size:20px;font-weight:900;margin-bottom:16px;">👤 Мой профиль</div>
+    <div style="text-align:center;margin-bottom:20px;">
+      <div id="profileAvatarBig" style="font-size:72px;line-height:1;margin-bottom:10px;cursor:pointer;" onclick="openAvatarPicker()" title="Сменить аватар">🦁</div>
+      <div style="font-size:12px;color:var(--text2);font-weight:600;">Нажми чтобы сменить аватар</div>
+    </div>
+    <div id="avatarPicker" style="display:none;margin-bottom:16px;">
+      <div style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;">Выбери аватар</div>
+      <div id="avatarGrid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;"></div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:12px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">👤 Имя</label>
+      <input type="text" id="profileName" placeholder="Введи своё имя…" maxlength="24" style="width:100%;padding:12px 14px;background:var(--muted2);border:1px solid var(--card-border);border-radius:var(--r2);color:var(--text);font-size:15px;font-weight:700;outline:none;">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:12px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">🎯 Цель обучения</label>
+      <select id="profileGoal" style="width:100%;padding:12px 14px;background:var(--muted2);border:1px solid var(--card-border);border-radius:var(--r2);color:var(--text);font-size:14px;font-weight:700;outline:none;">
+        <option value="">— Не указано —</option>
+        <option value="school">🏫 Для школы / учёбы</option>
+        <option value="work">💼 Для работы</option>
+        <option value="travel">✈️ Для путешествий</option>
+        <option value="exam">📋 Подготовка к экзамену</option>
+        <option value="fun">🎮 Просто для себя</option>
+        <option value="emigration">🌍 Переезд за рубеж</option>
+      </select>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:12px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">📊 Уровень английского</label>
+      <div id="levelPicker" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"></div>
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="font-size:12px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">📝 О себе</label>
+      <textarea id="profileBio" placeholder="Расскажи немного о себе…" maxlength="120" rows="3" style="width:100%;padding:12px 14px;background:var(--muted2);border:1px solid var(--card-border);border-radius:var(--r2);color:var(--text);font-size:14px;font-weight:600;outline:none;resize:none;font-family:inherit;line-height:1.5;"></textarea>
+      <div id="bioCounter" style="font-size:11px;color:var(--text2);text-align:right;margin-top:3px;">0 / 120</div>
+    </div>
+    <div style="background:var(--muted2);border:1px solid var(--card-border);border-radius:var(--r2);padding:14px 16px;margin-bottom:20px;">
+      <div style="font-size:12px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">🏅 Статистика</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
+        <div><div id="pStXp" style="font-size:22px;font-weight:900;color:var(--accent)">0</div><div style="font-size:11px;color:var(--text2);font-weight:700;">XP всего</div></div>
+        <div><div id="pStLvl" style="font-size:22px;font-weight:900;color:var(--warn)">1</div><div style="font-size:11px;color:var(--text2);font-weight:700;">Уровень</div></div>
+        <div><div id="pStStreak" style="font-size:22px;font-weight:900;color:var(--err)">0</div><div style="font-size:11px;color:var(--text2);font-weight:700;">Макс. серия</div></div>
+      </div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--card-border);text-align:center;">
+        <div id="pRankLabel" style="font-size:14px;font-weight:800;">🌱 Новичок</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px;">Текущий ранг</div>
+      </div>
+    </div>
+    <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveProfile()">💾 Сохранить профиль</button>
+    <button class="btn-secondary" style="width:100%;" onclick="showScreen('menuScreen')">← Назад</button>
+  </div>
+
   <!-- ═══ СТАТИСТИКА ═══ -->
   <div id="statsScreen" class="card screen">
     <div style="font-size:20px;font-weight:900;margin-bottom:16px;">📊 Статистика</div>
@@ -1540,6 +1593,7 @@ select:focus { border-color: var(--accent); }
 </div>
 
 <script>
+console.log("ETU v3 - profile build OK");
 // ════════════════════════════════════
 //  ДАННЫЕ — СЛОВАРИ
 // ════════════════════════════════════
@@ -2713,6 +2767,126 @@ function renderPronunHistory() {
 }
 
 
+// ════════════════════════════════════
+//  ПРОФИЛЬ
+// ════════════════════════════════════
+const AVATARS = ["🦁","🐯","🦊","🐺","🐻","🐼","🐨","🦝","🐸","🐙","🦋","🐬","🦄","🐉","👾","🤖","🧙","🥷","🦸","🎩","🌟","🔥","⚡","🎯"];
+const ENG_LEVELS = [
+  {code:"A1", label:"A1 — Начинающий"},
+  {code:"A2", label:"A2 — Элементарный"},
+  {code:"B1", label:"B1 — Средний"},
+  {code:"B2", label:"B2 — Выше среднего"},
+  {code:"C1", label:"C1 — Продвинутый"},
+  {code:"C2", label:"C2 — Свободный"},
+];
+
+let profileData = { name:"", avatar:"🦁", goal:"", engLevel:"", bio:"" };
+try { profileData = Object.assign(profileData, JSON.parse(localStorage.getItem("etu_profile")) || {}); } catch(e){}
+
+function loadProfile() {
+  // Apply name to main menu
+  if (profileData.name) {
+    document.querySelector(".menu-name").textContent = profileData.name;
+  }
+  if (profileData.avatar) {
+    document.getElementById("menuAvatar").textContent = profileData.avatar;
+  }
+}
+
+function showProfileScreen() {
+  playClick();
+  // Fill fields
+  document.getElementById("profileName").value = profileData.name || "";
+  document.getElementById("profileGoal").value = profileData.goal || "";
+  document.getElementById("profileBio").value = profileData.bio || "";
+  document.getElementById("profileAvatarBig").textContent = profileData.avatar || "🦁";
+  document.getElementById("bioCounter").textContent = (profileData.bio||"").length + " / 120";
+
+  // Stats
+  document.getElementById("pStXp").textContent = xp;
+  document.getElementById("pStLvl").textContent = getLevel(xp);
+  document.getElementById("pStStreak").textContent = maxStreak;
+  document.getElementById("pRankLabel").textContent = getRankObj(xp).label;
+
+  // Level picker
+  const lp = document.getElementById("levelPicker");
+  lp.innerHTML = ENG_LEVELS.map(l => `
+    <div data-code="${l.code}"
+      style="padding:10px 6px;border-radius:12px;border:2px solid ${profileData.engLevel===l.code?'var(--accent)':'var(--card-border)'};
+      background:${profileData.engLevel===l.code?'rgba(79,142,255,.15)':'var(--muted2)'};
+      text-align:center;cursor:pointer;transition:all .2s;font-weight:800;font-size:13px;">
+      <div style="font-size:18px;font-weight:900;color:var(--accent)">${l.code}</div>
+      <div style="font-size:10px;color:var(--text2);font-weight:600;margin-top:2px;">${l.label.split('—')[1].trim()}</div>
+    </div>`).join("");
+  lp.querySelectorAll("div").forEach(d => {
+    d.onclick = () => selectEngLevel(d.dataset.code);
+  });
+
+  // Avatar grid
+  const ag = document.getElementById("avatarGrid");
+  ag.innerHTML = AVATARS.map((a, i) => `
+    <div data-idx="${i}"
+      style="font-size:28px;text-align:center;padding:8px 4px;border-radius:12px;cursor:pointer;
+      border:2px solid ${profileData.avatar===a?'var(--accent)':'transparent'};
+      background:${profileData.avatar===a?'rgba(79,142,255,.15)':'var(--muted2)'};
+      transition:all .2s;">${a}</div>`).join("");
+  ag.querySelectorAll("div").forEach(d => {
+    d.onclick = () => selectAvatar(AVATARS[parseInt(d.dataset.idx)]);
+  });
+
+  // Bio counter
+  document.getElementById("profileBio").oninput = function() {
+    document.getElementById("bioCounter").textContent = this.value.length + " / 120";
+  };
+
+  document.getElementById("dashboardCard").style.display = "none";
+  showScreen("profileScreen");
+}
+
+function openAvatarPicker() {
+  const p = document.getElementById("avatarPicker");
+  p.style.display = p.style.display === "none" ? "block" : "none";
+}
+
+function selectAvatar(emoji) {
+  profileData.avatar = emoji;
+  document.getElementById("profileAvatarBig").textContent = emoji;
+  // refresh grid highlight
+  document.getElementById("avatarGrid").querySelectorAll("div").forEach(d => {
+    const match = d.textContent === emoji;
+    d.style.borderColor = match ? "var(--accent)" : "transparent";
+    d.style.background = match ? "rgba(79,142,255,.15)" : "var(--muted2)";
+  });
+}
+
+function selectEngLevel(code) {
+  profileData.engLevel = code;
+  document.getElementById("levelPicker").querySelectorAll("div[data-code]").forEach(d => {
+    const isMe = d.dataset.code === code;
+    d.style.borderColor = isMe ? "var(--accent)" : "var(--card-border)";
+    d.style.background = isMe ? "rgba(79,142,255,.15)" : "var(--muted2)";
+  });
+}
+
+function saveProfile() {
+  profileData.name = document.getElementById("profileName").value.trim();
+  profileData.goal = document.getElementById("profileGoal").value;
+  profileData.bio  = document.getElementById("profileBio").value.trim();
+  localStorage.setItem("etu_profile", JSON.stringify(profileData));
+
+  // Update main menu name & avatar
+  if (profileData.name) {
+    document.querySelector(".menu-name").textContent = profileData.name;
+  } else {
+    document.querySelector(".menu-name").textContent = "English Trainer";
+  }
+  document.getElementById("menuAvatar").textContent = profileData.avatar || "🦁";
+
+  playCorrect();
+  alertPop("✅ Профиль сохранён!");
+  setTimeout(() => { showScreen("menuScreen"); document.getElementById("dashboardCard").style.display = "block"; }, 800);
+}
+
 loadTheme();
 document.getElementById("soundBtn").textContent=soundEnabled?"🔊":"🔇";
 loadPrefs();
@@ -2723,6 +2897,7 @@ renderAchievements();
 renderMistakes();
 renderMyWords();
 goToMainMenu();
+
 </script>
 </body>
 </html>
