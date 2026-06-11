@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -1052,9 +1052,545 @@ select:focus { border-color: var(--accent); }
   .diff-option { padding: 10px 10px; gap: 8px; }
   .diff-option-icon { font-size: 18px; }
 }
+
+/* ════════════════════════════════════
+   УЛУЧШЕНИЯ v4 — ДЕНЬ СЕРИИ, КОЛЬЦА, CONFETTI
+════════════════════════════════════ */
+
+/* Day streak badge */
+.day-streak-box {
+  display: flex; align-items: center; gap: 14px;
+  background: linear-gradient(135deg, rgba(255,140,50,.12), rgba(255,194,71,.08));
+  border: 1px solid rgba(255,140,50,.3);
+  border-radius: var(--r2); padding: 12px 16px; margin-bottom: 16px;
+}
+.day-streak-flame { font-size: 32px; flex-shrink: 0; animation: flamePulse 1.5s ease-in-out infinite; }
+@keyframes flamePulse { 0%,100%{transform:scale(1) rotate(-3deg)} 50%{transform:scale(1.1) rotate(3deg)} }
+.day-streak-info { flex: 1; }
+.day-streak-label { font-size: 11px; color: var(--text2); font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.day-streak-val { font-size: 26px; font-weight: 900; color: var(--warn); line-height: 1.1; }
+.day-streak-sub { font-size: 11px; color: var(--text2); font-weight: 600; margin-top: 1px; }
+
+/* XP Ring progress for profile */
+.profile-ring-wrap {
+  position: relative; width: 110px; height: 110px; margin: 0 auto 10px;
+}
+.profile-ring-wrap svg { transform: rotate(-90deg); }
+.profile-ring-wrap .ring-bg { fill: none; stroke: var(--muted); stroke-width: 6; }
+.profile-ring-wrap .ring-fg {
+  fill: none; stroke-width: 6; stroke-linecap: round;
+  stroke: url(#ringGrad); transition: stroke-dashoffset 1s ease;
+}
+.profile-avatar-center {
+  position: absolute; inset: 0; display: flex; align-items: center;
+  justify-content: center; font-size: 48px; cursor: pointer;
+}
+
+/* Confetti particle */
+.confetti-piece {
+  position: fixed; pointer-events: none; z-index: 99999;
+  width: 8px; height: 8px; border-radius: 2px;
+  animation: confettiFall 1.2s ease forwards;
+}
+@keyframes confettiFall {
+  0%   { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); }
+  100% { opacity: 0; transform: translateY(200px) rotate(720deg) scale(0.5); }
+}
+
+/* Level-up banner */
+.lvlup-banner {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, rgba(79,142,255,.95), rgba(124,92,252,.95));
+  backdrop-filter: blur(20px);
+  color: #fff; padding: 24px 36px; border-radius: 24px;
+  font-size: 22px; font-weight: 900; text-align: center;
+  box-shadow: 0 20px 60px rgba(79,142,255,.4);
+  z-index: 9999; pointer-events: none;
+  animation: lvlupIn .5s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes lvlupIn {
+  0%  { opacity:0; transform:translate(-50%,-50%) scale(.6); }
+  60% { opacity:1; transform:translate(-50%,-50%) scale(1.05); }
+  100%{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+}
+
+/* Улучшенные кнопки */
+.btn-primary {
+  position: relative; overflow: hidden;
+}
+.btn-primary::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to right, transparent 0%, rgba(255,255,255,.1) 50%, transparent 100%);
+  transform: translateX(-100%); transition: transform .4s;
+}
+.btn-primary:hover::after { transform: translateX(100%); }
+
+/* Красивее stat-card */
+.stat-card { transition: var(--t); cursor: default; }
+.stat-card:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 4px 16px rgba(79,142,255,.15); }
+
+/* Weekly progress mini-chart */
+.weekly-chart {
+  display: flex; align-items: flex-end; gap: 6px; height: 50px;
+  margin-top: 10px;
+}
+.week-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.week-bar {
+  width: 100%; border-radius: 4px 4px 0 0;
+  background: linear-gradient(to top, var(--accent), var(--accent2));
+  transition: height .6s cubic-bezier(.4,0,.2,1);
+  min-height: 4px;
+}
+.week-bar.today { box-shadow: 0 0 10px rgba(79,142,255,.4); }
+.week-label { font-size: 9px; font-weight: 800; color: var(--text2); }
+
+/* Улучшенная карточка достижений */
+.ach-list-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; background: var(--muted2);
+  border: 1px solid var(--card-border); border-radius: 12px;
+  margin-bottom: 8px; transition: var(--t);
+}
+.ach-list-item:hover { border-color: rgba(79,142,255,.3); }
+.ach-list-item.locked { opacity: 0.45; filter: grayscale(.5); }
+.ach-list-icon { font-size: 22px; flex-shrink: 0; }
+.ach-list-text { flex: 1; font-size: 13px; font-weight: 600; }
+.ach-list-earned { font-size: 10px; color: var(--ok); font-weight: 800; }
+.ach-check { font-size: 16px; }
+
+/* Красивее quote box */
+.quote-box {
+  position: relative; overflow: hidden;
+}
+.quote-box::before {
+  content: '"'; position: absolute; top: -8px; left: 8px;
+  font-size: 60px; font-family: Georgia, serif; color: var(--accent2);
+  opacity: 0.15; line-height: 1; pointer-events: none;
+}
+
+/* Градиент аватара в меню */
+.avatar {
+  background: linear-gradient(135deg, var(--accent), var(--accent2)) !important;
+  overflow: hidden;
+}
+
+/* Улучшенный пустой экран достижений */
+.ach-empty {
+  text-align: center; padding: 24px 16px;
+}
+.ach-empty-icon { font-size: 40px; margin-bottom: 8px; }
+.ach-empty-text { color: var(--text2); font-size: 13px; font-style: italic; }
+
+/* Нижняя навигация (quick access) */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--card); border-top: 1px solid var(--card-border);
+  backdrop-filter: blur(20px); display: flex; justify-content: space-around;
+  padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+  z-index: 50;
+  box-shadow: 0 -4px 20px rgba(0,0,0,.15);
+}
+body { padding-bottom: max(90px, calc(env(safe-area-inset-bottom) + 80px)); }
+.nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  font-size: 10px; font-weight: 700; color: var(--text2);
+  padding: 4px 12px; border-radius: 10px; cursor: pointer;
+  transition: var(--t); background: transparent; border: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-item.active { color: var(--accent); }
+.nav-item-icon { font-size: 20px; }
+
+/* Кнопка «Начать» — более заметная */
+.start-btn-mega {
+  background: linear-gradient(135deg, #4f8eff, #7c5cfc);
+  color: #fff; border: none; border-radius: 18px;
+  padding: 18px 24px; font-size: 18px; font-weight: 900;
+  width: 100%; cursor: pointer; transition: var(--t);
+  box-shadow: 0 6px 24px rgba(79,142,255,.35);
+  position: relative; overflow: hidden; letter-spacing: .3px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.start-btn-mega:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(79,142,255,.45); filter: brightness(1.08); }
+.start-btn-mega:active { transform: translateY(0); }
+
+/* Улучшенный таймер */
+.timer-num { color: var(--warn); font-weight: 900; }
+
+/* Тег версии */
+.version-tag { opacity: .4; font-weight: 400; font-size: 12px; }
+
+/* ────────────────────────────────
+   v4 polish — финальные штрихи
+──────────────────────────────── */
+
+/* Убрать дублирование btn-primary::after (уже добавлено в extra_css) */
+
+/* Улучшенный header */
+header {
+  padding: 4px 4px 0;
+}
+.logo {
+  text-shadow: 0 2px 12px rgba(79,142,255,.2);
+}
+
+/* Плавное появление card */
+.card {
+  will-change: transform, opacity;
+}
+
+/* Улучшенный результат */
+.result-hero {
+  text-shadow: 0 4px 20px rgba(0,0,0,.3);
+}
+
+/* Mode card — добавить цветные фоны при hover */
+.mode-card:nth-child(1):hover { border-color: #22d88f; box-shadow: 0 0 24px rgba(34,216,143,.2); }
+.mode-card:nth-child(2):hover { border-color: #4f8eff; box-shadow: 0 0 24px rgba(79,142,255,.2); }
+.mode-card:nth-child(3):hover { border-color: #ffc247; box-shadow: 0 0 24px rgba(255,194,71,.2); }
+.mode-card:nth-child(4):hover { border-color: #ff4f6d; box-shadow: 0 0 24px rgba(255,79,109,.2); }
+
+/* Улучшенный flashcard */
+.fc-face {
+  text-shadow: 0 2px 10px rgba(0,0,0,.15);
+}
+
+/* Красивее daily-box */
+.daily-box {
+  transition: var(--t);
+}
+.daily-box:hover {
+  border-color: rgba(79,142,255,.6);
+}
+
+/* Streak box glow */
+.day-streak-box {
+  transition: var(--t);
+}
+.day-streak-box:hover {
+  box-shadow: 0 4px 20px rgba(255,140,50,.15);
+}
+
+/* Улучшен скролл */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(79,142,255,.3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(79,142,255,.5); }
+
+/* Кольцо профиля — гладкий переход */
+#profileRingFg {
+  stroke: url(#ringGrad);
+}
+
+/* Улучшить timer ring цвет когда мало времени */
+.timer-ring .fg-ring.danger { stroke: var(--err); }
+
+/* Подсказка в анаграмме */
+.anagram-q {
+  background: var(--muted2); border-radius: 8px; padding: 6px 12px;
+  display: inline-block;
+}
+
+/* Улучшенные result-stat карточки */
+.result-stat:nth-child(1) strong { color: var(--ok); }
+.result-stat:nth-child(2) strong { color: var(--err); }
+.result-stat:nth-child(3) strong { color: var(--warn); }
+.result-stat:nth-child(4) strong { color: var(--accent2); }
+
+/* Screen titles */
+#profileScreen > div:first-child,
+#statsScreen > div:first-child,
+#myWordsScreen > div:first-child,
+#pronounceScreen > div:first-child {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Улучшенный select */
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238899bb' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+/* Улучшенная статистика — ранг */
+.rank-item {
+  transition: var(--t);
+}
+.rank-item.current {
+  animation: rankGlow 2s ease-in-out infinite;
+}
+@keyframes rankGlow {
+  0%,100% { box-shadow: 0 0 0 0 rgba(34,216,143,.3); }
+  50% { box-shadow: 0 0 12px 4px rgba(34,216,143,.15); }
+}
+
+/* Красивей мои слова */
+.mw-row {
+  transition: var(--t);
+}
+.mw-row:hover {
+  border-color: rgba(79,142,255,.3);
+  transform: translateX(3px);
+}
+
+
+/* ════════════════════════════════════
+   ЭКРАН НАСТРОЕК
+════════════════════════════════════ */
+.settings-section {
+  background: var(--muted2); border: 1px solid var(--card-border);
+  border-radius: var(--r2); padding: 14px 16px; margin-bottom: 14px;
+}
+.settings-section-title {
+  font-size: 11px; font-weight: 800; color: var(--text2);
+  text-transform: uppercase; letter-spacing: .6px; margin-bottom: 14px;
+}
+.settings-row-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.settings-row-info { flex: 1; }
+.settings-row-label { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.settings-row-sub { font-size: 12px; color: var(--text2); font-weight: 500; }
+
+/* Toggle switch */
+.toggle-wrap {
+  width: 50px; height: 28px; border-radius: 14px;
+  background: var(--muted); position: relative; cursor: pointer;
+  transition: background .25s; flex-shrink: 0; border: 2px solid var(--card-border);
+}
+.toggle-wrap.on { background: var(--ok); border-color: var(--ok); }
+.toggle-knob {
+  position: absolute; top: 2px; left: 2px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.25);
+  transition: transform .25s cubic-bezier(.4,0,.2,1);
+}
+.toggle-wrap.on .toggle-knob { transform: translateX(22px); }
+
+/* Theme picker */
+.theme-picker {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 4px;
+}
+.theme-option {
+  border: 2px solid var(--card-border); border-radius: 12px;
+  overflow: hidden; cursor: pointer; transition: var(--t);
+}
+.theme-option:hover { border-color: var(--accent); }
+.theme-option.active { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,142,255,.2); }
+.theme-preview {
+  height: 52px; padding: 10px; display: flex; flex-direction: column; gap: 6px;
+}
+.theme-preview-dark { background: #080c14; }
+.theme-preview-light { background: #f0f4ff; }
+.theme-preview-auto {
+  display: flex; flex-direction: row; padding: 0; gap: 0; overflow: hidden;
+}
+.tp-half { flex: 1; height: 100%; }
+.dark-half { background: #080c14; }
+.light-half { background: #f0f4ff; }
+.tp-bar {
+  height: 6px; border-radius: 3px;
+  background: rgba(255,255,255,.3);
+}
+.theme-preview-light .tp-bar { background: rgba(0,0,0,.15); }
+.tp-bar.short { width: 60%; }
+.theme-option-label {
+  padding: 6px 8px; font-size: 11px; font-weight: 800;
+  text-align: center; color: var(--text2);
+}
+
+/* Settings mini button */
+.settings-mini-btn {
+  background: var(--muted); color: var(--text);
+  border: 1px solid var(--card-border); border-radius: 10px;
+  padding: 7px 14px; font-size: 12px; font-weight: 800;
+  cursor: pointer; transition: var(--t); white-space: nowrap; flex-shrink: 0;
+}
+.settings-mini-btn:hover { border-color: var(--accent); color: var(--accent); }
+.danger-btn { color: var(--err); border-color: rgba(255,79,109,.3); }
+.danger-btn:hover { background: rgba(255,79,109,.12); border-color: var(--err); }
+
+/* Nav item — 5 кнопок */
+.nav-item { flex: 1; min-width: 0; }
+.nav-item-icon { font-size: 18px; }
+.nav-item { font-size: 9px; }
+
+/* ════════════════════════════════════
+   ЖИЗНИ (HEARTS)
+════════════════════════════════════ */
+.lives-bar {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 20px; letter-spacing: 2px;
+}
+.heart { transition: transform .2s, filter .2s; display: inline-block; }
+.heart.lost { filter: grayscale(1); opacity: 0.3; transform: scale(0.8); }
+.heart-pop { animation: heartPop .4s cubic-bezier(.4,0,.2,1); }
+@keyframes heartPop {
+  0%  { transform: scale(1.6); }
+  60% { transform: scale(0.85); }
+  100%{ transform: scale(0.8); }
+}
+.lives-danger { animation: livesDanger .6s ease-in-out; }
+@keyframes livesDanger {
+  0%,100%{ background: var(--card); }
+  50%    { background: rgba(255,79,109,.15); }
+}
+
+/* ════════════════════════════════════
+   БОНУС-РАУНД
+════════════════════════════════════ */
+.bonus-banner {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, rgba(255,194,71,.97), rgba(255,140,50,.97));
+  color: #000; padding: 20px 32px; border-radius: 24px;
+  font-size: 20px; font-weight: 900; text-align: center;
+  box-shadow: 0 0 60px rgba(255,194,71,.5);
+  z-index: 9999; pointer-events: none;
+  animation: bonusIn .5s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes bonusIn {
+  0%  { opacity:0; transform:translate(-50%,-50%) scale(.5) rotate(-5deg); }
+  60% { opacity:1; transform:translate(-50%,-50%) scale(1.08) rotate(2deg); }
+  100%{ opacity:1; transform:translate(-50%,-50%) scale(1) rotate(0); }
+}
+.bonus-active-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: linear-gradient(135deg, rgba(255,194,71,.2), rgba(255,140,50,.15));
+  border: 1px solid rgba(255,194,71,.5);
+  border-radius: 10px; padding: 4px 10px;
+  font-size: 11px; font-weight: 900; color: var(--warn);
+  animation: bonusBadgePulse 1s ease-in-out infinite;
+}
+@keyframes bonusBadgePulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,194,71,.3); }
+  50%     { box-shadow: 0 0 0 6px rgba(255,194,71,0); }
+}
+
+/* ════════════════════════════════════
+   ОНБОРДИНГ
+════════════════════════════════════ */
+.onboard-overlay {
+  position: fixed; inset: 0;
+  background: rgba(8,12,20,.94); backdrop-filter: blur(16px);
+  z-index: 300; display: flex; justify-content: center; align-items: center;
+  animation: fadeIn .35s ease;
+}
+.onboard-card {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: 28px; padding: 32px 24px; max-width: 400px; width: 94%;
+  backdrop-filter: blur(20px); box-shadow: 0 30px 80px rgba(0,0,0,.5);
+  text-align: center; animation: screenIn .4s ease;
+}
+.onboard-emoji { font-size: 64px; margin-bottom: 12px; display: block; }
+.onboard-title { font-size: 26px; font-weight: 900; margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.onboard-sub { font-size: 14px; color: var(--text2); margin-bottom: 24px; line-height: 1.6; }
+.onboard-name-input {
+  width: 100%; padding: 14px 16px; font-size: 17px; font-weight: 700;
+  background: var(--muted2); border: 2px solid var(--card-border);
+  border-radius: 16px; color: var(--text); outline: none; margin-bottom: 12px;
+  text-align: center; transition: var(--t);
+}
+.onboard-name-input:focus { border-color: var(--accent); }
+.onboard-avatar-row {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px;
+}
+.onboard-avatar-btn {
+  font-size: 28px; padding: 8px; border-radius: 12px; cursor: pointer;
+  border: 2px solid transparent; background: var(--muted2); transition: var(--t);
+}
+.onboard-avatar-btn.selected { border-color: var(--accent); background: rgba(79,142,255,.15); }
+.onboard-steps { display: flex; justify-content: center; gap: 6px; margin-bottom: 20px; }
+.onboard-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--muted);
+  transition: background .3s, transform .3s;
+}
+.onboard-dot.active { background: var(--accent); transform: scale(1.3); }
+
+/* ════════════════════════════════════
+   ТОП СЛОЖНЫХ СЛОВ
+════════════════════════════════════ */
+.hard-word-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; background: var(--muted2);
+  border: 1px solid var(--card-border); border-radius: 12px; margin-bottom: 8px;
+  font-size: 13px; font-weight: 600; transition: var(--t);
+}
+.hard-word-item:hover { border-color: rgba(255,79,109,.3); }
+.hard-word-bar-wrap { background: var(--muted); border-radius: 4px; height: 4px; width: 60px; }
+.hard-word-bar { height: 100%; border-radius: 4px;
+  background: linear-gradient(90deg, var(--err), var(--warn)); }
+.hard-word-pct { font-size: 11px; font-weight: 800; color: var(--err); min-width: 32px; text-align: right; }
+
+/* ════════════════════════════════════
+   РЕКОРД ДНЯ
+════════════════════════════════════ */
+.daily-record-box {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,194,71,.1); border: 1px solid rgba(255,194,71,.3);
+  border-radius: 10px; padding: 4px 10px;
+  font-size: 12px; font-weight: 800; color: var(--warn);
+}
+.record-new { animation: recordPop .6s cubic-bezier(.4,0,.2,1); }
+@keyframes recordPop {
+  0%  { transform: scale(1); }
+  40% { transform: scale(1.18); }
+  100%{ transform: scale(1); }
+}
+
+/* ════════════════════════════════════
+   РЕЖИМ ПОВТОРЕНИЯ ОШИБОК
+════════════════════════════════════ */
+.retry-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(255,79,109,.12); border: 1px solid rgba(255,79,109,.3);
+  border-radius: 10px; padding: 5px 12px;
+  font-size: 12px; font-weight: 900; color: var(--err);
+  margin-bottom: 14px;
+}
+
+/* ════════════════════════════════════
+   ЭКРАН ПОВТОРЕНИЯ ОШИБОК
+════════════════════════════════════ */
+#mistakeRetryScreen .result-hero { font-size: 60px; }
+
+/* ════════════════════════════════════
+   ПЕРЕХОД СВАЙПОМ
+════════════════════════════════════ */
+.screen { transform-origin: center; }
+@keyframes slideInRight {
+  from { opacity:0; transform: translateX(40px) scale(0.97); }
+  to   { opacity:1; transform: translateX(0) scale(1); }
+}
+@keyframes slideInLeft {
+  from { opacity:0; transform: translateX(-40px) scale(0.97); }
+  to   { opacity:1; transform: translateX(0) scale(1); }
+}
+.screen.slide-in-right { animation: slideInRight .32s cubic-bezier(.4,0,.2,1); }
+.screen.slide-in-left  { animation: slideInLeft  .32s cubic-bezier(.4,0,.2,1); }
+
 </style>
 </head>
 <body onclick="unlockAudio()">
+<button id="soundBtn" style="display:none;">🔊</button>
+<button id="themeBtn" style="display:none;">🌙</button>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4f8eff"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+</svg>
 
 <!-- Фоновые сферы -->
 <div class="bg-orbs">
@@ -1064,19 +1600,7 @@ select:focus { border-color: var(--accent); }
 </div>
 
 <div class="container">
-  <!-- ═══ ШАПКА ═══ -->
-  <header>
-    <div class="logo">
-      <span class="logo-icon">📚</span>
-      ETU by BV <span style="opacity:.5;font-weight:400;font-size:14px">v3</span>
-    </div>
-    <div class="header-actions">
-      <button class="icon-btn" onclick="showScreen('statsScreen');updateStats();document.getElementById('dashboardCard').style.display='none';" title="Статистика">📊</button>
-      <button class="icon-btn" onclick="showProfileScreen();" title="Профиль">👤</button>
-      <button class="icon-btn" onclick="toggleSound();event.stopPropagation();" id="soundBtn" title="Звук">🔊</button>
-      <button class="icon-btn" onclick="toggleTheme();event.stopPropagation();" id="themeBtn" title="Тема">🌙</button>
-    </div>
-  </header>
+  <!-- header removed — navigation moved to bottom nav -->
 
   <!-- ═══ ГЛАВНОЕ МЕНЮ ═══ -->
   <div id="menuScreen" class="card screen active">
@@ -1106,6 +1630,19 @@ select:focus { border-color: var(--accent); }
       </div>
     </div>
 
+    <div class="day-streak-box" id="dayStreakBox">
+      <div class="day-streak-flame">🔥</div>
+      <div class="day-streak-info">
+        <div class="day-streak-label">Дней подряд</div>
+        <div class="day-streak-val" id="dayStreakVal">0</div>
+        <div class="day-streak-sub" id="dayStreakSub">Занимайся каждый день!</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:11px;color:var(--text2);font-weight:700;">РЕКОРД</div>
+        <div id="dayStreakBest" style="font-size:18px;font-weight:900;color:var(--accent)">0</div>
+      </div>
+    </div>
+
     <div class="daily-box">
       <div class="daily-header">
         <span class="daily-title">📅 Дневная цель</span>
@@ -1120,6 +1657,7 @@ select:focus { border-color: var(--accent); }
         <div class="prog-bar" id="dailyGoalBar"></div>
       </div>
       <div class="daily-complete-banner" id="dailyCompleteBanner">🎉 Дневная цель выполнена! Отличная работа!</div>
+      <div id="weeklyChart" class="weekly-chart" style="margin-top:10px;"></div>
     </div>
 
     <div class="quote-box" id="quoteBox">
@@ -1127,7 +1665,7 @@ select:focus { border-color: var(--accent); }
     </div>
 
     <div class="menu-btns">
-      <button class="btn-primary" onclick="showModeSelect()" style="font-size:17px;padding:16px;">🚀 Начать тренировку</button>
+      <button class="start-btn-mega" onclick="showModeSelect()"><span>🚀</span> Начать тренировку</button>
       <button class="btn-secondary" onclick="showScreen('pronounceScreen');initPronunScreen();">🗣️ Произношение</button>
       <button class="btn-secondary" onclick="showScreen('myWordsScreen')">📝 Мои слова</button>
     </div>
@@ -1182,6 +1720,8 @@ select:focus { border-color: var(--accent); }
         <div class="mini-stat">⭐ <span id="gameXp">0</span></div>
         <div class="mini-stat">🔥 <span id="gameStreak">0</span></div>
         <div class="mini-stat">🎯 <span id="gameAccuracy">—</span></div>
+        <div class="mini-stat" id="livesBar" style="display:none;"><span id="livesDisplay">❤️❤️❤️</span></div>
+        <div id="bonusActiveBadge" style="display:none;"><span class="bonus-active-badge">⚡ ×2 XP!</span></div>
       </div>
     </div>
 
@@ -1225,7 +1765,7 @@ select:focus { border-color: var(--accent); }
     <div class="actions">
       <button class="btn-secondary btn-hint" onclick="getHint()" id="hintBtn">💡 −5XP</button>
       <button class="btn-secondary" onclick="skipWord()" id="skipBtn">⏭ Пропуск</button>
-      <button class="btn-primary" onclick="checkAnswer()" id="checkBtn">✅ Проверить</button>
+      <button class="btn-primary" onclick="checkAnswer()" id="checkBtn">✅ Проверить <span style="opacity:.5;font-size:11px;font-weight:600;">[Enter]</span></button>
     </div>
     <div class="result" id="result"></div>
   </div>
@@ -1325,6 +1865,9 @@ select:focus { border-color: var(--accent); }
     <div class="result-hero" id="resultsEmoji">🏆</div>
     <div class="result-title" id="resultsTitle">Спринт завершён!</div>
     <div class="result-pct" id="resultsPct">0%</div>
+    <div id="dailyRecordBadge" style="text-align:center;margin-bottom:12px;display:none;">
+      <span class="daily-record-box">🏅 Рекорд дня!</span>
+    </div>
     <div class="result-stats">
       <div class="result-stat">✅ Правильно<strong id="resCorrect">0</strong></div>
       <div class="result-stat">❌ Ошибки<strong id="resErrors">0</strong></div>
@@ -1334,6 +1877,7 @@ select:focus { border-color: var(--accent); }
     <div class="result-verdict" id="resultsVerdict"></div>
     <div style="display:flex;flex-direction:column;gap:10px;">
       <button class="btn-primary" onclick="startSprint()">🔄 Ещё раз</button>
+      <button class="btn-danger" id="retryMistakesBtn" onclick="startMistakeRetry()" style="display:none;border-radius:var(--r2);padding:14px;font-weight:800;font-size:15px;cursor:pointer;transition:var(--t);">💪 Повторить ошибки</button>
       <button class="btn-secondary" onclick="showScreen('menuScreen');updateMenu();">🏠 В меню</button>
     </div>
   </div>
@@ -1355,8 +1899,17 @@ select:focus { border-color: var(--accent); }
   <div id="profileScreen" class="card screen">
     <div style="font-size:20px;font-weight:900;margin-bottom:16px;">👤 Мой профиль</div>
     <div style="text-align:center;margin-bottom:20px;">
-      <div id="profileAvatarBig" style="font-size:72px;line-height:1;margin-bottom:10px;cursor:pointer;" onclick="openAvatarPicker()" title="Сменить аватар">🦁</div>
-      <div style="font-size:12px;color:var(--text2);font-weight:600;">Нажми чтобы сменить аватар</div>
+      <div class="profile-ring-wrap">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <circle class="ring-bg" cx="55" cy="55" r="48"/>
+          <circle class="ring-fg" id="profileRingFg" cx="55" cy="55" r="48"
+            stroke-dasharray="301.6" stroke-dashoffset="301.6"/>
+        </svg>
+        <div class="profile-avatar-center" onclick="openAvatarPicker()" title="Сменить аватар">
+          <span id="profileAvatarBig">🦁</span>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text2);font-weight:600;margin-top:4px;">Нажми чтобы сменить аватар</div>
     </div>
     <div id="avatarPicker" style="display:none;margin-bottom:16px;">
       <div style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;">Выбери аватар</div>
@@ -1390,13 +1943,29 @@ select:focus { border-color: var(--accent); }
     <div style="background:var(--muted2);border:1px solid var(--card-border);border-radius:var(--r2);padding:14px 16px;margin-bottom:20px;">
       <div style="font-size:12px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">🏅 Статистика</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
-        <div><div id="pStXp" style="font-size:22px;font-weight:900;color:var(--accent)">0</div><div style="font-size:11px;color:var(--text2);font-weight:700;">XP всего</div></div>
-        <div><div id="pStLvl" style="font-size:22px;font-weight:900;color:var(--warn)">1</div><div style="font-size:11px;color:var(--text2);font-weight:700;">Уровень</div></div>
-        <div><div id="pStStreak" style="font-size:22px;font-weight:900;color:var(--err)">0</div><div style="font-size:11px;color:var(--text2);font-weight:700;">Макс. серия</div></div>
+        <div style="background:rgba(79,142,255,.08);border-radius:10px;padding:10px 6px;">
+          <div id="pStXp" style="font-size:22px;font-weight:900;color:var(--accent)">0</div>
+          <div style="font-size:11px;color:var(--text2);font-weight:700;">XP всего</div>
+        </div>
+        <div style="background:rgba(255,194,71,.08);border-radius:10px;padding:10px 6px;">
+          <div id="pStLvl" style="font-size:22px;font-weight:900;color:var(--warn)">1</div>
+          <div style="font-size:11px;color:var(--text2);font-weight:700;">Уровень</div>
+        </div>
+        <div style="background:rgba(34,216,143,.08);border-radius:10px;padding:10px 6px;">
+          <div id="pStStreak" style="font-size:22px;font-weight:900;color:var(--ok)">0</div>
+          <div style="font-size:11px;color:var(--text2);font-weight:700;">Макс. серия</div>
+        </div>
       </div>
       <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--card-border);text-align:center;">
-        <div id="pRankLabel" style="font-size:14px;font-weight:800;">🌱 Новичок</div>
+        <div id="pRankLabel" style="font-size:16px;font-weight:900;">🌱 Новичок</div>
         <div style="font-size:11px;color:var(--text2);margin-top:2px;">Текущий ранг</div>
+        <div style="margin-top:8px;">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:4px;">Прогресс уровня</div>
+          <div style="background:var(--muted);border-radius:6px;overflow:hidden;height:6px;">
+            <div id="pProfileBar" style="height:100%;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s;"></div>
+          </div>
+          <div id="pProfileBarTxt" style="font-size:10px;color:var(--text2);margin-top:3px;text-align:right;font-weight:700;"></div>
+        </div>
       </div>
     </div>
     <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveProfile()">💾 Сохранить профиль</button>
@@ -1438,6 +2007,16 @@ select:focus { border-color: var(--accent); }
         <div class="sc-label">XP сегодня</div>
         <div class="sc-val" id="stDailyXp">0</div>
       </div>
+      <div class="stats-cell">
+        <div class="sc-icon">🗓️</div>
+        <div class="sc-label">Дней подряд</div>
+        <div class="sc-val" id="stDayStreak">0</div>
+      </div>
+      <div class="stats-cell" style="grid-column:span 2;">
+        <div class="sc-icon">📈</div>
+        <div class="sc-label">XP за неделю</div>
+        <div id="statsWeeklyChart" class="weekly-chart" style="height:44px;margin-top:8px;"></div>
+      </div>
     </div>
 
     <div class="accuracy-visual">
@@ -1456,6 +2035,11 @@ select:focus { border-color: var(--accent); }
       <div class="rank-levels" id="rankLevels"></div>
     </div>
 
+    <div class="accuracy-visual" id="hardWordsSection" style="display:none;">
+      <div class="section-title">🔴 Топ сложных слов</div>
+      <div id="hardWordsList"></div>
+    </div>
+
     <button class="btn-secondary" style="width:100%;margin-bottom:10px;" onclick="showScreen('menuScreen')">← Назад</button>
     <div style="text-align:center;">
       <button class="reset-btn" onclick="confirmReset()">⚠️ Сбросить прогресс</button>
@@ -1463,15 +2047,19 @@ select:focus { border-color: var(--accent); }
   </div>
 
   <!-- ═══ ДОСТИЖЕНИЯ И ОШИБКИ ═══ -->
-  <div class="card" id="dashboardCard">
+  <div class="card screen" id="dashboardCard">
+    <div style="font-size:20px;font-weight:900;margin-bottom:16px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">🏆 Достижения</div>
     <div class="tabs">
-      <div class="tab active" onclick="switchTab('tab-ach')" id="achBtn">🏆 Достижения</div>
-      <div class="tab" onclick="switchTab('tab-mis')" id="misBtn">❌ Ошибки</div>
+      <div class="tab active" onclick="switchTab('tab-ach')" id="achBtn">🏆 Достижения <span id="achCountBadge" style="background:var(--ok);color:#000;font-size:10px;padding:1px 6px;border-radius:6px;font-weight:900;"></span></div>
+      <div class="tab" onclick="switchTab('tab-mis')" id="misBtn">❌ Ошибки <span id="misCountBadge" style="background:var(--err);color:#fff;font-size:10px;padding:1px 6px;border-radius:6px;font-weight:900;display:none;"></span></div>
     </div>
     <div class="tab-content active" id="tab-ach"><ul id="achievements"></ul></div>
     <div class="tab-content" id="tab-mis">
       <ul id="mistakes"></ul>
-      <button class="clean-btn" onclick="clearMistakes()">Очистить ошибки</button>
+      <div style="display:flex;gap:8px;margin-top:6px;">
+        <button class="btn-danger" id="retryAllMistakesBtn" onclick="startMistakeRetry()" style="flex:1;border-radius:var(--r2);padding:11px;font-weight:800;font-size:13px;cursor:pointer;transition:var(--t);display:none;">💪 Тренировать</button>
+        <button class="clean-btn" onclick="clearMistakes()" style="flex:1;">Очистить</button>
+      </div>
     </div>
   </div>
 
@@ -1516,7 +2104,174 @@ select:focus { border-color: var(--accent); }
     <button class="btn-secondary" style="width:100%;margin-top:14px;" onclick="showScreen('menuScreen')">← Назад</button>
   </div>
 
+
+  <!-- ═══ НАСТРОЙКИ ═══ -->
+  <div id="settingsScreen" class="card screen">
+    <div style="font-size:20px;font-weight:900;margin-bottom:20px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">⚙️ Настройки</div>
+
+    <!-- Звук -->
+    <div class="settings-section">
+      <div class="settings-section-title">🔊 Звук</div>
+      <div class="settings-row-item">
+        <div class="settings-row-info">
+          <div class="settings-row-label">Звуковые эффекты</div>
+          <div class="settings-row-sub">Звуки при ответах и действиях</div>
+        </div>
+        <div class="toggle-wrap" onclick="toggleSoundSetting()" id="soundToggleWrap">
+          <div class="toggle-knob" id="soundToggleKnob"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Тема -->
+    <div class="settings-section">
+      <div class="settings-section-title">🎨 Оформление</div>
+      <div class="settings-row-item" style="margin-bottom:10px;">
+        <div class="settings-row-info">
+          <div class="settings-row-label">Тема оформления</div>
+          <div class="settings-row-sub" id="themeSubLabel">Тёмная тема активна</div>
+        </div>
+      </div>
+      <div class="theme-picker">
+        <div class="theme-option" id="themeOptDark" onclick="setTheme('dark')">
+          <div class="theme-preview theme-preview-dark">
+            <div class="tp-bar"></div><div class="tp-bar short"></div>
+          </div>
+          <div class="theme-option-label">🌙 Тёмная</div>
+        </div>
+        <div class="theme-option" id="themeOptLight" onclick="setTheme('light')">
+          <div class="theme-preview theme-preview-light">
+            <div class="tp-bar"></div><div class="tp-bar short"></div>
+          </div>
+          <div class="theme-option-label">☀️ Светлая</div>
+        </div>
+        <div class="theme-option" id="themeOptAuto" onclick="setTheme('auto')">
+          <div class="theme-preview theme-preview-auto">
+            <div class="tp-half dark-half"></div>
+            <div class="tp-half light-half"></div>
+          </div>
+          <div class="theme-option-label">🔄 Авто</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Дневная цель -->
+    <div class="settings-section">
+      <div class="settings-section-title">🎯 Дневная цель</div>
+      <div class="settings-row-item">
+        <div class="settings-row-info">
+          <div class="settings-row-label">Сложность</div>
+          <div class="settings-row-sub" id="settingsDiffSub">Лёгкая — 30 XP/день</div>
+        </div>
+        <button class="settings-mini-btn" onclick="openDiffModal()">Изменить</button>
+      </div>
+    </div>
+
+    <!-- Игра -->
+    <div class="settings-section">
+      <div class="settings-section-title">🎮 Игра</div>
+      <div class="settings-row-item">
+        <div class="settings-row-info">
+          <div class="settings-row-label">Направление перевода</div>
+          <div class="settings-row-sub">По умолчанию для тренировок</div>
+        </div>
+      </div>
+      <select id="settingsMode" onchange="document.getElementById('mode').value=this.value;savePrefs();" style="margin-bottom:10px;">
+        <option value="ru-en">🇷🇺 → 🇬🇧 Русский → Английский</option>
+        <option value="en-ru">🇬🇧 → 🇷🇺 Английский → Русский</option>
+        <option value="mixed">🔀 Смешанный</option>
+      </select>
+      <div class="settings-row-item">
+        <div class="settings-row-info">
+          <div class="settings-row-label">Категория слов</div>
+          <div class="settings-row-sub">Какие слова учить</div>
+        </div>
+      </div>
+      <select id="settingsCategory" onchange="document.getElementById('category').value=this.value;savePrefs();" style="margin-bottom:0;">
+        <option value="all">🌍 Все категории</option>
+        <option value="jobs">💼 Профессии</option>
+        <option value="workplaces">🏭 Места работы</option>
+        <option value="dailyRoutines">🌅 Распорядок дня</option>
+        <option value="activities">📅 Занятия и дни недели</option>
+        <option value="aroundTown">🏙️ По городу</option>
+        <option value="myWords">⭐ Мои слова</option>
+      </select>
+    </div>
+
+    <!-- Опасная зона -->
+    <div class="settings-section" style="border-color:rgba(255,79,109,.2);">
+      <div class="settings-section-title" style="color:var(--err);">⚠️ Данные</div>
+      <div class="settings-row-item">
+        <div class="settings-row-info">
+          <div class="settings-row-label">Сбросить прогресс</div>
+          <div class="settings-row-sub">Удалит весь XP, достижения и ошибки</div>
+        </div>
+        <button class="settings-mini-btn danger-btn" onclick="confirmReset()">Сброс</button>
+      </div>
+    </div>
+
+    <div style="text-align:center;font-size:12px;color:var(--text2);margin-top:8px;opacity:.5;">ETU by BV · v4</div>
+  </div>
+
 </div><!-- /container -->
+
+<!-- ═══ ОНБОРДИНГ ═══ -->
+<div class="onboard-overlay" id="onboardOverlay" style="display:none;">
+  <div class="onboard-card">
+    <!-- Шаг 1 -->
+    <div id="onboardStep1">
+      <span class="onboard-emoji">🚀</span>
+      <div class="onboard-title">English Trainer</div>
+      <div class="onboard-sub">Учи английские слова каждый день — быстро, весело и с геймификацией!</div>
+      <div class="onboard-avatar-row" id="onboardAvatarRow"></div>
+      <input class="onboard-name-input" id="onboardName" placeholder="Как тебя зовут?" maxlength="20">
+      <div class="onboard-steps">
+        <div class="onboard-dot active"></div>
+        <div class="onboard-dot"></div>
+      </div>
+      <button class="btn-primary" style="width:100%;" onclick="onboardNext()">Далее →</button>
+    </div>
+    <!-- Шаг 2 -->
+    <div id="onboardStep2" style="display:none;">
+      <span class="onboard-emoji">🎯</span>
+      <div class="onboard-title">Выбери цель</div>
+      <div class="onboard-sub">Сколько XP ты готов зарабатывать каждый день?</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;" id="onboardDiffList"></div>
+      <div class="onboard-steps">
+        <div class="onboard-dot"></div>
+        <div class="onboard-dot active"></div>
+      </div>
+      <button class="btn-primary" style="width:100%;" onclick="onboardFinish()">🚀 Начать!</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ЭКРАН ПОВТОРЕНИЯ ОШИБОК ═══ -->
+<div id="mistakeRetryScreen" class="card screen" style="display:none;"></div>
+
+<!-- Нижняя навигация — всегда видима -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="nav-item active" id="navHome" onclick="navTo('home')">
+    <span class="nav-item-icon">🏠</span>
+    Главная
+  </button>
+  <button class="nav-item" id="navStats" onclick="navTo('stats')">
+    <span class="nav-item-icon">📊</span>
+    Статистика
+  </button>
+  <button class="nav-item" id="navAch" onclick="navTo('ach')">
+    <span class="nav-item-icon">🏆</span>
+    Достижения
+  </button>
+  <button class="nav-item" id="navSettings" onclick="navTo('settings')">
+    <span class="nav-item-icon">⚙️</span>
+    Настройки
+  </button>
+  <button class="nav-item" id="navProfile" onclick="navTo('profile')">
+    <span class="nav-item-icon">👤</span>
+    Профиль
+  </button>
+</nav>
 
 <!-- ═══ МОДАЛЬНОЕ ОКНО СЛОЖНОСТИ ═══ -->
 <div class="diff-modal-overlay" id="diffModalOverlay" onclick="if(event.target===this)closeDiffModal()">
@@ -1697,6 +2452,13 @@ const quotes = [
   { text:"Learning a language is the discovery of a new world.", author:"Unknown" },
   { text:"Every word learned is a step forward.", author:"Unknown" },
   { text:"Practice makes perfect — especially with language.", author:"Unknown" },
+  { text:"A different language is a different vision of life.", author:"Federico Fellini" },
+  { text:"You live a new life for every new language you speak.", author:"Czech Proverb" },
+  { text:"The brain is like a muscle. When it is in use we feel very good.", author:"Carl Sagan" },
+  { text:"Consistency is more important than perfection.", author:"Unknown" },
+  { text:"Every expert was once a beginner.", author:"Helen Hayes" },
+  { text:"Small daily improvements over time lead to stunning results.", author:"Robin Sharma" },
+  { text:"It does not matter how slowly you go as long as you do not stop.", author:"Confucius" },
 ];
 
 // ════════════════════════════════════
@@ -1751,6 +2513,9 @@ function selectDifficulty(d) {
   updateMenu();
   setTimeout(closeDiffModal, 350);
   alertPop(`Цель: ${DAILY_GOALS[d].icon} ${DAILY_GOALS[d].name} — ${DAILY_GOALS[d].xp} XP`);
+  // Sync settings screen subtitle
+  const diffSub = document.getElementById('settingsDiffSub');
+  if (diffSub) diffSub.textContent = `${DAILY_GOALS[d].icon} ${DAILY_GOALS[d].name} — ${DAILY_GOALS[d].xp} XP/день`;
 }
 
 let earnedAchievements = [];
@@ -1777,6 +2542,38 @@ let fcPool = [], fcIdx = 0, fcKnown = 0, fcUnknown = 0, fcUnknownCards = [];
 let agPool = [], agIdx = 0, agWord = "", agTarget = "", agInterval;
 let agTimer = 20, agCorrect = 0, agErrors = 0, agXpEarned = 0, agStreak = 0;
 const AG_TOTAL = 10;
+
+// ════════════════════════════════════
+//  НОВЫЕ ФИЧИ v5
+// ════════════════════════════════════
+
+// Жизни (Hearts)
+const MAX_LIVES = 3;
+let lives = MAX_LIVES;
+let livesMode = false; // включены только в спринте
+
+// Бонус-раунд (×2 XP на 30 сек после 10 подряд)
+let bonusRoundActive = false;
+let bonusRoundTimer = 0;
+let bonusInterval = null;
+const BONUS_TRIGGER = 10; // серия для активации
+const BONUS_DURATION = 30; // секунд
+
+// Рекорд дня
+let dailyRecord = parseInt(localStorage.getItem("etu_dailyRecord_" + new Date().toDateString())) || 0;
+
+// Повторение ошибок
+let mistakeRetryPool = [];
+let mistakeRetryIdx = 0;
+let isMistakeRetry = false;
+
+// Статистика по словам (сколько раз ошибался)
+let wordErrorCount = {};
+try { wordErrorCount = JSON.parse(localStorage.getItem("etu_wordErrors")) || {}; } catch(e){}
+
+// Онбординг
+let onboardSelectedAvatar = "🦁";
+let onboardSelectedDiff = "medium";
 
 // ════════════════════════════════════
 //  ДОСТИЖЕНИЯ
@@ -1888,6 +2685,10 @@ function save() {
   localStorage.setItem("soundEnabled", soundEnabled);
   localStorage.setItem("wordWeights", JSON.stringify(wordWeights));
   localStorage.setItem("etu_dailyXp", dailyXp);
+  localStorage.setItem("etu_wordErrors", JSON.stringify(wordErrorCount));
+  // v4: weekly chart + day streak
+  if (typeof saveWeeklyData === 'function') saveWeeklyData();
+  if (typeof renderWeeklyChart === 'function') renderWeeklyChart();
 }
 function savePrefs() {
   localStorage.setItem("etu_mode", document.getElementById("mode").value);
@@ -1916,17 +2717,30 @@ function getRankObj(x){ return [...ranks].reverse().find(r=>x>=r.min) || ranks[0
 //  ЭКРАНЫ
 // ════════════════════════════════════
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const prev = document.querySelector('.screen.active');
+  const prevId = prev ? prev.id : null;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active','slide-in-right','slide-in-left'));
+  const next = document.getElementById(id);
+  next.classList.add('active');
+
+  // Slide direction based on nav order
+  const prevOrder = _tabOrder[prevId] ?? -1;
+  const nextOrder = _tabOrder[id] ?? -1;
+  if (prevOrder >= 0 && nextOrder >= 0 && prevOrder !== nextOrder) {
+    const dir = nextOrder > prevOrder ? 'slide-in-right' : 'slide-in-left';
+    next.classList.add(dir);
+    setTimeout(()=>next.classList.remove(dir), 350);
+  }
+  updateBottomNav(id);
 }
 function goToMainMenu() {
+  playClick();
   clearInterval(interval);
   clearInterval(agInterval);
   isPaused=false; isAnswering=false; isGameActive=false;
   document.getElementById("pauseOverlay").classList.remove("active");
   updateMenu();
   showScreen("menuScreen");
-  document.getElementById("dashboardCard").style.display = "block";
 }
 function showModeSelect() {
   playClick();
@@ -1940,6 +2754,7 @@ function showSprintSelect() {
 function showStatsScreen() {
   playClick();
   updateStats();
+  renderHardWords();
   showScreen("statsScreen");
   document.getElementById("dashboardCard").style.display = "none";
 }
@@ -1960,7 +2775,8 @@ function updateMenu() {
   document.getElementById("menuAccuracy").textContent = total ? Math.round(correct/total*100)+"%" : "—";
   const rank = getRankObj(xp);
   document.getElementById("userRank").textContent = rank.label;
-  document.getElementById("menuAvatar").textContent = rank.avatar;
+  document.getElementById("menuAvatar").textContent = profileData.avatar || rank.avatar;
+  if (profileData.name) document.querySelector(".menu-name").textContent = profileData.name;
   document.getElementById("dailyGoalText").textContent = `цель: ${DAILY_GOALS[dailyDifficulty].xp} XP`;
   document.getElementById("dailyXpDone").textContent = `${dailyXp} XP набрано`;
   const pctDaily = Math.min(dailyXp / DAILY_GOALS[dailyDifficulty].xp * 100, 100);
@@ -1992,6 +2808,33 @@ function updateStats() {
   document.getElementById("stAccDetail").textContent = `${correct} из ${total}`;
   document.getElementById("stAccBar").style.width = acc + "%";
 
+  // Day streak
+  const dsEl = document.getElementById("stDayStreak");
+  if (dsEl) {
+    const cur = parseInt(localStorage.getItem("etu_ds_current")) || 0;
+    dsEl.textContent = cur;
+  }
+  
+  // Weekly chart in stats
+  const swc = document.getElementById("statsWeeklyChart");
+  if (swc) {
+    const days = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+    const todayIdx = (new Date().getDay() + 6) % 7;
+    let data = [];
+    try { data = JSON.parse(localStorage.getItem("etu_weekData")) || []; } catch(e){}
+    while (data.length < 7) data.unshift(0);
+    if (data.length > 7) data = data.slice(-7);
+    const maxVal = Math.max(...data, 1);
+    swc.innerHTML = data.map((v, i) => {
+      const heightPct = Math.round((v / maxVal) * 100);
+      const isToday = i === todayIdx;
+      return `<div class="week-bar-wrap">
+        <div class="week-bar${isToday ? ' today' : ''}" style="height:${Math.max(4, heightPct * 0.36)}px;" title="${v} XP"></div>
+        <div class="week-label">${days[i]}</div>
+      </div>`;
+    }).join("");
+  }
+
   // Ранг лестница
   const c = document.getElementById("rankLevels");
   c.innerHTML = ranks.map(r=>{
@@ -2004,13 +2847,7 @@ function updateStats() {
 // ════════════════════════════════════
 //  ИГРА — ЗАПУСК
 // ════════════════════════════════════
-function startEndless() {
-  playStart(); isSprint=false; isGameActive=true;
-  document.getElementById("sprintCounterRow").style.display="none";
-  document.getElementById("sprintProgWrap").style.display="none";
-  document.getElementById("dashboardCard").style.display="none";
-  showScreen("gameScreen"); nextWord();
-}
+function startEndless() { startEndlessGame(); }
 
 let sprintLenSelected = 10;
 function setSprintLen(n, btn) {
@@ -2023,8 +2860,23 @@ function startSprint() {
   sprintLen=sprintLenSelected||10; sprintIdx=0;
   sprintCorrect=0; sprintErrors=0; sprintXpEarned=0; sprintMaxStreak=0;
   isGameActive=true;
+  // Жизни
+  livesMode=true; lives=MAX_LIVES; updateLivesDisplay();
+  document.getElementById("livesBar").style.display="flex";
+  // Бонус
+  stopBonusRound();
   document.getElementById("sprintCounterRow").style.display="block";
   document.getElementById("sprintProgWrap").style.display="block";
+  document.getElementById("dashboardCard").style.display="none";
+  showScreen("gameScreen"); nextWord();
+}
+function startEndlessGame() {
+  playStart(); isSprint=false; isGameActive=true;
+  livesMode=false;
+  document.getElementById("livesBar").style.display="none";
+  stopBonusRound();
+  document.getElementById("sprintCounterRow").style.display="none";
+  document.getElementById("sprintProgWrap").style.display="none";
   document.getElementById("dashboardCard").style.display="none";
   showScreen("gameScreen"); nextWord();
 }
@@ -2047,6 +2899,7 @@ function setGameMode(mode) {
 // ════════════════════════════════════
 function nextWord() {
   if (isPaused) return;
+  if (isMistakeRetry) { nextMistakeRetryWord(); return; }
   if (isSprint && sprintIdx >= sprintLen) { showResults(); return; }
   isAnswering=false; toggleBtns(false);
   const pool = getPool();
@@ -2131,22 +2984,42 @@ function onCorrect() {
   if (isSprint){ sprintCorrect++; sprintMaxStreak = Math.max(sprintMaxStreak,streak); }
   const key = currentWordObj.en;
   wordWeights[key] = Math.max((wordWeights[key]||0)-1, 0);
+
+  // Бонус-раунд
+  if (streak === BONUS_TRIGGER && !bonusRoundActive) activateBonusRound();
+
+  const bonusMult = bonusRoundActive ? 2 : 1;
   const mult = streak>=15?3:streak>=5?2:1;
-  const earned = 10*mult;
+  const earned = 10 * mult * bonusMult;
   xp+=earned; dailyXp+=earned;
   if (isSprint) sprintXpEarned+=earned;
+
+  // Рекорд дня
+  if (isSprint && sprintXpEarned > dailyRecord) {
+    dailyRecord = sprintXpEarned;
+    localStorage.setItem("etu_dailyRecord_" + new Date().toDateString(), dailyRecord);
+  }
+
   const res = document.getElementById("result");
   res.className="result ok-text";
-  res.innerHTML = `✅ Правильно! +${earned} XP${mult>1?` <b>(×${mult} 🔥)</b>`:''}`;
+  let xpLabel = `+${earned} XP`;
+  if (bonusMult>1) xpLabel += ` ⚡`;
+  if (mult>1) xpLabel += ` <b>(×${mult} 🔥)</b>`;
+  res.innerHTML = `✅ Правильно! ${xpLabel}`;
   spawnXpPop(earned);
   document.getElementById("gameScreen").classList.add("flash-ok");
   setTimeout(()=>document.getElementById("gameScreen").classList.remove("flash-ok"),350);
   if (mult>1){ playStreak(); showStreakBanner(streak); }
   else playCorrect();
+  // Haptic
+  if (navigator.vibrate) navigator.vibrate(30);
   if (currentLanguage==='ru') speak(currentWordObj.en.split('/')[0].trim());
   if (streak>maxStreak) maxStreak=streak;
+  const _prevXp = xp - earned;
   update(); save(); checkAchievements();
-  if (isSprint){ sprintIdx++; setTimeout(nextWord, sprintIdx>=sprintLen?600:250); }
+  if (typeof checkLevelUp === 'function') checkLevelUp(_prevXp, xp);
+  if (typeof updateProfileRing === 'function') updateProfileRing();
+  if (isSprint){ sprintIdx++; if(isMistakeRetry) mistakeRetryIdx++; setTimeout(nextWord, sprintIdx>=sprintLen?600:250); }
   else setTimeout(nextWord,250);
 }
 function onWrong() {
@@ -2154,17 +3027,39 @@ function onWrong() {
   if (isSprint) sprintErrors++;
   const key = currentWordObj.en;
   wordWeights[key]=(wordWeights[key]||0)+2;
+  // Трекинг ошибок по словам
+  wordErrorCount[key] = (wordErrorCount[key]||0)+1;
+
   const res = document.getElementById("result");
   res.className="result err-text";
   res.innerHTML = `❌ Ошибка. Верно: <strong>${correctAnswerString}</strong>`;
   document.getElementById("gameScreen").classList.add("shake");
   setTimeout(()=>document.getElementById("gameScreen").classList.remove("shake"),500);
   playWrong();
+  // Haptic — двойной импульс для ошибки
+  if (navigator.vibrate) navigator.vibrate([40,30,40]);
+
   const isEN = currentLanguage==='en';
   const mstr = isEN?`${currentWordObj.en} — ${currentWordObj.ru}`:`${currentWordObj.ru} — ${currentWordObj.en}`;
   if (!mistakes.includes(mstr)){ mistakes.push(mstr); renderMistakes(); }
+
+  // Жизни
+  if (livesMode) {
+    lives = Math.max(0, lives - 1);
+    updateLivesDisplay();
+    if (lives <= 0) {
+      update(); save(); checkAchievements();
+      if (isSprint){ sprintIdx++; setTimeout(()=>{ showResults(); }, 800); }
+      return;
+    }
+    if (lives === 1) {
+      document.getElementById("gameScreen").classList.add("lives-danger");
+      setTimeout(()=>document.getElementById("gameScreen").classList.remove("lives-danger"),600);
+    }
+  }
+
   update(); save(); checkAchievements();
-  if (isSprint){ sprintIdx++; setTimeout(nextWord,sprintIdx>=sprintLen?600:1200); }
+  if (isSprint){ sprintIdx++; if(isMistakeRetry) mistakeRetryIdx++; setTimeout(nextWord,sprintIdx>=sprintLen?600:1200); }
   else setTimeout(nextWord,1500);
 }
 
@@ -2209,7 +3104,8 @@ function resetTimer() {
     el.textContent=timerVal;
     const offset = (1-timerVal/TIMER_MAX)*100;
     if (circle){ circle.style.strokeDashoffset=offset; }
-    if (timerVal<=5){ if (circle) circle.style.stroke="var(--err)"; playTick(); }
+    if (timerVal<=5){ if (circle) { circle.style.stroke="var(--err)"; circle.classList.add('danger'); } playTick(); }
+    if (timerVal>5 && circle) { circle.style.stroke="var(--warn)"; circle.classList.remove('danger'); }
     if (timerVal<=0){
       clearInterval(interval); streak=0; update(); save();
       if (isSprint) sprintIdx++;
@@ -2253,6 +3149,9 @@ function update() {
 // ════════════════════════════════════
 function showResults() {
   clearInterval(interval); isGameActive=false; playSprint();
+  stopBonusRound();
+  livesMode=false;
+  document.getElementById("livesBar").style.display="none";
   document.getElementById("resCorrect").textContent=sprintCorrect;
   document.getElementById("resErrors").textContent=sprintErrors;
   document.getElementById("resXp").textContent=sprintXpEarned;
@@ -2269,8 +3168,30 @@ function showResults() {
   document.getElementById("resultsTitle").textContent=title;
   document.getElementById("resultsVerdict").innerHTML=verdict;
   triggerAch("ach_sprint");
+
+  // Рекорд дня
+  const recBadge = document.getElementById("dailyRecordBadge");
+  const todayKey = "etu_dailyRecord_" + new Date().toDateString();
+  const prevRecord = parseInt(localStorage.getItem(todayKey)) || 0;
+  if (sprintXpEarned > 0 && sprintXpEarned >= prevRecord) {
+    localStorage.setItem(todayKey, sprintXpEarned);
+    dailyRecord = sprintXpEarned;
+    recBadge.style.display="block";
+    recBadge.querySelector("span").classList.add("record-new");
+    setTimeout(()=>recBadge.querySelector("span").classList.remove("record-new"),700);
+  } else {
+    recBadge.style.display="none";
+  }
+
+  // Кнопка повторения ошибок
+  const retryBtn = document.getElementById("retryMistakesBtn");
+  // Собираем слова из текущего спринта с ошибками
+  _lastSprintMistakes = mistakes.slice(-sprintErrors);
+  retryBtn.style.display = sprintErrors > 0 ? "block" : "none";
+
   showScreen("resultsScreen");
   document.getElementById("dashboardCard").style.display="none";
+  spawnConfetti(30);
 }
 
 // ════════════════════════════════════
@@ -2436,12 +3357,14 @@ function agCheck(){
     document.getElementById("agResult").className="result ok-text";
     spawnXpPop(earned);
     if(agStreak>=5) playStreak(); else playCorrect();
+    if (navigator.vibrate) navigator.vibrate(30);
     speak(agTarget);
   } else {
     agErrors++; agStreak=0;
     document.getElementById("agResult").innerHTML=`❌ Неверно. Правильно: <strong>${agTarget}</strong>`;
     document.getElementById("agResult").className="result err-text";
     playWrong();
+    if (navigator.vibrate) navigator.vibrate([40,30,40]);
   }
   document.getElementById("agXp").textContent=xp;
   document.getElementById("agStreak").textContent=agStreak;
@@ -2503,12 +3426,8 @@ function triggerAch(id) {
     showAchPop(achievementList[id]);
   }
 }
-function renderAchievements() {
-  const c=document.getElementById("achievements");
-  if(!earnedAchievements.length){
-    c.innerHTML=`<li class="empty-state">Нет достижений. Продолжай тренироваться!</li>`;return;
-  }
-  c.innerHTML=earnedAchievements.map(id=>`<li><span>${achievementList[id]||id}</span></li>`).join("");
+function _renderAchievementsOld() {
+  // replaced by v4 version below
 }
 
 // ════════════════════════════════════
@@ -2516,6 +3435,14 @@ function renderAchievements() {
 // ════════════════════════════════════
 function renderMistakes() {
   const c=document.getElementById("mistakes");
+  const mBadge = document.getElementById("misCountBadge");
+  if (mBadge) {
+    mBadge.textContent = mistakes.length || '';
+    mBadge.style.display = mistakes.length ? 'inline' : 'none';
+  }
+  const retryAllBtn = document.getElementById("retryAllMistakesBtn");
+  if (retryAllBtn) retryAllBtn.style.display = mistakes.length ? "block" : "none";
+
   if(!mistakes.length){ c.innerHTML=`<li class="empty-state">Ошибок нет. Хорошая работа!</li>`;return; }
   c.innerHTML=mistakes.map((m,i)=>{
     const [a,b]=m.split(" — ");
@@ -2807,6 +3734,11 @@ function showProfileScreen() {
   document.getElementById("pStLvl").textContent = getLevel(xp);
   document.getElementById("pStStreak").textContent = maxStreak;
   document.getElementById("pRankLabel").textContent = getRankObj(xp).label;
+  const pPct = (xp % 100);
+  const pBar = document.getElementById("pProfileBar");
+  const pTxt = document.getElementById("pProfileBarTxt");
+  if (pBar) pBar.style.width = pPct + "%";
+  if (pTxt) pTxt.textContent = pPct + " / 100 XP";
 
   // Level picker
   const lp = document.getElementById("levelPicker");
@@ -2841,6 +3773,7 @@ function showProfileScreen() {
 
   document.getElementById("dashboardCard").style.display = "none";
   showScreen("profileScreen");
+  updateProfileRing();
 }
 
 function openAvatarPicker() {
@@ -2884,11 +3817,530 @@ function saveProfile() {
 
   playCorrect();
   alertPop("✅ Профиль сохранён!");
-  setTimeout(() => { showScreen("menuScreen"); document.getElementById("dashboardCard").style.display = "block"; }, 800);
+  setTimeout(() => { showScreen("menuScreen"); }, 800);
 }
 
+
+// ════════════════════════════════════
+//  СЕРИЯ ДНЕЙ (DAY STREAK)
+// ════════════════════════════════════
+const DS_KEY_LAST  = "etu_ds_lastDate";
+const DS_KEY_CUR   = "etu_ds_current";
+const DS_KEY_BEST  = "etu_ds_best";
+
+function updateDayStreak() {
+  const todayStr = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  const lastDate = localStorage.getItem(DS_KEY_LAST) || "";
+  let cur  = parseInt(localStorage.getItem(DS_KEY_CUR))  || 0;
+  let best = parseInt(localStorage.getItem(DS_KEY_BEST)) || 0;
+
+  if (lastDate === todayStr) {
+    // уже занимались сегодня — ничего не меняем
+  } else if (lastDate === yesterday) {
+    // занимались вчера — streak продолжается
+    cur++;
+    localStorage.setItem(DS_KEY_LAST, todayStr);
+    localStorage.setItem(DS_KEY_CUR, cur);
+    if (cur > best) { best = cur; localStorage.setItem(DS_KEY_BEST, best); }
+  } else {
+    // пропуск — streak сбрасывается
+    cur = 1;
+    localStorage.setItem(DS_KEY_LAST, todayStr);
+    localStorage.setItem(DS_KEY_CUR, cur);
+    if (cur > best) { best = cur; localStorage.setItem(DS_KEY_BEST, best); }
+  }
+  renderDayStreak(cur, best);
+  return { cur, best };
+}
+
+function renderDayStreak(cur, best) {
+  const el = document.getElementById("dayStreakVal");
+  const sub = document.getElementById("dayStreakSub");
+  const bestEl = document.getElementById("dayStreakBest");
+  if (!el) return;
+  el.textContent = cur;
+  bestEl.textContent = best;
+  if (cur === 0) sub.textContent = "Начни сегодня!";
+  else if (cur === 1) sub.textContent = "День 1 — отличное начало!";
+  else if (cur < 7) sub.textContent = `${cur} дня подряд 💪`;
+  else if (cur < 14) sub.textContent = `${cur} дней — продолжай!`;
+  else if (cur < 30) sub.textContent = `${cur} дней — ты огонь! 🔥`;
+  else sub.textContent = `${cur} дней — легендарно! ⚡`;
+}
+
+// ════════════════════════════════════
+//  НЕДЕЛЬНЫЙ МИНИ-ГРАФИК
+// ════════════════════════════════════
+function renderWeeklyChart() {
+  const chart = document.getElementById("weeklyChart");
+  if (!chart) return;
+  const days = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  const today = new Date();
+  const todayIdx = (today.getDay() + 6) % 7; // 0=Mon
+  let data = [];
+  try { data = JSON.parse(localStorage.getItem("etu_weekData")) || []; } catch(e){}
+  // fill to 7 days
+  while (data.length < 7) data.unshift(0);
+  if (data.length > 7) data = data.slice(-7);
+
+  const maxVal = Math.max(...data, 1);
+  chart.innerHTML = data.map((v, i) => {
+    const heightPct = Math.round((v / maxVal) * 100);
+    const isToday = i === todayIdx;
+    return `<div class="week-bar-wrap">
+      <div class="week-bar${isToday ? ' today' : ''}" style="height:${Math.max(4, heightPct * 0.42)}px;" title="${v} XP"></div>
+      <div class="week-label">${days[i]}</div>
+    </div>`;
+  }).join("");
+}
+
+function saveWeeklyData() {
+  let data = [];
+  try { data = JSON.parse(localStorage.getItem("etu_weekData")) || []; } catch(e){}
+  while (data.length < 7) data.unshift(0);
+  if (data.length > 7) data = data.slice(-7);
+  const todayIdx = (new Date().getDay() + 6) % 7;
+  data[todayIdx] = dailyXp;
+  localStorage.setItem("etu_weekData", JSON.stringify(data));
+}
+
+// ════════════════════════════════════
+//  CONFETTI
+// ════════════════════════════════════
+function spawnConfetti(count = 30) {
+  const colors = ['#4f8eff','#7c5cfc','#22d88f','#ffc247','#ff4f6d','#a78bfa'];
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left = (20 + Math.random() * 60) + 'vw';
+      el.style.top = '20vh';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.animationDelay = (Math.random() * .4) + 's';
+      el.style.animationDuration = (.8 + Math.random() * .6) + 's';
+      el.style.transform = `rotate(${Math.random()*360}deg)`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1500);
+    }, i * 30);
+  }
+}
+
+// ════════════════════════════════════
+//  LEVEL UP BANNER
+// ════════════════════════════════════
+let _lastLevel = 0;
+function checkLevelUp(prevXp, newXp) {
+  const prev = getLevel(prevXp);
+  const next = getLevel(newXp);
+  if (next > prev && next > _lastLevel) {
+    _lastLevel = next;
+    showLevelUpBanner(next);
+    spawnConfetti(50);
+  }
+}
+
+function showLevelUpBanner(lvl) {
+  const el = document.createElement('div');
+  el.className = 'lvlup-banner';
+  el.innerHTML = `⬆️ Уровень ${lvl}!<br><span style="font-size:14px;opacity:.85;font-weight:700;">Ты растёшь 🚀</span>`;
+  document.body.appendChild(el);
+  setTimeout(() => {
+    el.style.transition = 'opacity .6s, transform .6s';
+    el.style.opacity = '0';
+    el.style.transform = 'translate(-50%,-60%) scale(.9)';
+    setTimeout(() => el.remove(), 600);
+  }, 2200);
+}
+
+// ════════════════════════════════════
+//  НИЖНЯЯ НАВИГАЦИЯ
+// ════════════════════════════════════
+function navTo(tab) {
+  ['navHome','navTrain','navStats','navAch','navProfile','navSettings'].forEach(id => {
+    document.getElementById(id)?.classList.remove('active');
+  });
+  if (tab === 'home') {
+    document.getElementById('navHome')?.classList.add('active');
+    goToMainMenu();
+  } else if (tab === 'train') {
+    document.getElementById('navTrain')?.classList.add('active');
+    showModeSelect();
+  } else if (tab === 'stats') {
+    document.getElementById('navStats')?.classList.add('active');
+    showStatsScreen();
+  } else if (tab === 'ach') {
+    document.getElementById('navAch')?.classList.add('active');
+    showAchScreen();
+  } else if (tab === 'profile') {
+    document.getElementById('navProfile')?.classList.add('active');
+    showProfileScreen();
+  } else if (tab === 'settings') {
+    document.getElementById('navSettings')?.classList.add('active');
+    showSettingsScreen();
+  }
+}
+
+function updateBottomNav(screen) {
+  ['navHome','navTrain','navStats','navAch','navProfile','navSettings'].forEach(id => {
+    document.getElementById(id)?.classList.remove('active');
+  });
+  if (screen === 'menuScreen') document.getElementById('navHome')?.classList.add('active');
+  else if (screen === 'modeSelectScreen' || screen === 'gameScreen') document.getElementById('navTrain')?.classList.add('active');
+  else if (screen === 'statsScreen') document.getElementById('navStats')?.classList.add('active');
+  else if (screen === 'dashboardCard') document.getElementById('navAch')?.classList.add('active');
+  else if (screen === 'profileScreen') document.getElementById('navProfile')?.classList.add('active');
+  else if (screen === 'settingsScreen') document.getElementById('navSettings')?.classList.add('active');
+}
+
+// updateBottomNav вызывается напрямую из showScreen (см. выше — патч снизу убран)
+
+// ════════════════════════════════════
+//  ПРОФИЛЬ — КОЛЬЦО XP
+// ════════════════════════════════════
+function updateProfileRing() {
+  const ring = document.getElementById("profileRingFg");
+  if (!ring) return;
+  const pct = (xp % 100) / 100;
+  const circumference = 301.6;
+  ring.style.strokeDashoffset = circumference * (1 - pct);
+}
+
+// ════════════════════════════════════
+//  LEVEL UP интегрирован в onCorrect выше
+// ════════════════════════════════════
+// save() патч убран — вызов saveWeeklyData встроен в оригинальный save()
+
+// Улучшенная renderAchievements с иконками и locked
+function renderAchievements() {
+  const c = document.getElementById("achievements");
+  if (!Object.keys(achievementList).length) return;
+  
+  const items = Object.entries(achievementList).map(([id, text]) => {
+    const earned = earnedAchievements.includes(id);
+    return `<div class="ach-list-item${earned ? '' : ' locked'}">
+      <span class="ach-list-icon">${text.split(' ')[0]}</span>
+      <div class="ach-list-text">
+        <div>${text.substring(text.indexOf(' ')+1)}</div>
+        ${earned ? '<div class="ach-list-earned">✅ Получено</div>' : ''}
+      </div>
+      <span class="ach-check">${earned ? '✅' : '🔒'}</span>
+    </div>`;
+  });
+  
+  if (items.length === 0) {
+    c.innerHTML = '<div class="ach-empty"><div class="ach-empty-icon">🏆</div><div class="ach-empty-text">Продолжай тренироваться!</div></div>';
+  } else {
+    c.innerHTML = items.join('');
+  }
+  const badge = document.getElementById("achCountBadge");
+  if (badge) {
+    badge.textContent = earnedAchievements.length ? earnedAchievements.length : '';
+    badge.style.display = earnedAchievements.length ? 'inline' : 'none';
+  }
+}
+
+
+// ════════════════════════════════════
+//  НАСТРОЙКИ
+// ════════════════════════════════════
+function showAchScreen() {
+  playClick();
+  document.getElementById('dashboardCard').style.display = '';
+  renderAchievements();
+  renderMistakes();
+  showScreen('dashboardCard');
+}
+
+function showSettingsScreen() {
+  playClick();
+  // Sync sound toggle
+  const wrap = document.getElementById('soundToggleWrap');
+  if (wrap) wrap.classList.toggle('on', soundEnabled);
+
+  // Sync theme picker
+  const theme = localStorage.getItem('etu_theme') || 'dark';
+  ['dark','light','auto'].forEach(t => {
+    document.getElementById('themeOpt' + t.charAt(0).toUpperCase() + t.slice(1))?.classList.toggle('active', t === theme);
+  });
+  const labels = { dark: 'Тёмная тема активна', light: 'Светлая тема активна', auto: 'Авто (системная тема)' };
+  const subEl = document.getElementById('themeSubLabel');
+  if (subEl) subEl.textContent = labels[theme] || labels.dark;
+
+  // Sync difficulty
+  const d = DAILY_GOALS[dailyDifficulty];
+  const diffSub = document.getElementById('settingsDiffSub');
+  if (diffSub) diffSub.textContent = `${d.icon} ${d.name} — ${d.xp} XP/день`;
+
+  // Sync selects
+  const sm = document.getElementById('settingsMode');
+  const sc = document.getElementById('settingsCategory');
+  if (sm) sm.value = document.getElementById('mode').value;
+  if (sc) sc.value = document.getElementById('category').value;
+
+  document.getElementById('dashboardCard').style.display = 'none';
+  showScreen('settingsScreen');
+}
+
+function toggleSoundSetting() {
+  unlockAudio();
+  soundEnabled = !soundEnabled;
+  localStorage.setItem('soundEnabled', soundEnabled);
+  // Sync hidden soundBtn (для совместимости)
+  const btn = document.getElementById('soundBtn');
+  if (btn) btn.textContent = soundEnabled ? '🔊' : '🔇';
+  // Update toggle UI
+  const wrap = document.getElementById('soundToggleWrap');
+  if (wrap) wrap.classList.toggle('on', soundEnabled);
+  if (soundEnabled) playClick();
+}
+
+function setTheme(theme) {
+  playClick();
+  if (theme === 'dark') {
+    document.body.classList.remove('light');
+    localStorage.setItem('etu_theme', 'dark');
+  } else if (theme === 'light') {
+    document.body.classList.add('light');
+    localStorage.setItem('etu_theme', 'light');
+  } else {
+    // auto — follow system
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.body.classList.toggle('light', !prefersDark);
+    localStorage.setItem('etu_theme', 'auto');
+  }
+  // Update labels and active states
+  const labels = { dark: 'Тёмная тема активна', light: 'Светлая тема активна', auto: 'Авто (системная тема)' };
+  const subEl = document.getElementById('themeSubLabel');
+  if (subEl) subEl.textContent = labels[theme];
+  const themeBtn = document.getElementById('themeBtn');
+  if (themeBtn) themeBtn.textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
+  ['dark','light','auto'].forEach(t => {
+    document.getElementById('themeOpt' + t.charAt(0).toUpperCase() + t.slice(1))?.classList.toggle('active', t === theme);
+  });
+}
+
+// ════════════════════════════════════
+//  ЖИЗНИ (HEARTS)
+// ════════════════════════════════════
+function updateLivesDisplay() {
+  const el = document.getElementById("livesDisplay");
+  if (!el) return;
+  let html = '';
+  for (let i = 0; i < MAX_LIVES; i++) {
+    html += `<span class="heart${i >= lives ? ' lost' : ''}">❤️</span>`;
+  }
+  el.innerHTML = html;
+}
+
+// ════════════════════════════════════
+//  БОНУС-РАУНД
+// ════════════════════════════════════
+function activateBonusRound() {
+  bonusRoundActive = true;
+  bonusRoundTimer = BONUS_DURATION;
+  document.getElementById("bonusActiveBadge").style.display = "flex";
+  spawnConfetti(20);
+
+  const banner = document.createElement("div");
+  banner.className = "bonus-banner";
+  banner.innerHTML = `⚡ БОНУС-РАУНД!<br><span style="font-size:14px;font-weight:700;">×2 XP на ${BONUS_DURATION} секунд!</span>`;
+  document.body.appendChild(banner);
+  setTimeout(() => banner.remove(), 2500);
+
+  clearInterval(bonusInterval);
+  bonusInterval = setInterval(() => {
+    bonusRoundTimer--;
+    const badge = document.querySelector(".bonus-active-badge");
+    if (badge) badge.textContent = `⚡ ×2 XP (${bonusRoundTimer}с)`;
+    if (bonusRoundTimer <= 0) stopBonusRound();
+  }, 1000);
+}
+function stopBonusRound() {
+  bonusRoundActive = false;
+  clearInterval(bonusInterval);
+  const el = document.getElementById("bonusActiveBadge");
+  if (el) el.style.display = "none";
+}
+
+// ════════════════════════════════════
+//  ПОВТОРЕНИЕ ОШИБОК
+// ════════════════════════════════════
+let _lastSprintMistakes = [];
+
+function startMistakeRetry() {
+  if (!mistakes.length) { alertPop("Нет ошибок для повторения!"); return; }
+  playStart();
+  isMistakeRetry = true;
+  isSprint = true;
+  livesMode = false;
+  stopBonusRound();
+  document.getElementById("livesBar").style.display = "none";
+
+  // Парсим mistakes в пары слов
+  mistakeRetryPool = mistakes.map(m => {
+    const parts = m.split(" — ");
+    return { ru: parts[0]||'', en: parts[1]||'' };
+  }).filter(w => w.ru && w.en);
+
+  if (!mistakeRetryPool.length) { alertPop("Нет слов для повторения!"); return; }
+  mistakeRetryPool = mistakeRetryPool.sort(()=>Math.random()-.5);
+  mistakeRetryIdx = 0;
+  sprintLen = mistakeRetryPool.length;
+  sprintIdx = 0; sprintCorrect=0; sprintErrors=0; sprintXpEarned=0; sprintMaxStreak=0;
+  isGameActive = true;
+
+  document.getElementById("sprintCounterRow").style.display="block";
+  document.getElementById("sprintProgWrap").style.display="block";
+  document.getElementById("dashboardCard").style.display="none";
+  showScreen("gameScreen");
+  nextMistakeRetryWord();
+  alertPop(`💪 Повторяем ${mistakeRetryPool.length} слов!`);
+}
+
+function nextMistakeRetryWord() {
+  if (mistakeRetryIdx >= mistakeRetryPool.length) {
+    isMistakeRetry = false;
+    showResults();
+    return;
+  }
+  const w = mistakeRetryPool[mistakeRetryIdx];
+  currentWordObj = w;
+  currentLanguage = 'ru';
+  correctAnswerString = w.en;
+  document.getElementById("word").textContent = w.ru;
+  document.getElementById("answer").value = "";
+  document.getElementById("result").innerHTML = `<span class="retry-badge">💪 Режим повторения ошибок</span>`;
+  document.getElementById("result").className = "result";
+  document.getElementById("sprintCurrent").textContent = mistakeRetryIdx+1;
+  document.getElementById("sprintTotal").textContent = mistakeRetryPool.length;
+  document.getElementById("sprintBar").style.width = (mistakeRetryIdx/mistakeRetryPool.length*100)+"%";
+  if (gameMode==='test') genOptions();
+  isAnswering=false; toggleBtns(false); resetTimer();
+}
+
+// ════════════════════════════════════
+//  СТАТИСТИКА СЛОЖНЫХ СЛОВ
+// ════════════════════════════════════
+function renderHardWords() {
+  const section = document.getElementById("hardWordsSection");
+  const list = document.getElementById("hardWordsList");
+  if (!section || !list) return;
+
+  const entries = Object.entries(wordErrorCount)
+    .filter(([k,v]) => v > 0)
+    .sort((a,b) => b[1]-a[1])
+    .slice(0, 7);
+
+  if (!entries.length) { section.style.display="none"; return; }
+  section.style.display = "block";
+
+  const maxErr = entries[0][1] || 1;
+  list.innerHTML = entries.map(([word, count]) => {
+    const pct = Math.round(count/maxErr*100);
+    // Найти перевод
+    const pool = getPool();
+    const found = pool.find(w => w.en === word || w.en.split('/')[0].trim() === word);
+    const ru = found ? found.ru : '?';
+    return `<div class="hard-word-item">
+      <div>
+        <div style="font-weight:800;color:var(--text);">${word}</div>
+        <div style="font-size:11px;color:var(--text2);">${ru}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="hard-word-bar-wrap"><div class="hard-word-bar" style="width:${pct}%"></div></div>
+        <span class="hard-word-pct">${count}×</span>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+// ════════════════════════════════════
+//  ОНБОРДИНГ
+// ════════════════════════════════════
+function initOnboarding() {
+  const done = localStorage.getItem("etu_onboard_done");
+  if (done) return;
+
+  const overlay = document.getElementById("onboardOverlay");
+  overlay.style.display = "flex";
+
+  // Аватары
+  const avatarRow = document.getElementById("onboardAvatarRow");
+  const avatarList = ["🦁","🐯","🦊","🐺","🐻","🐼","🐨","🦝","🐸","🐙","🦋","👾"];
+  avatarRow.innerHTML = avatarList.map(a =>
+    `<button class="onboard-avatar-btn${a===onboardSelectedAvatar?' selected':''}" onclick="selectOnboardAvatar('${a}',this)">${a}</button>`
+  ).join("");
+
+  // Сложности
+  const diffList = document.getElementById("onboardDiffList");
+  diffList.innerHTML = Object.entries(DAILY_GOALS).map(([k,d]) =>
+    `<div class="diff-option diff-${k}${k===onboardSelectedDiff?' selected':''}" onclick="selectOnboardDiff('${k}',this)" style="cursor:pointer;">
+      <span class="diff-option-icon">${d.icon}</span>
+      <div class="diff-option-info">
+        <div class="diff-option-name">${d.name}</div>
+        <div class="diff-option-desc">${d.xp} XP в день</div>
+      </div>
+    </div>`
+  ).join("");
+}
+
+function selectOnboardAvatar(emoji, btn) {
+  onboardSelectedAvatar = emoji;
+  document.querySelectorAll(".onboard-avatar-btn").forEach(b=>b.classList.remove("selected"));
+  btn.classList.add("selected");
+  playClick();
+}
+
+function selectOnboardDiff(key, el) {
+  onboardSelectedDiff = key;
+  document.querySelectorAll("#onboardDiffList .diff-option").forEach(d=>d.classList.remove("selected"));
+  el.classList.add("selected");
+  playClick();
+}
+
+function onboardNext() {
+  playClick();
+  document.getElementById("onboardStep1").style.display="none";
+  document.getElementById("onboardStep2").style.display="block";
+}
+
+function onboardFinish() {
+  playCorrect();
+  const name = document.getElementById("onboardName").value.trim();
+
+  // Сохранить имя и аватар
+  profileData.name = name || "Тренер";
+  profileData.avatar = onboardSelectedAvatar;
+  localStorage.setItem("etu_profile", JSON.stringify(profileData));
+
+  // Сохранить сложность
+  dailyDifficulty = onboardSelectedDiff;
+  localStorage.setItem("etu_difficulty", dailyDifficulty);
+
+  // Применить
+  document.querySelector(".menu-name").textContent = profileData.name;
+  document.getElementById("menuAvatar").textContent = profileData.avatar;
+  updateMenu();
+
+  localStorage.setItem("etu_onboard_done", "1");
+  document.getElementById("onboardOverlay").style.display="none";
+  spawnConfetti(40);
+  alertPop(`Добро пожаловать, ${profileData.name}! 🎉`);
+}
+
+// ════════════════════════════════════
+//  ПЛАВНЫЙ ПЕРЕХОД МЕЖДУ ЭКРАНАМИ
+// ════════════════════════════════════
+let _lastNavTab = 0; // 0=home,1=stats,2=ach,3=settings,4=profile
+const _tabOrder = { menuScreen:0, statsScreen:1, dashboardCard:2, settingsScreen:3, profileScreen:4 };
+
+// ════════════════════════════════════
+//  ИНИЦИАЛИЗАЦИЯ
+// ════════════════════════════════════
 loadTheme();
 document.getElementById("soundBtn").textContent=soundEnabled?"🔊":"🔇";
+
 loadPrefs();
 setGameMode(gameMode);
 updateMenu();
@@ -2897,6 +4349,18 @@ renderAchievements();
 renderMistakes();
 renderMyWords();
 goToMainMenu();
+
+// NEW v4 init
+_lastLevel = getLevel(xp);
+updateDayStreak();
+renderWeeklyChart();
+updateProfileRing();
+
+// v5 init
+initOnboarding();
+renderHardWords();
+
+// onCorrect патч убран — level up встроен напрямую
 
 </script>
 </body>
