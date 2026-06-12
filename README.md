@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -2016,22 +2016,22 @@ select {
         Спринт
         <div class="mc-sub">10, 20 или 30 слов — итог в конце</div>
       </div>
-      <div class="mode-card new-badge" onclick="startFlashcards()">
+      <div class="mode-card" onclick="startFlashcards()">
         <span class="mc-icon">🃏</span>
         Флэшкарты
         <div class="mc-sub">Смотришь слово, переворачиваешь — видишь перевод</div>
       </div>
-      <div class="mode-card new-badge" onclick="startAnagram()">
+      <div class="mode-card" onclick="startAnagram()">
         <span class="mc-icon">🧩</span>
         Анаграмма
         <div class="mc-sub">Буквы перемешаны — собери слово правильно</div>
       </div>
-      <div class="mode-card new-badge" onclick="startDictant()" style="grid-column:span 2;">
+      <div class="mode-card" onclick="startDictant()" style="grid-column:span 2;">
         <span class="mc-icon">🎧</span>
         Диктант
         <div class="mc-sub">Слово произносится вслух — напиши перевод на русском</div>
       </div>
-      <div class="mode-card new-badge" onclick="startSentence()" style="grid-column:span 2;">
+      <div class="mode-card" onclick="startSentence()" style="grid-column:span 2;">
         <span class="mc-icon">🗣️</span>
         Предложение
         <div class="mc-sub">Слова перемешаны — составь правильное предложение</div>
@@ -3287,8 +3287,36 @@ function pickWord(pool) {
   }
   return c;
 }
-function getLevel(x){ return Math.floor(x/100)+1; }
-function getNextLvlXp(x){ return (Math.floor(x/100)+1)*100; }
+// Прогрессивная кривая: уровень N требует N*50 XP (суммарно: N*(N+1)/2*50)
+// Уровень 1 = 0 XP, уровень 2 = 50, уровень 5 = 500, уровень 10 = 2250, уровень 50 = 63750, уровень 100 = 252500
+function getLevel(x) {
+  // Решаем N*(N+1)/2 * 50 <= x => N^2+N-2x/50 <= 0 => N = floor((-1+sqrt(1+8x/50))/2)+1
+  if (x <= 0) return 1;
+  return Math.floor((-1 + Math.sqrt(1 + 8 * x / 50)) / 2) + 1;
+}
+function _xpForLevel(n) {
+  // Суммарный XP, нужный чтобы достигнуть уровня n (n>=1)
+  const lvl = Math.max(1, n) - 1;
+  return lvl * (lvl + 1) / 2 * 50;
+}
+function getNextLvlXp(x) {
+  const lvl = getLevel(x);
+  return _xpForLevel(lvl + 1);
+}
+function _getLevelProgress(x) {
+  // Прогресс внутри текущего уровня в % (0..100)
+  const lvl = getLevel(x);
+  const cur = _xpForLevel(lvl);
+  const next = _xpForLevel(lvl + 1);
+  return Math.round((x - cur) / (next - cur) * 100);
+}
+function _xpInCurrentLevel(x) {
+  return x - _xpForLevel(getLevel(x));
+}
+function _xpNeededForNextLevel(x) {
+  const lvl = getLevel(x);
+  return _xpForLevel(lvl + 1) - _xpForLevel(lvl);
+}
 
 // ════════════════════════════════════
 //  СОХРАНЕНИЕ
@@ -3394,12 +3422,13 @@ function showStatsScreen() {
 function updateMenu() {
   const lvl = getLevel(xp);
   const nextXp = getNextLvlXp(xp);
-  const pct = ((xp % 100) / 100 * 100);
+  const pct = _getLevelProgress(xp);
+  const xpLeft = nextXp - xp;
   document.getElementById("menuXp").textContent = xp;
   document.getElementById("menuLevel").textContent = lvl;
   document.getElementById("nextLvlXp").textContent = nextXp;
   document.getElementById("levelBar").style.width = pct + "%";
-  document.getElementById("levelTxt").textContent = `${100 - (xp%100)} XP до уровня ${lvl+1}`;
+  document.getElementById("levelTxt").textContent = `${xpLeft} XP до уровня ${lvl+1}`;
   const rank = getRankObj(xp);
   document.getElementById("userRank").textContent = rank.label;
   document.getElementById("menuAvatar").textContent = profileData.avatar || rank.avatar;
@@ -3780,7 +3809,7 @@ function update() {
   document.getElementById("gameXp").textContent=xp;
   document.getElementById("gameStreak").textContent=streak;
   document.getElementById("gameAccuracy").textContent=(total?Math.round(correct/total*100):0)+"%";
-  document.getElementById("xpBar").style.width=(xp%100)+"%";
+  document.getElementById("xpBar").style.width=_getLevelProgress(xp)+"%";
   updateMenu();
 }
 
@@ -4397,11 +4426,13 @@ function showProfileScreen() {
   document.getElementById("pStLvl").textContent = getLevel(xp);
   document.getElementById("pStStreak").textContent = maxStreak;
   document.getElementById("pRankLabel").textContent = getRankObj(xp).label;
-  const pPct = (xp % 100);
+  const pPct = _getLevelProgress(xp);
   const pBar = document.getElementById("pProfileBar");
   const pTxt = document.getElementById("pProfileBarTxt");
+  const _xpCur = _xpInCurrentLevel(xp);
+  const _xpNeed = _xpNeededForNextLevel(xp);
   if (pBar) pBar.style.width = pPct + "%";
-  if (pTxt) pTxt.textContent = pPct + " / 100 XP";
+  if (pTxt) pTxt.textContent = _xpCur + " / " + _xpNeed + " XP";
 
   // Level picker
   const lp = document.getElementById("levelPicker");
@@ -4666,7 +4697,7 @@ function updateBottomNav(screen) {
 function updateProfileRing() {
   const ring = document.getElementById("profileRingFg");
   if (!ring) return;
-  const pct = (xp % 100) / 100;
+  const pct = _getLevelProgress(xp) / 100;
   const circumference = 301.6;
   ring.style.strokeDashoffset = circumference * (1 - pct);
 }
