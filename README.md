@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -131,10 +131,25 @@ header {
   position: relative; overflow: hidden; width: 100%;
   transition: var(--t);
 }
-.screen { display: none; animation: screenIn .35s cubic-bezier(.4,0,.2,1); }
-.screen.active { display: block; }
+.screen {
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  will-change: transform, opacity;
+  transition: none;
+}
+.screen.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  position: relative;
+  animation: screenIn .3s cubic-bezier(.4,0,.2,1) both;
+}
 @keyframes screenIn {
-  from { opacity:0; transform:translateY(14px) scale(0.98); }
+  from { opacity:0; transform:translateY(10px) scale(0.99); }
   to   { opacity:1; transform:translateY(0) scale(1); }
 }
 
@@ -1889,15 +1904,15 @@ select {
 ════════════════════════════════════ */
 .screen { transform-origin: center; }
 @keyframes slideInRight {
-  from { opacity:0; transform: translateX(40px) scale(0.97); }
+  from { opacity:0; transform: translateX(28px) scale(0.98); }
   to   { opacity:1; transform: translateX(0) scale(1); }
 }
 @keyframes slideInLeft {
-  from { opacity:0; transform: translateX(-40px) scale(0.97); }
+  from { opacity:0; transform: translateX(-28px) scale(0.98); }
   to   { opacity:1; transform: translateX(0) scale(1); }
 }
-.screen.slide-in-right { animation: slideInRight .32s cubic-bezier(.4,0,.2,1); }
-.screen.slide-in-left  { animation: slideInLeft  .32s cubic-bezier(.4,0,.2,1); }
+.screen.slide-in-right { animation: slideInRight .28s cubic-bezier(.4,0,.2,1) both; }
+.screen.slide-in-left  { animation: slideInLeft  .28s cubic-bezier(.4,0,.2,1) both; }
 
 </style>
 </head>
@@ -3159,25 +3174,75 @@ function beep(freq, type, dur, vol=0.07) {
     o.start(); o.stop(audioCtx.currentTime + dur);
   } catch(e){}
 }
+function _pack(){ return localStorage.getItem('etu_sound_pack') || 'default'; }
 function playCorrect(){
-  const pack = localStorage.getItem('etu_sound_pack') || 'default';
-  if (pack === 'bells') { beep(880,'sine',.12); setTimeout(()=>beep(1108,'sine',.14),60); setTimeout(()=>beep(1318,'sine',.25),130); return; }
+  const pack = _pack();
+  if (pack === 'bells')  { beep(880,'sine',.12); setTimeout(()=>beep(1108,'sine',.14),60); setTimeout(()=>beep(1318,'sine',.25),130); return; }
   if (pack === 'arcade') { beep(660,'square',.06,.05); setTimeout(()=>beep(880,'square',.06,.05),50); setTimeout(()=>beep(1100,'square',.12,.06),100); return; }
-  if (pack === 'chime') { beep(784,'triangle',.18,.08); setTimeout(()=>beep(1047,'triangle',.22,.07),90); setTimeout(()=>beep(1568,'triangle',.3,.05),180); return; }
+  if (pack === 'chime')  { beep(784,'triangle',.18,.08); setTimeout(()=>beep(1047,'triangle',.22,.07),90); setTimeout(()=>beep(1568,'triangle',.3,.05),180); return; }
   beep(523,'sine',.1); setTimeout(()=>beep(659,'sine',.12),70); setTimeout(()=>beep(784,'sine',.2),140);
 }
-function playWrong(){ beep(300,'sawtooth',.15,.1); setTimeout(()=>beep(200,'sawtooth',.25,.12),150); }
-function playStreak(){ beep(659,'sine',.08); setTimeout(()=>beep(784,'sine',.08),60); setTimeout(()=>beep(987,'sine',.08),120); setTimeout(()=>beep(1047,'sine',.2),180); }
-function playAchievement(){ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,'sine',.25,.12),i*80)); }
-function playTick(){ beep(880,'square',.05,.04); }
-function playHint(){ beep(440,'triangle',.15,.07); }
-function playSprint(){ [523,587,659,698,784,880,988,1047].forEach((f,i)=>setTimeout(()=>beep(f,'sine',.2,.1),i*90)); }
-function playStart(){ beep(440,'sine',.1); setTimeout(()=>beep(550,'sine',.1),100); setTimeout(()=>beep(660,'sine',.2),200); }
-function playClick(){ beep(600,'square',.05,.04); }
+function playWrong(){
+  const pack = _pack();
+  if (pack === 'arcade') { beep(220,'square',.1,.08); setTimeout(()=>beep(180,'square',.15,.1),100); return; }
+  if (pack === 'chime')  { beep(350,'triangle',.12,.08); setTimeout(()=>beep(280,'triangle',.2,.1),120); return; }
+  beep(300,'sawtooth',.15,.1); setTimeout(()=>beep(200,'sawtooth',.25,.12),150);
+}
+function playClick(){
+  const pack = _pack();
+  if (pack === 'bells')  { beep(1200,'sine',.04,.04); return; }
+  if (pack === 'arcade') { beep(700,'square',.03,.04); return; }
+  if (pack === 'chime')  { beep(900,'triangle',.05,.04); return; }
+  beep(600,'square',.05,.04);
+}
+function playStreak(){
+  const pack = _pack();
+  if (pack === 'bells')  { [880,1108,1318,1568].forEach((f,i)=>setTimeout(()=>beep(f,'sine',.12,.1),i*80)); return; }
+  if (pack === 'arcade') { [660,770,880,1100].forEach((f,i)=>setTimeout(()=>beep(f,'square',.08,.06),i*70)); return; }
+  if (pack === 'chime')  { [784,987,1175,1568].forEach((f,i)=>setTimeout(()=>beep(f,'triangle',.15,.08),i*85)); return; }
+  beep(659,'sine',.08); setTimeout(()=>beep(784,'sine',.08),60); setTimeout(()=>beep(987,'sine',.08),120); setTimeout(()=>beep(1047,'sine',.2),180);
+}
+function playAchievement(){
+  const pack = _pack();
+  if (pack === 'bells')  { [880,1108,1318,1568].forEach((f,i)=>setTimeout(()=>beep(f,'sine',.3,.12),i*90)); return; }
+  if (pack === 'arcade') { [523,659,784,1047,1318].forEach((f,i)=>setTimeout(()=>beep(f,'square',.25,.1),i*75)); return; }
+  if (pack === 'chime')  { [784,1047,1318,1568].forEach((f,i)=>setTimeout(()=>beep(f,'triangle',.28,.1),i*85)); return; }
+  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,'sine',.25,.12),i*80));
+}
+function playTick(){
+  const pack = _pack();
+  if (pack === 'bells')  { beep(1400,'sine',.03,.03); return; }
+  if (pack === 'arcade') { beep(1000,'square',.03,.03); return; }
+  if (pack === 'chime')  { beep(1200,'triangle',.04,.03); return; }
+  beep(880,'square',.05,.04);
+}
+function playHint(){
+  const pack = _pack();
+  if (pack === 'bells')  { beep(660,'sine',.1,.07); setTimeout(()=>beep(880,'sine',.12,.07),80); return; }
+  if (pack === 'arcade') { beep(500,'square',.08,.06); setTimeout(()=>beep(650,'square',.1,.06),70); return; }
+  if (pack === 'chime')  { beep(587,'triangle',.12,.07); setTimeout(()=>beep(784,'triangle',.15,.07),80); return; }
+  beep(440,'triangle',.15,.07);
+}
+function playSprint(){
+  const pack = _pack();
+  if (pack === 'bells')  { [880,988,1108,1175,1318,1480,1568,1760].forEach((f,i)=>setTimeout(()=>beep(f,'sine',.18,.1),i*90)); return; }
+  if (pack === 'arcade') { [523,587,659,698,784,880,988,1047].forEach((f,i)=>setTimeout(()=>beep(f,'square',.15,.08),i*80)); return; }
+  if (pack === 'chime')  { [784,880,987,1047,1175,1319,1480,1568].forEach((f,i)=>setTimeout(()=>beep(f,'triangle',.2,.1),i*90)); return; }
+  [523,587,659,698,784,880,988,1047].forEach((f,i)=>setTimeout(()=>beep(f,'sine',.2,.1),i*90));
+}
+function playStart(){
+  const pack = _pack();
+  if (pack === 'bells')  { beep(880,'sine',.12); setTimeout(()=>beep(1108,'sine',.14),120); setTimeout(()=>beep(1318,'sine',.22),240); return; }
+  if (pack === 'arcade') { beep(440,'square',.08); setTimeout(()=>beep(550,'square',.1),100); setTimeout(()=>beep(660,'square',.18),200); return; }
+  if (pack === 'chime')  { beep(659,'triangle',.1); setTimeout(()=>beep(784,'triangle',.12),110); setTimeout(()=>beep(987,'triangle',.2),220); return; }
+  beep(440,'sine',.1); setTimeout(()=>beep(550,'sine',.1),100); setTimeout(()=>beep(660,'sine',.2),200);
+}
 function playFlip(){
-  beep(500,'sine',.05,.06);
-  setTimeout(()=>beep(900,'sine',.07,.07), 55);
-  setTimeout(()=>beep(1200,'triangle',.09,.05), 110);
+  const pack = _pack();
+  if (pack === 'bells')  { beep(1108,'sine',.06,.05); setTimeout(()=>beep(1318,'sine',.08,.06),60); return; }
+  if (pack === 'arcade') { beep(600,'square',.04,.04); setTimeout(()=>beep(900,'square',.06,.05),55); return; }
+  if (pack === 'chime')  { beep(784,'triangle',.06,.05); setTimeout(()=>beep(1047,'triangle',.09,.06),65); return; }
+  beep(500,'sine',.05,.06); setTimeout(()=>beep(900,'sine',.07,.07),55); setTimeout(()=>beep(1200,'triangle',.09,.05),110);
 }
 
 function speak(text) {
@@ -3275,7 +3340,7 @@ function getRankObj(x){ return [...ranks].reverse().find(r=>x>=r.min) || ranks[0
 function showScreen(id) {
   const prev = document.querySelector('.screen.active');
   const prevId = prev ? prev.id : null;
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active','slide-in-right','slide-in-left'));
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active','slide-in-right','slide-in-left'));
   const next = document.getElementById(id);
   next.classList.add('active');
 
@@ -3285,7 +3350,6 @@ function showScreen(id) {
   if (prevOrder >= 0 && nextOrder >= 0 && prevOrder !== nextOrder) {
     const dir = nextOrder > prevOrder ? 'slide-in-right' : 'slide-in-left';
     next.classList.add(dir);
-    setTimeout(()=>next.classList.remove(dir), 350);
   }
   updateBottomNav(id);
 }
@@ -3293,6 +3357,7 @@ function goToMainMenu() {
   playClick();
   clearInterval(interval);
   clearInterval(agInterval);
+  clearInterval(bonusInterval); bonusRoundActive = false;
   isPaused=false; isAnswering=false; isGameActive=false; isDictant=false;
   document.getElementById("dictantRepeatWrap").style.display = 'none';
   if (isSprint) clearSprintState(); // v7: don't leave orphaned sprint state
@@ -4163,17 +4228,24 @@ function alertPop(msg) {
 //  СБРОС
 // ════════════════════════════════════
 function confirmReset() {
-  if(!confirm("Сбросить весь прогресс, XP, достижения и ошибки?")) return;
-  const savedDiff = localStorage.getItem("etu_difficulty");
-  const savedTheme = localStorage.getItem("etu_theme");
-  localStorage.clear();
-  if (savedDiff) localStorage.setItem("etu_difficulty", savedDiff);
-  if (savedTheme) localStorage.setItem("etu_theme", savedTheme);
-  xp=correct=total=maxStreak=streak=dailyXp=0;
-  earnedAchievements=[]; mistakes=[]; wordWeights=[];
-  categories.myWords=[];
-  save(); goToMainMenu(); update();
-  alertPop("Прогресс сброшен!");
+  shopConfirm("⚠️ Сбросить весь прогресс, XP, достижения и ошибки?<br><span style='font-size:13px;font-weight:600;opacity:.7'>Покупки в магазине сохранятся</span>", () => {
+    const savedDiff  = localStorage.getItem("etu_difficulty");
+    const savedTheme = localStorage.getItem("etu_theme");
+    const savedAccent= localStorage.getItem("etu_accent_theme");
+    const savedShop  = localStorage.getItem("etu_shop_owned");
+    const savedSound = localStorage.getItem("etu_sound_pack");
+    localStorage.clear();
+    if (savedDiff)   localStorage.setItem("etu_difficulty",   savedDiff);
+    if (savedTheme)  localStorage.setItem("etu_theme",        savedTheme);
+    if (savedAccent) localStorage.setItem("etu_accent_theme", savedAccent);
+    if (savedShop)   localStorage.setItem("etu_shop_owned",   savedShop);
+    if (savedSound)  localStorage.setItem("etu_sound_pack",   savedSound);
+    xp=correct=total=maxStreak=streak=dailyXp=0;
+    earnedAchievements=[]; mistakes=[]; wordWeights={};
+    categories.myWords=[];
+    save(); goToMainMenu(); update();
+    alertPop("Прогресс сброшен!");
+  }, '⚠️ Сбросить');
 }
 
 // ════════════════════════════════════
@@ -4805,11 +4877,16 @@ function checkResumeSprint() {
   const s = loadSprintState();
   if (!s) return;
   const minutesAgo = Math.round((Date.now() - s.ts) / 60000);
-  if (confirm(`Найден незавершённый спринт (${minutesAgo} мин. назад) — ${s.sprintIdx} из ${s.sprintLen} слов пройдено. Продолжить?`)) {
-    resumeSprintFromState(s);
-  } else {
-    clearSprintState();
-  }
+  shopConfirm(
+    `▶ Найден незавершённый спринт<br><span style="font-size:14px;font-weight:600;">${minutesAgo} мин. назад — ${s.sprintIdx} из ${s.sprintLen} слов пройдено</span>`,
+    () => resumeSprintFromState(s),
+    '▶ Продолжить'
+  );
+  // patch cancel to also clear state
+  setTimeout(() => {
+    const noBtn = document.getElementById('shopConfirmNo');
+    if (noBtn) { const orig = noBtn.onclick; noBtn.onclick = () => { clearSprintState(); if(orig) orig(); }; }
+  }, 0);
 }
 function resumeSprintFromState(s) {
   playStart();
@@ -4969,12 +5046,12 @@ function exportProgress() {
     font-family:'Inter',system-ui,sans-serif;
     background:linear-gradient(135deg,#080c14 0%,#0d1525 50%,#080c14 100%);
     min-height:100vh; display:flex; align-items:center; justify-content:center;
-    padding:24px;
+    padding:16px;
   }
   .cert{
     background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
     border:1px solid rgba(255,255,255,.12);
-    border-radius:28px; padding:48px 44px; max-width:600px; width:100%;
+    border-radius:24px; padding:36px 24px; max-width:520px; width:100%;
     box-shadow:0 40px 80px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.1);
     position:relative; overflow:hidden; text-align:center;
   }
@@ -4991,37 +5068,37 @@ function exportProgress() {
     pointer-events:none;
   }
   .logo-line{
-    font-size:11px; font-weight:800; letter-spacing:3px; text-transform:uppercase;
-    color:rgba(255,255,255,.35); margin-bottom:28px;
+    font-size:10px; font-weight:800; letter-spacing:3px; text-transform:uppercase;
+    color:rgba(255,255,255,.35); margin-bottom:20px;
   }
   .badge-wrap{
     display:inline-flex; align-items:center; gap:8px;
     background:linear-gradient(135deg,rgba(79,142,255,.15),rgba(124,92,252,.1));
     border:1px solid rgba(79,142,255,.3); border-radius:40px;
-    padding:6px 18px; margin-bottom:24px; font-size:12px; font-weight:800;
+    padding:6px 16px; margin-bottom:20px; font-size:12px; font-weight:800;
     color:#a78bfa; letter-spacing:.5px; text-transform:uppercase;
   }
-  .avatar-big{font-size:72px; display:block; margin-bottom:12px; line-height:1;}
+  .avatar-big{font-size:64px; display:block; margin-bottom:10px; line-height:1;}
   .cert-name{
-    font-size:36px; font-weight:900; color:#fff;
+    font-size:30px; font-weight:900; color:#fff;
     background:linear-gradient(135deg,#f0f4ff,#a78bfa);
     -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    margin-bottom:8px; letter-spacing:-.5px;
+    margin-bottom:8px; letter-spacing:-.5px; word-break:break-word;
   }
-  .cert-sub{font-size:14px; color:rgba(255,255,255,.45); margin-bottom:32px; font-weight:600;}
+  .cert-sub{font-size:13px; color:rgba(255,255,255,.45); margin-bottom:24px; font-weight:600; line-height:1.5;}
   .divider{
     height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
-    margin:28px 0;
+    margin:20px 0;
   }
   .stats-grid{
-    display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:28px;
+    display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;
   }
   .stat-box{
     background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08);
-    border-radius:16px; padding:16px 10px;
+    border-radius:14px; padding:14px 8px;
   }
   .stat-val{
-    font-size:28px; font-weight:900;
+    font-size:26px; font-weight:900;
     background:linear-gradient(135deg,#4f8eff,#a78bfa);
     -webkit-background-clip:text; -webkit-text-fill-color:transparent;
     margin-bottom:4px;
@@ -5029,24 +5106,24 @@ function exportProgress() {
   .stat-label{font-size:10px; font-weight:700; color:rgba(255,255,255,.35); text-transform:uppercase; letter-spacing:.6px;}
   .rank-box{
     background:linear-gradient(135deg,rgba(255,194,71,.12),rgba(255,140,50,.08));
-    border:1px solid rgba(255,194,71,.3); border-radius:16px;
-    padding:16px 20px; margin-bottom:28px;
+    border:1px solid rgba(255,194,71,.3); border-radius:14px;
+    padding:14px 16px; margin-bottom:20px;
     display:flex; align-items:center; justify-content:center; gap:10px;
   }
-  .rank-label{font-size:18px; font-weight:900; color:#ffc247;}
+  .rank-label{font-size:17px; font-weight:900; color:#ffc247;}
   .ach-line{
-    font-size:13px; color:rgba(255,255,255,.4); font-weight:600; margin-bottom:28px;
+    font-size:13px; color:rgba(255,255,255,.4); font-weight:600; margin-bottom:24px; line-height:1.5;
   }
   .ach-line b{color:#22d88f;}
   .seal{
     display:inline-flex; align-items:center; justify-content:center; flex-direction:column;
-    width:90px; height:90px; border-radius:50%;
+    width:80px; height:80px; border-radius:50%;
     background:linear-gradient(135deg,#4f8eff,#7c5cfc);
     box-shadow:0 0 0 6px rgba(79,142,255,.15), 0 0 30px rgba(79,142,255,.3);
-    margin-bottom:16px;
+    margin-bottom:14px;
   }
-  .seal-icon{font-size:36px;}
-  .date-line{font-size:12px; color:rgba(255,255,255,.25); font-weight:600; letter-spacing:.5px;}
+  .seal-icon{font-size:32px;}
+  .date-line{font-size:11px; color:rgba(255,255,255,.25); font-weight:600; letter-spacing:.5px;}
   @media print{
     body{background:#080c14!important; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
   }
@@ -6094,15 +6171,17 @@ function buyOrEquipAvatar(id) {
     return;
   }
   if (xp < item.price) { alertPop(`Не хватает XP! Нужно ${item.price} XP`); return; }
-  if (!confirm(`Купить аватар ${item.icon} ${item.name} за ${item.price} XP?`)) return;
-  xp -= item.price; save(); update();
-  owned.push(id); setOwned('avatars', owned);
-  profileData.avatar = item.icon;
-  localStorage.setItem('etu_profile', JSON.stringify(profileData));
-  document.getElementById('menuAvatar').textContent = item.icon;
-  playAchievement(); spawnConfetti(20);
-  showShopToast(`✅ Куплено!<br><span style="font-size:28px;">${item.icon} ${item.name}</span>`);
-  renderShop();
+  shopConfirm(`Купить аватар ${item.icon} <b>${item.name}</b> за <b>${item.price} XP</b>?`, () => {
+    owned.push(id); setOwned('avatars', owned);
+    xp -= item.price;
+    profileData.avatar = item.icon;
+    localStorage.setItem('etu_profile', JSON.stringify(profileData));
+    save(); update();
+    document.getElementById('menuAvatar').textContent = item.icon;
+    playAchievement(); spawnConfetti(20);
+    showShopToast(`✅ Куплено!<br><span style="font-size:28px;">${item.icon} ${item.name}</span>`);
+    renderShop();
+  });
 }
 
 function buyOrEquipTheme(id) {
@@ -6116,13 +6195,14 @@ function buyOrEquipTheme(id) {
     return;
   }
   if (xp < item.price) { alertPop(`Не хватает XP! Нужно ${item.price} XP`); return; }
-  if (!confirm(`Купить тему «${item.name}» за ${item.price} XP?`)) return;
-  xp -= item.price; save(); update();
-  const ownedTh = getOwned('themes'); ownedTh.push(id); setOwned('themes', ownedTh);
-  applyAccentTheme(id);
-  playAchievement(); spawnConfetti(20);
-  showShopToast(`✅ Тема применена!<br><span style="font-size:24px;">${item.name}</span>`);
-  renderShop();
+  shopConfirm(`Купить тему «<b>${item.name}</b>» за <b>${item.price} XP</b>?`, () => {
+    const ownedTh = getOwned('themes'); ownedTh.push(id); setOwned('themes', ownedTh);
+    xp -= item.price; save(); update();
+    applyAccentTheme(id);
+    playAchievement(); spawnConfetti(20);
+    showShopToast(`✅ Тема применена!<br><span style="font-size:24px;">${item.name}</span>`);
+    renderShop();
+  });
 }
 
 function buyOrEquipSound(id) {
@@ -6132,18 +6212,22 @@ function buyOrEquipSound(id) {
   if (owned) {
     playClick();
     localStorage.setItem('etu_sound_pack', id);
-    unlockAudio(); playCorrect();
+    unlockAudio();
+    setTimeout(() => playCorrect(), 200);
     renderShop();
     return;
   }
   if (xp < item.price) { alertPop(`Не хватает XP! Нужно ${item.price} XP`); return; }
-  if (!confirm(`Купить звук «${item.name}» за ${item.price} XP?`)) return;
-  xp -= item.price; save(); update();
-  const ownedSnd = getOwned('sounds'); ownedSnd.push(id); setOwned('sounds', ownedSnd);
-  localStorage.setItem('etu_sound_pack', id);
-  unlockAudio(); playCorrect(); spawnConfetti(20);
-  showShopToast(`✅ Звук применён!<br><span style="font-size:24px;">${item.icon} ${item.name}</span>`);
-  renderShop();
+  shopConfirm(`Купить звук «<b>${item.name}</b>» за <b>${item.price} XP</b>?`, () => {
+    const ownedSnd = getOwned('sounds'); ownedSnd.push(id); setOwned('sounds', ownedSnd);
+    localStorage.setItem('etu_sound_pack', id);
+    xp -= item.price; save(); update();
+    unlockAudio();
+    setTimeout(() => playCorrect(), 200);
+    spawnConfetti(20);
+    showShopToast(`✅ Звук применён!<br><span style="font-size:24px;">${item.icon} ${item.name}</span>`);
+    renderShop();
+  });
 }
 
 function applyAccentTheme(id) {
@@ -6162,6 +6246,7 @@ function loadAccentTheme() {
 // ════════════════════════════════════
 loadTheme();
 loadAccentTheme();
+loadProfile();
 renderChest();
 document.getElementById("soundBtn").textContent=soundEnabled?"🔊":"🔇";
 
@@ -6193,6 +6278,25 @@ renderActivityCalendar();
 renderChallenges();
 
 // onCorrect патч убран — level up встроен напрямую
+
+// ════ Custom shop confirm modal (replaces browser confirm) ════
+function shopConfirm(message, onYes, yesLabel) {
+  let modal = document.getElementById('shopConfirmModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'shopConfirmModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(8,12,20,.85);backdrop-filter:blur(12px);z-index:9998;display:flex;align-items:center;justify-content:center;padding:20px;';
+    modal.innerHTML = '<div style="background:var(--card);border:1px solid var(--card-border);border-radius:24px;padding:28px 24px;max-width:360px;width:100%;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.5);"><div id="shopConfirmMsg" style="font-size:17px;font-weight:700;line-height:1.5;margin-bottom:24px;color:var(--text);"></div><div style="display:flex;gap:12px;"><button id="shopConfirmNo" style="flex:1;padding:14px;border-radius:14px;border:1px solid var(--card-border);background:var(--muted);color:var(--text);font-size:15px;font-weight:700;cursor:pointer;">Отмена</button><button id="shopConfirmYes" style="flex:1;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:15px;font-weight:800;cursor:pointer;">Купить ✓</button></div></div>';
+    document.body.appendChild(modal);
+  }
+  document.getElementById('shopConfirmMsg').innerHTML = message;
+  document.getElementById('shopConfirmYes').textContent = yesLabel || 'Купить ✓';
+  modal.style.display = 'flex';
+  const hide = () => { modal.style.display = 'none'; };
+  document.getElementById('shopConfirmYes').onclick = () => { hide(); onYes(); };
+  document.getElementById('shopConfirmNo').onclick = hide;
+  modal.onclick = (e) => { if (e.target === modal) hide(); };
+}
 
 </script>
 </body>
