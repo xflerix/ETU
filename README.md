@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -1594,8 +1594,209 @@ select {
 }
 
 /* ════════════════════════════════════
-   ОНБОРДИНГ
+   КАЛЕНДАРЬ АКТИВНОСТИ
 ════════════════════════════════════ */
+.activity-cal-wrap {
+  margin-bottom: 16px;
+}
+.activity-cal-title {
+  font-size: 12px; font-weight: 800; color: var(--text2);
+  text-transform: uppercase; letter-spacing: .6px; margin-bottom: 10px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.activity-cal-title span { color: var(--accent); font-size: 13px; letter-spacing: 0; text-transform: none; }
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(13, 1fr);
+  gap: 3px;
+}
+.act-cell {
+  aspect-ratio: 1; border-radius: 3px;
+  background: var(--muted);
+  transition: transform .15s;
+  cursor: default;
+  position: relative;
+}
+.act-cell:hover { transform: scale(1.4); z-index: 2; }
+.act-cell.lvl1 { background: rgba(79,142,255,.3); }
+.act-cell.lvl2 { background: rgba(79,142,255,.55); }
+.act-cell.lvl3 { background: rgba(79,142,255,.8); }
+.act-cell.lvl4 { background: #4f8eff; box-shadow: 0 0 6px rgba(79,142,255,.4); }
+.act-cell.today { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 4px; }
+.act-months {
+  display: flex; justify-content: space-between;
+  font-size: 9px; font-weight: 700; color: var(--text2);
+  margin-top: 5px; padding: 0 1px;
+}
+
+/* ════════════════════════════════════
+   ЕЖЕДНЕВНЫЕ ЧЕЛЛЕНДЖИ
+════════════════════════════════════ */
+.challenges-box {
+  background: var(--muted2); border: 1px solid var(--card-border);
+  border-radius: var(--r2); padding: 14px 16px; margin-bottom: 16px;
+}
+.challenges-title {
+  font-size: 13px; font-weight: 800; margin-bottom: 12px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.challenges-refresh {
+  font-size: 11px; color: var(--text2); font-weight: 600;
+}
+.challenge-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 12px;
+  border: 1px solid var(--card-border); background: var(--muted2);
+  margin-bottom: 8px; transition: var(--t); cursor: pointer;
+}
+.challenge-item:last-child { margin-bottom: 0; }
+.challenge-item.done {
+  border-color: rgba(34,216,143,.3); background: rgba(34,216,143,.06);
+  opacity: .7;
+}
+.challenge-item:not(.done):hover { border-color: var(--accent); }
+.ch-icon { font-size: 22px; flex-shrink: 0; }
+.ch-info { flex: 1; }
+.ch-name { font-size: 13px; font-weight: 800; margin-bottom: 2px; }
+.ch-desc { font-size: 11px; color: var(--text2); font-weight: 600; }
+.ch-xp {
+  font-size: 12px; font-weight: 900; color: var(--accent);
+  background: rgba(79,142,255,.1); border-radius: 8px;
+  padding: 3px 8px; white-space: nowrap; flex-shrink: 0;
+}
+.ch-xp.done-xp { color: var(--ok); background: rgba(34,216,143,.1); }
+.ch-check { font-size: 18px; flex-shrink: 0; }
+
+/* ════════════════════════════════════
+   РЕЖИМ «СОСТАВЬ ПРЕДЛОЖЕНИЕ»
+════════════════════════════════════ */
+.sentence-word-row {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  justify-content: center; margin: 14px 0;
+  min-height: 44px;
+}
+.sentence-tile {
+  padding: 8px 14px; border-radius: 10px;
+  background: var(--muted2); border: 2px solid var(--card-border);
+  font-size: 15px; font-weight: 800; cursor: pointer;
+  transition: var(--t); user-select: none;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.sentence-tile:hover { border-color: var(--accent); background: rgba(79,142,255,.1); }
+.sentence-tile.used { opacity: .3; pointer-events: none; }
+.sentence-answer-row {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  justify-content: center; min-height: 52px;
+  background: var(--muted2); border: 2px dashed var(--card-border);
+  border-radius: 14px; padding: 10px 12px; margin-bottom: 14px;
+  transition: border-color .2s;
+}
+.sentence-answer-row.has-words { border-color: rgba(79,142,255,.3); }
+.sentence-answer-tile {
+  padding: 8px 14px; border-radius: 10px;
+  background: rgba(79,142,255,.15); border: 2px solid var(--accent);
+  font-size: 15px; font-weight: 800; cursor: pointer;
+  transition: var(--t);
+}
+.sentence-answer-tile:hover { background: rgba(255,79,109,.15); border-color: var(--err); }
+.sentence-ru {
+  font-size: 20px; font-weight: 900; text-align: center;
+  margin-bottom: 6px; color: var(--text); min-height: 32px;
+}
+.sentence-hint-line {
+  font-size: 12px; color: var(--text2); text-align: center;
+  margin-bottom: 10px; font-style: italic;
+}
+.sentence-result-screen .result-hero { font-size: 60px; }
+
+/* ════════════════════════════════════
+   СУНДУКИ С НАГРАДАМИ
+════════════════════════════════════ */
+.chest-box {
+  background: linear-gradient(135deg, rgba(255,194,71,.10), rgba(255,140,50,.05));
+  border: 1px solid rgba(255,194,71,.25); border-radius: var(--r2);
+  padding: 14px 16px; margin-bottom: 16px;
+}
+.chest-title {
+  font-size: 13px; font-weight: 800; margin-bottom: 10px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.chest-row { display: flex; gap: 10px; align-items: center; }
+.chest-track { display: flex; gap: 6px; flex: 1; }
+.chest-day {
+  flex: 1; aspect-ratio: 1; border-radius: 10px;
+  background: var(--muted); border: 1px solid var(--card-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 900; color: var(--text2);
+  transition: var(--t); position: relative;
+}
+.chest-day.filled {
+  background: linear-gradient(135deg, rgba(255,194,71,.25), rgba(255,140,50,.15));
+  border-color: rgba(255,194,71,.5); color: var(--warn);
+}
+.chest-day.today { outline: 2px solid var(--warn); outline-offset: 1px; }
+.chest-reward-btn {
+  flex-shrink: 0; padding: 10px 14px; border-radius: 12px;
+  border: none; cursor: pointer; font-weight: 900; font-size: 13px;
+  background: linear-gradient(135deg, #ffc247, #ff8c32); color: #1a1408;
+  transition: var(--t); white-space: nowrap;
+}
+.chest-reward-btn:disabled { opacity: .35; cursor: default; }
+.chest-reward-btn.ready { animation: chestPulse 1.2s infinite; }
+@keyframes chestPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,194,71,.5); }
+  50% { box-shadow: 0 0 0 8px rgba(255,194,71,0); }
+}
+.chest-sub { font-size: 11px; color: var(--text2); font-weight: 600; margin-top: 8px; }
+
+/* ════════════════════════════════════
+   МАГАЗИН
+════════════════════════════════════ */
+.shop-balance {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--muted2); border: 1px solid var(--card-border);
+  border-radius: var(--r2); padding: 14px 16px; margin-bottom: 16px;
+}
+.shop-balance-label { font-size: 12px; font-weight: 800; color: var(--text2); text-transform: uppercase; letter-spacing: .5px; }
+.shop-balance-val { font-size: 24px; font-weight: 900; color: var(--warn); }
+.shop-section-title {
+  font-size: 12px; font-weight: 800; color: var(--text2);
+  text-transform: uppercase; letter-spacing: .6px; margin: 16px 0 10px;
+}
+.shop-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+}
+.shop-grid.themes { grid-template-columns: repeat(3, 1fr); }
+.shop-item {
+  background: var(--muted2); border: 2px solid var(--card-border);
+  border-radius: 14px; padding: 10px 6px; text-align: center;
+  cursor: pointer; transition: var(--t); position: relative;
+}
+.shop-item:hover { border-color: var(--accent); }
+.shop-item.owned { border-color: rgba(34,216,143,.4); }
+.shop-item.equipped { border-color: var(--accent); background: rgba(79,142,255,.12); }
+.shop-item.locked { opacity: .55; }
+.shop-item-icon { font-size: 26px; margin-bottom: 6px; }
+.shop-item-name { font-size: 10px; font-weight: 800; color: var(--text2); margin-bottom: 4px; }
+.shop-item-price {
+  font-size: 11px; font-weight: 900; color: var(--warn);
+  background: rgba(255,194,71,.1); border-radius: 8px; padding: 2px 6px;
+}
+.shop-item-price.owned-tag { color: var(--ok); background: rgba(34,216,143,.1); }
+.shop-item-price.equipped-tag { color: var(--accent); background: rgba(79,142,255,.1); }
+.theme-swatch {
+  width: 100%; height: 28px; border-radius: 8px; margin-bottom: 6px;
+}
+.shop-toast {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  background: linear-gradient(135deg, rgba(255,194,71,.97), rgba(255,140,50,.97));
+  color: #1a1408; padding: 28px 36px; border-radius: 24px;
+  font-size: 20px; font-weight: 900; text-align: center;
+  box-shadow: 0 20px 60px rgba(255,140,50,.4);
+  z-index: 9999; pointer-events: none;
+  animation: lvlupIn .5s cubic-bezier(.4,0,.2,1) forwards;
+}
+
 .onboard-overlay {
   position: fixed; inset: 0;
   background: rgba(8,12,20,.94); backdrop-filter: blur(16px);
@@ -1739,17 +1940,6 @@ select {
     <div class="level-bar-wrap"><div class="level-bar" id="levelBar"></div></div>
     <div class="level-txt" id="levelTxt"></div>
 
-    <div class="menu-stats">
-      <div class="stat-card">
-        <div class="s-label">🔥 Макс. серия</div>
-        <div class="s-val" id="menuStreak">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="s-label">🎯 Точность</div>
-        <div class="s-val" id="menuAccuracy">—</div>
-      </div>
-    </div>
-
     <div class="day-streak-box" id="dayStreakBox">
       <div class="day-streak-flame">🔥</div>
       <div class="day-streak-info">
@@ -1763,21 +1953,17 @@ select {
       </div>
     </div>
 
-    <div class="daily-box">
-      <div class="daily-header">
-        <span class="daily-title">📅 Дневная цель</span>
-        <button class="daily-change-btn" onclick="openDiffModal();event.stopPropagation();">⚙️ Сложность</button>
+    <div class="menu-btns" style="margin-bottom:16px;">
+      <button class="start-btn-mega" onclick="showModeSelect()"><span>🚀</span> Начать тренировку</button>
+    </div>
+
+    <!-- Ежедневные челленджи -->
+    <div class="challenges-box">
+      <div class="challenges-title">
+        🎯 Челленджи на сегодня
+        <span class="challenges-refresh" id="chalRefreshTime"></span>
       </div>
-      <div class="daily-difficulty-badge" id="dailyDiffBadge">🌱 Легко</div>
-      <div class="daily-progress-row">
-        <span class="daily-xp-done" id="dailyXpDone">0 XP набрано</span>
-        <span class="daily-xp-goal" id="dailyGoalText">цель: 50 XP</span>
-      </div>
-      <div class="prog-wrap" style="margin-bottom:0;height:10px;">
-        <div class="prog-bar" id="dailyGoalBar"></div>
-      </div>
-      <div class="daily-complete-banner" id="dailyCompleteBanner">🎉 Дневная цель выполнена! Отличная работа!</div>
-      <div id="weeklyChart" class="weekly-chart" style="margin-top:10px;"></div>
+      <div id="challengesList"></div>
     </div>
 
     <div class="word-of-day-card" id="wodCard">
@@ -1792,14 +1978,10 @@ select {
       </div>
     </div>
 
-    <div class="quote-box" id="quoteBox">
-      <em id="quoteText">Loading...</em>
-    </div>
-
     <div class="menu-btns">
-      <button class="start-btn-mega" onclick="showModeSelect()"><span>🚀</span> Начать тренировку</button>
       <button class="btn-secondary" onclick="openDictSearch()">🔍 Поиск слова</button>
       <button class="btn-secondary" onclick="showScreen('pronounceScreen');initPronunScreen();">🗣️ Произношение</button>
+      <button class="btn-secondary" onclick="showShopScreen()">🛍️ Магазин</button>
     </div>
   </div>
 
@@ -1833,6 +2015,11 @@ select {
         <span class="mc-icon">🎧</span>
         Диктант
         <div class="mc-sub">Слово произносится вслух — напиши перевод на русском</div>
+      </div>
+      <div class="mode-card new-badge" onclick="startSentence()" style="grid-column:span 2;">
+        <span class="mc-icon">🗣️</span>
+        Предложение
+        <div class="mc-sub">Слова перемешаны — составь правильное предложение</div>
       </div>
     </div>
 
@@ -2109,6 +2296,17 @@ select {
         </div>
       </div>
     </div>
+
+    <!-- Календарь активности -->
+    <div style="background:var(--muted2);border:1px solid var(--card-border);border-radius:var(--r2);padding:14px 16px;margin-bottom:20px;">
+      <div class="activity-cal-title">
+        📆 Активность за 3 месяца
+        <span id="actCalStreak"></span>
+      </div>
+      <div class="activity-grid" id="activityGrid"></div>
+      <div class="act-months" id="actMonths"></div>
+    </div>
+
     <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveProfile()">💾 Сохранить профиль</button>
     <button class="btn-secondary" style="width:100%;" onclick="showScreen('menuScreen')">← Назад</button>
   </div>
@@ -2116,6 +2314,22 @@ select {
   <!-- ═══ СТАТИСТИКА ═══ -->
   <div id="statsScreen" class="card screen">
     <div style="font-size:20px;font-weight:900;margin-bottom:16px;">📊 Статистика</div>
+
+    <div class="daily-box">
+      <div class="daily-header">
+        <span class="daily-title">📅 Дневная цель</span>
+        <button class="daily-change-btn" onclick="openDiffModal();event.stopPropagation();">⚙️ Сложность</button>
+      </div>
+      <div class="daily-difficulty-badge" id="dailyDiffBadge">🌱 Легко</div>
+      <div class="daily-progress-row">
+        <span class="daily-xp-done" id="dailyXpDone">0 XP набрано</span>
+        <span class="daily-xp-goal" id="dailyGoalText">цель: 50 XP</span>
+      </div>
+      <div class="prog-wrap" style="margin-bottom:0;height:10px;">
+        <div class="prog-bar" id="dailyGoalBar"></div>
+      </div>
+      <div class="daily-complete-banner" id="dailyCompleteBanner">🎉 Дневная цель выполнена! Отличная работа!</div>
+    </div>
 
     <div class="stats-grid">
       <div class="stats-cell">
@@ -2197,6 +2411,20 @@ select {
   <!-- ═══ ДОСТИЖЕНИЯ И ОШИБКИ ═══ -->
   <div class="card screen" id="dashboardCard">
     <div style="font-size:20px;font-weight:900;margin-bottom:16px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">🏆 Достижения</div>
+
+    <!-- Сундук с наградами -->
+    <div class="chest-box">
+      <div class="chest-title">
+        🎁 Сундук недели
+        <span style="font-size:11px;color:var(--text2);font-weight:700;">за выполнение всех челленджей</span>
+      </div>
+      <div class="chest-row">
+        <div class="chest-track" id="chestTrack"></div>
+        <button class="chest-reward-btn" id="chestClaimBtn" onclick="claimChest()" disabled>Открыть 🔒</button>
+      </div>
+      <div class="chest-sub" id="chestSub">Выполни все 3 челленджа сегодня, чтобы продвинуться</div>
+    </div>
+
     <div class="tabs">
       <div class="tab active" onclick="switchTab('tab-ach')" id="achBtn">🏆 Достижения <span id="achCountBadge" style="background:var(--ok);color:#000;font-size:10px;padding:1px 6px;border-radius:6px;font-weight:900;"></span></div>
       <div class="tab" onclick="switchTab('tab-mis')" id="misBtn">❌ Ошибки <span id="misCountBadge" style="background:var(--err);color:#fff;font-size:10px;padding:1px 6px;border-radius:6px;font-weight:900;display:none;"></span></div>
@@ -2466,7 +2694,6 @@ select {
       <span class="onboard-emoji">🚀</span>
       <div class="onboard-title">English Trainer</div>
       <div class="onboard-sub">Учи английские слова каждый день — быстро, весело и с геймификацией!</div>
-      <div style="background:rgba(34,216,143,.1);border:1px solid rgba(34,216,143,.3);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:800;color:var(--ok);text-align:center;margin-bottom:14px;">🌍 Уже 12 847 пользователей тренируются с нами</div>
       <div class="onboard-avatar-row" id="onboardAvatarRow"></div>
       <input class="onboard-name-input" id="onboardName" placeholder="Как тебя зовут?" maxlength="20">
       <div class="onboard-steps">
@@ -2492,6 +2719,79 @@ select {
 
 <!-- ═══ ЭКРАН ПОВТОРЕНИЯ ОШИБОК ═══ -->
 <div id="mistakeRetryScreen" class="card screen" style="display:none;"></div>
+
+<!-- ═══ РЕЖИМ «ПРЕДЛОЖЕНИЕ» ═══ -->
+<div id="sentenceScreen" class="card screen">
+  <div class="game-header">
+    <button class="pause-btn" onclick="exitSentence()">← Выйти</button>
+    <div class="stats-bar">
+      <div class="mini-stat">⭐ <span id="senXp">0</span></div>
+      <div class="mini-stat">🔥 <span id="senStreak">0</span></div>
+    </div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar sprint" id="senBar"></div></div>
+  <div class="sprint-counter" id="senCounter" style="text-align:right;margin-bottom:8px;">Предложение 1 из 8</div>
+
+  <div style="font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Переведи на английский:</div>
+  <div class="sentence-ru" id="senRu">—</div>
+  <div class="sentence-hint-line" id="senHintLine"></div>
+
+  <div style="font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Твой ответ:</div>
+  <div class="sentence-answer-row" id="senAnswer" onclick="senAnswerClick(event)"></div>
+
+  <div style="font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">Слова:</div>
+  <div class="sentence-word-row" id="senWords"></div>
+
+  <div class="result" id="senResult"></div>
+  <div class="actions" style="margin-top:10px;">
+    <button class="btn-secondary btn-hint" onclick="senHint()">💡 Подсказка</button>
+    <button class="btn-secondary" onclick="senSkip()">⏭ Пропуск</button>
+    <button class="btn-primary" onclick="senCheck()">✅ Проверить</button>
+  </div>
+</div>
+
+<!-- ═══ РЕЗУЛЬТАТЫ «ПРЕДЛОЖЕНИЕ» ═══ -->
+<div id="sentenceResultScreen" class="card screen sentence-result-screen">
+  <div class="result-hero" id="senResEmoji">🗣️</div>
+  <div class="result-title" id="senResTitle">Отличная работа!</div>
+  <div class="result-pct" id="senResPct">0%</div>
+  <div class="result-stats">
+    <div class="result-stat">✅ Верно<strong id="senResCorrect">0</strong></div>
+    <div class="result-stat">❌ Ошибки<strong id="senResErrors">0</strong></div>
+    <div class="result-stat">⭐ XP<strong id="senResXp">0</strong></div>
+    <div class="result-stat">🔥 Серия<strong id="senResStreak">0</strong></div>
+  </div>
+  <div class="result-verdict" id="senResVerdict"></div>
+  <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">
+    <button class="btn-primary" onclick="startSentence()">🔄 Ещё раз</button>
+    <button class="btn-secondary" onclick="showScreen('menuScreen');updateMenu();">🏠 В меню</button>
+  </div>
+</div>
+
+<!-- ═══ МАГАЗИН ═══ -->
+<div id="shopScreen" class="card screen">
+  <div style="font-size:20px;font-weight:900;margin-bottom:4px;">🛍️ Магазин</div>
+  <div style="color:var(--text2);font-size:13px;margin-bottom:14px;">Трать XP на аватары, темы и звуки</div>
+
+  <div class="shop-balance">
+    <div>
+      <div class="shop-balance-label">Твой баланс</div>
+      <div class="shop-balance-val" id="shopXpBalance">0 XP</div>
+    </div>
+    <div style="font-size:36px;">💰</div>
+  </div>
+
+  <div class="shop-section-title">🦸 Эксклюзивные аватары</div>
+  <div class="shop-grid" id="shopAvatars"></div>
+
+  <div class="shop-section-title">🎨 Цветовые темы</div>
+  <div class="shop-grid themes" id="shopThemes"></div>
+
+  <div class="shop-section-title">🔊 Звуки правильного ответа</div>
+  <div class="shop-grid" id="shopSounds"></div>
+
+  <button class="btn-secondary" style="width:100%;margin-top:16px;" onclick="goToMainMenu()">← Назад</button>
+</div>
 
 <!-- Нижняя навигация — всегда видима -->
 <nav class="bottom-nav" id="bottomNav">
@@ -2859,7 +3159,13 @@ function beep(freq, type, dur, vol=0.07) {
     o.start(); o.stop(audioCtx.currentTime + dur);
   } catch(e){}
 }
-function playCorrect(){ beep(523,'sine',.1); setTimeout(()=>beep(659,'sine',.12),70); setTimeout(()=>beep(784,'sine',.2),140); }
+function playCorrect(){
+  const pack = localStorage.getItem('etu_sound_pack') || 'default';
+  if (pack === 'bells') { beep(880,'sine',.12); setTimeout(()=>beep(1108,'sine',.14),60); setTimeout(()=>beep(1318,'sine',.25),130); return; }
+  if (pack === 'arcade') { beep(660,'square',.06,.05); setTimeout(()=>beep(880,'square',.06,.05),50); setTimeout(()=>beep(1100,'square',.12,.06),100); return; }
+  if (pack === 'chime') { beep(784,'triangle',.18,.08); setTimeout(()=>beep(1047,'triangle',.22,.07),90); setTimeout(()=>beep(1568,'triangle',.3,.05),180); return; }
+  beep(523,'sine',.1); setTimeout(()=>beep(659,'sine',.12),70); setTimeout(()=>beep(784,'sine',.2),140);
+}
 function playWrong(){ beep(300,'sawtooth',.15,.1); setTimeout(()=>beep(200,'sawtooth',.25,.12),150); }
 function playStreak(){ beep(659,'sine',.08); setTimeout(()=>beep(784,'sine',.08),60); setTimeout(()=>beep(987,'sine',.08),120); setTimeout(()=>beep(1047,'sine',.2),180); }
 function playAchievement(){ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,'sine',.25,.12),i*80)); }
@@ -2994,6 +3300,10 @@ function goToMainMenu() {
   document.getElementById("pauseOverlay").classList.remove("active");
   updateMenu();
   showScreen("menuScreen");
+  document.getElementById("dashboardCard").style.display = "";
+  renderActivityCalendar();
+  renderChallenges();
+  renderChest();
 }
 function showModeSelect() {
   playClick();
@@ -3025,8 +3335,6 @@ function updateMenu() {
   document.getElementById("nextLvlXp").textContent = nextXp;
   document.getElementById("levelBar").style.width = pct + "%";
   document.getElementById("levelTxt").textContent = `${100 - (xp%100)} XP до уровня ${lvl+1}`;
-  document.getElementById("menuStreak").textContent = maxStreak;
-  document.getElementById("menuAccuracy").textContent = total ? Math.round(correct/total*100)+"%" : "—";
   const rank = getRankObj(xp);
   document.getElementById("userRank").textContent = rank.label;
   document.getElementById("menuAvatar").textContent = profileData.avatar || rank.avatar;
@@ -3044,10 +3352,6 @@ function updateMenu() {
   document.getElementById("dailyGoalBar").style.background = done
     ? "linear-gradient(90deg, #22d88f, #4f8eff)"
     : "linear-gradient(90deg, #4f8eff, #a78bfa)";
-
-  // Цитата
-  const q = quotes[new Date().getDate() % quotes.length];
-  document.getElementById("quoteText").innerHTML = `"${q.text}" <strong>— ${q.author}</strong>`;
 }
 
 function updateStats() {
@@ -3441,6 +3745,10 @@ function showResults() {
   document.getElementById("resultsTitle").textContent=title;
   document.getElementById("resultsVerdict").innerHTML=verdict;
   triggerAch("ach_sprint");
+  trackChStat('sprints10');
+  if (sprintErrors === 0) trackChStat('perfectSprint');
+  claimChallengeXp();
+  renderActivityCalendar();
 
   // Рекорд дня
   const recBadge = document.getElementById("dailyRecordBadge");
@@ -3519,6 +3827,9 @@ function showFlashcardResult() {
   repBtn.style.display = fcUnknownCards.length>0?'flex':'none';
   showScreen("flashcardResultScreen");
   xp += fcKnown*3; dailyXp += fcKnown*3; save(); updateMenu();
+  trackChStat('flashDone');
+  claimChallengeXp();
+  renderActivityCalendar();
 }
 function fcRepeatUnknown() {
   if (fcUnknownCards.length>0) startFlashcards(fcUnknownCards);
@@ -3673,6 +3984,9 @@ function showAnagramResult(){
   playSprint();
   showScreen("resultsScreen");
   document.getElementById("dashboardCard").style.display="none";
+  trackChStat('anagramDone');
+  claimChallengeXp();
+  renderActivityCalendar();
 }
 function exitAnagram(){
   clearInterval(agInterval); goToMainMenu();
@@ -3998,6 +4312,7 @@ function loadProfile() {
 
 function showProfileScreen() {
   playClick();
+  renderActivityCalendar();
   // Fill fields
   document.getElementById("profileName").value = profileData.name || "";
   document.getElementById("profileGoal").value = profileData.goal || "";
@@ -4327,6 +4642,7 @@ function showAchScreen() {
   document.getElementById('dashboardCard').style.display = '';
   renderAchievements();
   renderMistakes();
+  renderChest();
   showScreen('dashboardCard');
 }
 
@@ -4567,6 +4883,7 @@ function wodMarkKnown() {
   xp += 5; dailyXp += 5; save(); updateMenu();
   spawnConfetti(15); playCorrect();
   alertPop("🌟 +5 XP за слово дня!");
+  claimChallengeXp();
 }
 function wodSpeak() {
   unlockAudio();
@@ -4806,17 +5123,26 @@ function renderCatStats() {
     jobs:"💼 Профессии", workplaces:"🏭 Места работы", dailyRoutines:"🌅 Распорядок",
     activities:"📅 Занятия", aroundTown:"🏙️ Город", myWords:"⭐ Мои слова"
   };
-  const entries = Object.entries(raw).filter(([k,v])=>(v.total||0)>0)
+  const entries = Object.entries(raw).filter(([k,v])=>(v.total||0)>=3)
     .sort((a,b)=>b[1].total-a[1].total);
   if (!entries.length) {
     el.innerHTML = '<div class="empty-state" style="padding:10px 0;font-size:13px;">Начни тренировку, чтобы увидеть статистику по категориям</div>';
     return;
   }
+  // Find easiest/hardest by accuracy
+  const byAcc = [...entries].sort((a,b) => (b[1].correct/b[1].total) - (a[1].correct/a[1].total));
+  const easiestKey = byAcc[0][0];
+  const hardestKey = byAcc[byAcc.length-1][0];
+  const showBadges = byAcc.length >= 2 && (byAcc[0][1].correct/byAcc[0][1].total) !== (byAcc[byAcc.length-1][1].correct/byAcc[byAcc.length-1][1].total);
+
   el.innerHTML = entries.map(([cat, v]) => {
     const pct = v.total ? Math.round(v.correct / v.total * 100) : 0;
     const color = pct >= 80 ? 'var(--ok)' : pct >= 60 ? 'var(--accent)' : 'var(--warn)';
+    let badge = '';
+    if (showBadges && cat === easiestKey) badge = ' <span style="color:var(--ok);font-size:11px;font-weight:800;">✓ Легче всех</span>';
+    else if (showBadges && cat === hardestKey) badge = ' <span style="color:var(--err);font-size:11px;font-weight:800;">⚠ Сложнее всех</span>';
     return `<div class="cat-stat-row">
-      <div class="cat-stat-label">${catLabels[cat]||cat}</div>
+      <div class="cat-stat-label">${catLabels[cat]||cat}${badge}</div>
       <div class="cat-stat-bar-wrap"><div class="cat-stat-bar" style="width:${pct}%;background:linear-gradient(90deg,${color},var(--accent));"></div></div>
       <div class="cat-stat-pct" style="color:${color};">${pct}%</div>
     </div>`;
@@ -5147,12 +5473,696 @@ function showDictantResult() {
   document.getElementById("dashboardCard").style.display = "none";
   spawnConfetti(25);
   xp += dictantXp; dailyXp += dictantXp; save(); updateMenu();
+  trackChStat('dictantDone');
+  claimChallengeXp();
+  renderActivityCalendar();
 }
 
 // ════════════════════════════════════
 
 // ════════════════════════════════════
+//  КАЛЕНДАРЬ АКТИВНОСТИ
+// ════════════════════════════════════
+function renderActivityCalendar() {
+  const grid = document.getElementById('activityGrid');
+  const monthsEl = document.getElementById('actMonths');
+  if (!grid) return;
+
+  const DAYS = 91; // ~3 months
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  // Load stored daily XP history
+  let history = {};
+  try { history = JSON.parse(localStorage.getItem('etu_act_history')) || {}; } catch(e){}
+
+  // Write today's XP
+  const todayKey = today.toDateString();
+  history[todayKey] = dailyXp;
+  try { localStorage.setItem('etu_act_history', JSON.stringify(history)); } catch(e){}
+
+  // Max for scale
+  const vals = Object.values(history).filter(v => v > 0);
+  const maxXp = vals.length ? Math.max(...vals) : 1;
+
+  grid.innerHTML = '';
+  const monthsSeen = {};
+  let monthPositions = [];
+
+  for (let i = DAYS - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const key = d.toDateString();
+    const xpVal = history[key] || 0;
+    let lvl = 0;
+    if (xpVal > 0) {
+      const r = xpVal / maxXp;
+      lvl = r < .25 ? 1 : r < .5 ? 2 : r < .75 ? 3 : 4;
+    }
+    const isToday = key === todayKey;
+    const cell = document.createElement('div');
+    cell.className = `act-cell lvl${lvl}${isToday ? ' today' : ''}`;
+    cell.title = `${d.toLocaleDateString('ru-RU', {day:'numeric',month:'short'})}: ${xpVal} XP`;
+    grid.appendChild(cell);
+
+    // Track month labels
+    const mo = d.toLocaleString('ru-RU', {month:'short'});
+    const colIdx = DAYS - 1 - i;
+    if (!monthsSeen[mo]) {
+      monthsSeen[mo] = true;
+      monthPositions.push({ mo, col: colIdx });
+    }
+  }
+
+  // Month labels — only first of each
+  if (monthsEl) {
+    const totalCols = 13; // grid columns
+    monthsEl.innerHTML = '';
+    // Just show first 3 distinct months
+    monthPositions.slice(0, 3).forEach(({mo}) => {
+      const s = document.createElement('span');
+      s.textContent = mo;
+      monthsEl.appendChild(s);
+    });
+  }
+
+  // Streak label
+  const streakEl = document.getElementById('actCalStreak');
+  if (streakEl) {
+    let streak = 0;
+    for (let i = 0; i < DAYS; i++) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      if ((history[d.toDateString()] || 0) > 0) streak++;
+      else break;
+    }
+    streakEl.textContent = streak > 1 ? `🔥 ${streak} дн. подряд` : '';
+  }
+}
+
+// ════════════════════════════════════
+//  ЕЖЕДНЕВНЫЕ ЧЕЛЛЕНДЖИ
+// ════════════════════════════════════
+const CHALLENGE_TEMPLATES = [
+  { id:'ch_sprint10',  icon:'⚡', name:'Мини-спринт',       desc:'Пройди спринт из 10 слов',          xp:20,  check:()=>{ const s=JSON.parse(localStorage.getItem('etu_ch_stats')||'{}'); return (s.sprints10||0)>=1; } },
+  { id:'ch_correct10', icon:'✅', name:'10 правильных',      desc:'Ответь правильно 10 раз подряд',     xp:25,  check:()=>maxStreak>=10 },
+  { id:'ch_xp50',      icon:'⭐', name:'50 XP за день',      desc:'Набери 50 XP сегодня',              xp:15,  check:()=>dailyXp>=50 },
+  { id:'ch_flash',     icon:'🃏', name:'Флэшкарты',          desc:'Пройди раунд флэшкарт',             xp:15,  check:()=>{ const s=JSON.parse(localStorage.getItem('etu_ch_stats')||'{}'); return (s.flashDone||0)>=1; } },
+  { id:'ch_dictant',   icon:'🎧', name:'Диктант',            desc:'Пройди режим диктанта',             xp:20,  check:()=>{ const s=JSON.parse(localStorage.getItem('etu_ch_stats')||'{}'); return (s.dictantDone||0)>=1; } },
+  { id:'ch_anagram',   icon:'🧩', name:'Анаграмма',          desc:'Пройди раунд анаграммы',            xp:15,  check:()=>{ const s=JSON.parse(localStorage.getItem('etu_ch_stats')||'{}'); return (s.anagramDone||0)>=1; } },
+  { id:'ch_sentence',  icon:'🗣️', name:'Предложение',        desc:'Составь 3 предложения верно',       xp:30,  check:()=>{ const s=JSON.parse(localStorage.getItem('etu_ch_stats')||'{}'); return (s.sentCorrect||0)>=3; } },
+  { id:'ch_noerror',   icon:'💎', name:'Без ошибок',         desc:'Пройди спринт без единой ошибки',   xp:35,  check:()=>{ const s=JSON.parse(localStorage.getItem('etu_ch_stats')||'{}'); return (s.perfectSprint||0)>=1; } },
+  { id:'ch_wod',       icon:'📖', name:'Слово дня',          desc:'Отметь слово дня как изученное',    xp:10,  check:()=>localStorage.getItem('etu_wod_known_'+new Date().toDateString())==='1' },
+  { id:'ch_correct5',  icon:'🔥', name:'Серия 5',            desc:'Набери серию из 5 правильных',      xp:10,  check:()=>maxStreak>=5 },
+];
+
+function getTodayChallenges() {
+  const todayKey = 'etu_chal_' + new Date().toDateString();
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(todayKey)); } catch(e){}
+  if (saved && Array.isArray(saved)) return saved;
+  // Pick 3 random challenges deterministically by date
+  const seed = new Date().toDateString().split(' ').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const shuffled = [...CHALLENGE_TEMPLATES].sort((a,b) => {
+    const ha = (seed * 1103515245 + a.id.length) & 0x7fffffff;
+    const hb = (seed * 1103515245 + b.id.length * 2) & 0x7fffffff;
+    return ha - hb;
+  });
+  const picked = shuffled.slice(0, 3).map(c => c.id);
+  try { localStorage.setItem(todayKey, JSON.stringify(picked)); } catch(e){}
+  return picked;
+}
+
+function renderChallenges() {
+  const el = document.getElementById('challengesList');
+  const refreshEl = document.getElementById('chalRefreshTime');
+  if (!el) return;
+
+  const ids = getTodayChallenges();
+  const templates = ids.map(id => CHALLENGE_TEMPLATES.find(c => c.id === id)).filter(Boolean);
+
+  // Time until midnight
+  const now = new Date();
+  const midnight = new Date(now); midnight.setHours(24,0,0,0);
+  const hoursLeft = Math.floor((midnight - now) / 3600000);
+  const minsLeft = Math.floor(((midnight - now) % 3600000) / 60000);
+  if (refreshEl) refreshEl.textContent = `Обновится через ${hoursLeft}ч ${minsLeft}м`;
+
+  el.innerHTML = templates.map(c => {
+    const done = c.check();
+    return `<div class="challenge-item${done?' done':''}">
+      <span class="ch-icon">${c.icon}</span>
+      <div class="ch-info">
+        <div class="ch-name">${c.name}</div>
+        <div class="ch-desc">${c.desc}</div>
+      </div>
+      <span class="ch-xp${done?' done-xp':''}">+${c.xp} XP</span>
+      <span class="ch-check">${done ? '✅' : '○'}</span>
+    </div>`;
+  }).join('');
+}
+
+function claimChallengeXp() {
+  // Called after any game action — check if newly completed
+  const ids = getTodayChallenges();
+  const claimedKey = 'etu_chal_claimed_' + new Date().toDateString();
+  let claimed = [];
+  try { claimed = JSON.parse(localStorage.getItem(claimedKey)) || []; } catch(e){}
+
+  ids.forEach(id => {
+    if (claimed.includes(id)) return;
+    const tmpl = CHALLENGE_TEMPLATES.find(c => c.id === id);
+    if (!tmpl) return;
+    if (tmpl.check()) {
+      claimed.push(id);
+      xp += tmpl.xp; dailyXp += tmpl.xp;
+      alertPop(`🎯 Челлендж выполнен! +${tmpl.xp} XP`);
+    }
+  });
+  try { localStorage.setItem(claimedKey, JSON.stringify(claimed)); } catch(e){}
+  renderChallenges();
+  renderChest();
+}
+
+function trackChStat(key, val=1) {
+  const todayKey = 'etu_ch_stats_' + new Date().toDateString();
+  let s = {};
+  try { s = JSON.parse(localStorage.getItem(todayKey)) || {}; } catch(e){}
+  s[key] = (s[key] || 0) + val;
+  try { localStorage.setItem(todayKey, JSON.stringify(s)); } catch(e){}
+  // alias so check() finds it
+  try { localStorage.setItem('etu_ch_stats', JSON.stringify(s)); } catch(e){}
+}
+
+// ════════════════════════════════════
+//  РЕЖИМ «СОСТАВЬ ПРЕДЛОЖЕНИЕ»
+// ════════════════════════════════════
+const SENTENCES = [
+  { ru: 'Я иду на работу каждый день',          en: 'I go to work every day' },
+  { ru: 'Она любит читать книги по вечерам',     en: 'She likes to read books in the evening' },
+  { ru: 'Мы живём в большом городе',             en: 'We live in a big city' },
+  { ru: 'Он учит английский каждое утро',        en: 'He learns English every morning' },
+  { ru: 'Дети играют в парке после школы',       en: 'The children play in the park after school' },
+  { ru: 'Я не знаю правильного ответа',          en: 'I do not know the right answer' },
+  { ru: 'Мы едим вместе каждый вечер',           en: 'We eat together every evening' },
+  { ru: 'Она говорит по-английски очень хорошо', en: 'She speaks English very well' },
+  { ru: 'Мой друг работает врачом',              en: 'My friend works as a doctor' },
+  { ru: 'Я хочу выучить много новых слов',       en: 'I want to learn many new words' },
+  { ru: 'Они живут рядом с нашей школой',        en: 'They live near our school' },
+  { ru: 'Погода сегодня очень хорошая',          en: 'The weather today is very good' },
+  { ru: 'Он не любит вставать рано утром',       en: 'He does not like to wake up early' },
+  { ru: 'Мы идём в кино в субботу',             en: 'We are going to the cinema on Saturday' },
+  { ru: 'Я читаю новости каждое утро',           en: 'I read the news every morning' },
+  { ru: 'Кошка спит на диване',                  en: 'The cat is sleeping on the sofa' },
+  { ru: 'Моя сестра работает в офисе',           en: 'My sister works in an office' },
+  { ru: 'Они говорят по-русски дома',            en: 'They speak Russian at home' },
+  { ru: 'Я хожу в спортзал три раза в неделю',  en: 'I go to the gym three times a week' },
+  { ru: 'Он купил новый телефон вчера',          en: 'He bought a new phone yesterday' },
+];
+
+const SEN_TOTAL = 8;
+let senPool = [], senIdx = 0, senCorrect = 0, senErrors = 0, senXpEarned = 0, senMaxStreak = 0, senStreak = 0;
+let senCurrent = null, senAnswerArr = [], senWordsArr = [];
+
+function startSentence() {
+  playStart();
+  senPool = [...SENTENCES].sort(() => Math.random() - .5).slice(0, SEN_TOTAL);
+  senIdx = 0; senCorrect = 0; senErrors = 0; senXpEarned = 0; senMaxStreak = 0; senStreak = 0;
+  document.getElementById('dashboardCard').style.display = 'none';
+  showScreen('sentenceScreen');
+  nextSentence();
+}
+
+function nextSentence() {
+  if (senIdx >= senPool.length) { showSentenceResult(); return; }
+  senCurrent = senPool[senIdx];
+  senAnswerArr = [];
+  // Shuffle words + add 2 distractors
+  const words = senCurrent.en.split(' ');
+  const distractors = ['always','never','very','often','really','just','also','only'].sort(()=>Math.random()-.5).slice(0,2);
+  senWordsArr = [...words, ...distractors].sort(() => Math.random() - .5);
+
+  document.getElementById('senRu').textContent = senCurrent.ru;
+  document.getElementById('senHintLine').textContent = `${words.length} слов`;
+  document.getElementById('senCounter').textContent = `Предложение ${senIdx+1} из ${SEN_TOTAL}`;
+  document.getElementById('senBar').style.width = (senIdx / SEN_TOTAL * 100) + '%';
+  document.getElementById('senXp').textContent = xp;
+  document.getElementById('senStreak').textContent = senStreak;
+  document.getElementById('senResult').innerHTML = '';
+  document.getElementById('senResult').className = 'result';
+  renderSenWords();
+  renderSenAnswer();
+}
+
+function renderSenWords() {
+  const el = document.getElementById('senWords');
+  el.innerHTML = senWordsArr.map((w, i) =>
+    `<div class="sentence-tile${senAnswerArr.some(a=>a.i===i)?' used':''}" data-idx="${i}" onclick="senAddWord(${i})">${w}</div>`
+  ).join('');
+}
+
+function renderSenAnswer() {
+  const el = document.getElementById('senAnswer');
+  if (!senAnswerArr.length) {
+    el.innerHTML = '<span style="color:var(--text2);font-size:13px;font-style:italic;align-self:center;">Нажимай слова снизу →</span>';
+    el.classList.remove('has-words');
+  } else {
+    el.classList.add('has-words');
+    el.innerHTML = senAnswerArr.map((a, i) =>
+      `<div class="sentence-answer-tile" data-pos="${i}" onclick="senRemoveWord(${i})">${a.w}</div>`
+    ).join('');
+  }
+}
+
+function senAddWord(idx) {
+  if (senAnswerArr.some(a => a.i === idx)) return;
+  playClick();
+  if (navigator.vibrate) navigator.vibrate(15);
+  senAnswerArr.push({ i: idx, w: senWordsArr[idx] });
+  renderSenWords();
+  renderSenAnswer();
+}
+
+function senAnswerClick(e) {
+  const tile = e.target.closest('.sentence-answer-tile');
+  if (!tile) return;
+  const pos = parseInt(tile.dataset.pos);
+  senRemoveWord(pos);
+}
+
+function senRemoveWord(pos) {
+  playClick();
+  senAnswerArr.splice(pos, 1);
+  renderSenWords();
+  renderSenAnswer();
+}
+
+function senCheck() {
+  unlockAudio();
+  if (!senAnswerArr.length) { alertPop('Составь предложение!'); return; }
+  const answer = senAnswerArr.map(a => a.w).join(' ').toLowerCase().trim();
+  const correct = senCurrent.en.toLowerCase().trim();
+  const ok = answer === correct;
+  const res = document.getElementById('senResult');
+
+  if (ok) {
+    senCorrect++; senStreak++; senMaxStreak = Math.max(senMaxStreak, senStreak);
+    const earned = senStreak >= 3 ? 20 : 15;
+    senXpEarned += earned; xp += earned; dailyXp += earned;
+    res.className = 'result ok-text';
+    res.innerHTML = `✅ Верно! +${earned} XP`;
+    playCorrect();
+    if (navigator.vibrate) navigator.vibrate(30);
+    document.getElementById('senXp').textContent = xp;
+    document.getElementById('senStreak').textContent = senStreak;
+    trackChStat('sentCorrect');
+    save();
+  } else {
+    senErrors++; senStreak = 0;
+    res.className = 'result err-text';
+    res.innerHTML = `❌ Ошибка.<br><span style="font-size:13px;color:var(--text2);">Правильно: <strong style="color:var(--ok)">${senCurrent.en}</strong></span>`;
+    playWrong();
+    if (navigator.vibrate) navigator.vibrate([40,30,40]);
+    document.getElementById('senStreak').textContent = 0;
+  }
+
+  senIdx++;
+  // Disable tiles
+  document.querySelectorAll('#senWords .sentence-tile, #senAnswer .sentence-answer-tile')
+    .forEach(t => t.style.pointerEvents = 'none');
+  document.querySelectorAll('.actions button').forEach(b => b.disabled = true);
+  claimChallengeXp();
+  setTimeout(() => {
+    document.querySelectorAll('.actions button').forEach(b => b.disabled = false);
+    nextSentence();
+  }, ok ? 900 : 1600);
+}
+
+function senHint() {
+  if (xp < 5) { alertPop('Нужно минимум 5 XP для подсказки!'); return; }
+  xp -= 5; playHint(); update(); save();
+  // Add next correct word
+  const correctWords = senCurrent.en.split(' ');
+  const pos = senAnswerArr.length;
+  if (pos >= correctWords.length) return;
+  const nextWord = correctWords[pos];
+  const idx = senWordsArr.findIndex((w, i) => w === nextWord && !senAnswerArr.some(a => a.i === i));
+  if (idx !== -1) senAddWord(idx);
+}
+
+function senSkip() {
+  playClick(); senErrors++; senStreak = 0; senIdx++;
+  document.getElementById('senResult').className = 'result err-text';
+  document.getElementById('senResult').innerHTML = `⏭ Пропущено. Правильно: <strong>${senCurrent.en}</strong>`;
+  setTimeout(nextSentence, 1200);
+}
+
+function exitSentence() { playClick(); goToMainMenu(); }
+
+function showSentenceResult() {
+  clearInterval(interval); playSprint();
+  _lastResultMode = 'sentence';
+  const pct = SEN_TOTAL > 0 ? Math.round(senCorrect / SEN_TOTAL * 100) : 0;
+  let emoji = '😅', title = 'Продолжай практиковаться!';
+  if (pct === 100) { emoji = '🏆'; title = 'Идеально! 🎉'; trackChStat('perfectSprint'); }
+  else if (pct >= 80) { emoji = '🌟'; title = 'Отличный результат!'; }
+  else if (pct >= 60) { emoji = '👍'; title = 'Хорошая работа!'; }
+  document.getElementById('senResEmoji').textContent = emoji;
+  document.getElementById('senResTitle').textContent = title;
+  document.getElementById('senResPct').textContent = pct + '%';
+  document.getElementById('senResCorrect').textContent = senCorrect;
+  document.getElementById('senResErrors').textContent = senErrors;
+  document.getElementById('senResXp').textContent = senXpEarned;
+  document.getElementById('senResStreak').textContent = senMaxStreak;
+  document.getElementById('senResVerdict').innerHTML = `Правильно: <b>${senCorrect} из ${SEN_TOTAL}</b><br>Заработано: <b>+${senXpEarned} XP</b>`;
+  xp += senXpEarned; dailyXp += senXpEarned;
+  save(); updateMenu(); claimChallengeXp();
+  showScreen('sentenceResultScreen');
+  document.getElementById('dashboardCard').style.display = 'none';
+  spawnConfetti(25);
+}
+
+// ════════════════════════════════════
+//  СУНДУКИ С НАГРАДАМИ
+// ════════════════════════════════════
+const CHEST_DAYS = 7;
+const CHEST_REWARDS = [
+  { xp: 20,  label: '+20 XP' },
+  { xp: 25,  label: '+25 XP' },
+  { xp: 30,  label: '+30 XP' },
+  { xp: 40,  label: '+40 XP' },
+  { xp: 50,  label: '+50 XP' },
+  { xp: 60,  label: '+60 XP' },
+  { xp: 100, label: '🏆 +100 XP' },
+];
+
+function getAllChallengesDoneToday() {
+  const ids = getTodayChallenges();
+  const claimedKey = 'etu_chal_claimed_' + new Date().toDateString();
+  let claimed = [];
+  try { claimed = JSON.parse(localStorage.getItem(claimedKey)) || []; } catch(e){}
+  return ids.length > 0 && ids.every(id => claimed.includes(id));
+}
+
+function getChestState() {
+  let s = { progress: 0, lastDate: null, claimedToday: false };
+  try { s = Object.assign(s, JSON.parse(localStorage.getItem('etu_chest_state')) || {}); } catch(e){}
+  return s;
+}
+function saveChestState(s) {
+  try { localStorage.setItem('etu_chest_state', JSON.stringify(s)); } catch(e){}
+}
+
+function renderChest() {
+  const track = document.getElementById('chestTrack');
+  const btn = document.getElementById('chestClaimBtn');
+  const sub = document.getElementById('chestSub');
+  if (!track) return;
+
+  const todayKey = new Date().toDateString();
+  let state = getChestState();
+
+  // Reset progress streak if a day was missed (not today, not yesterday)
+  if (state.lastDate && state.lastDate !== todayKey) {
+    const last = new Date(state.lastDate);
+    const today = new Date(todayKey);
+    const diffDays = Math.round((today - last) / 86400000);
+    if (diffDays > 1) { state.progress = 0; }
+    state.claimedToday = false;
+    state.lastDate = todayKey;
+    saveChestState(state);
+  } else if (!state.lastDate) {
+    state.lastDate = todayKey;
+    saveChestState(state);
+  }
+
+  // If all challenges done today and not yet credited
+  const allDone = getAllChallengesDoneToday();
+  if (allDone && !state.creditedToday) {
+    state.progress = Math.min(state.progress + 1, CHEST_DAYS);
+    state.creditedToday = true;
+    saveChestState(state);
+  }
+  if (!allDone) {
+    state.creditedToday = false;
+    saveChestState(state);
+  }
+
+  // Render track
+  track.innerHTML = '';
+  for (let i = 0; i < CHEST_DAYS; i++) {
+    const filled = i < state.progress;
+    const isLast = i === CHEST_DAYS - 1;
+    const cell = document.createElement('div');
+    cell.className = `chest-day${filled ? ' filled' : ''}`;
+    cell.textContent = isLast ? '🎁' : (i+1);
+    track.appendChild(cell);
+  }
+
+  // Button state
+  if (state.progress >= CHEST_DAYS && !state.claimedToday) {
+    btn.disabled = false;
+    btn.classList.add('ready');
+    btn.textContent = '🎁 Открыть!';
+    sub.textContent = 'Сундук готов! Открой и получи награду 🎉';
+  } else if (state.progress >= CHEST_DAYS && state.claimedToday) {
+    btn.disabled = true;
+    btn.classList.remove('ready');
+    btn.textContent = '✅ Открыт';
+    sub.textContent = 'Награда уже получена. Завтра начнётся новый сундук.';
+  } else {
+    btn.disabled = true;
+    btn.classList.remove('ready');
+    btn.textContent = `🔒 ${state.progress}/${CHEST_DAYS}`;
+    sub.textContent = allDone
+      ? '✅ Сегодня челленджи выполнены — приходи завтра!'
+      : 'Выполни все 3 челленджа сегодня, чтобы продвинуться';
+  }
+}
+
+function claimChest() {
+  let state = getChestState();
+  if (state.progress < CHEST_DAYS || state.claimedToday) return;
+  const reward = CHEST_REWARDS[Math.floor(Math.random() * CHEST_REWARDS.length)];
+  xp += reward.xp; dailyXp += reward.xp;
+  state.progress = 0;
+  state.claimedToday = true;
+  saveChestState(state);
+  save(); update();
+  playAchievement();
+  spawnConfetti(35);
+  if (navigator.vibrate) navigator.vibrate([60,40,60,40,120]);
+  showShopToast(`🎁 Сундук открыт!<br><span style="font-size:28px;">${reward.label}</span>`);
+  renderChest();
+}
+
+function showShopToast(html) {
+  const el = document.createElement('div');
+  el.className = 'shop-toast';
+  el.innerHTML = html;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1800);
+}
+
+// ════════════════════════════════════
+//  МАГАЗИН
+// ════════════════════════════════════
+const SHOP_AVATARS = [
+  { id:'av_wizard2', icon:'🧞', name:'Джинн', price:60 },
+  { id:'av_alien',   icon:'👽', name:'Пришелец', price:60 },
+  { id:'av_ninja2',  icon:'🦹', name:'Злодей', price:80 },
+  { id:'av_king',    icon:'🤴', name:'Принц', price:80 },
+  { id:'av_queen',   icon:'👸', name:'Принцесса', price:80 },
+  { id:'av_robot2',  icon:'🦾', name:'Киборг', price:100 },
+  { id:'av_dragon2', icon:'🐲', name:'Дракон', price:120 },
+  { id:'av_crown',   icon:'👑', name:'Корона', price:150 },
+  { id:'av_gem',     icon:'💎', name:'Бриллиант', price:200 },
+  { id:'av_trophy',  icon:'🏆', name:'Чемпион', price:250 },
+  { id:'av_star2',   icon:'🌠', name:'Звездопад', price:300 },
+  { id:'av_phoenix', icon:'🔥', name:'Феникс', price:400 },
+];
+
+const SHOP_THEMES = [
+  { id:'theme_default', name:'Классика',  accent:'#4f8eff', accent2:'#7c5cfc', price:0 },
+  { id:'theme_sunset',  name:'Закат',     accent:'#ff7a59', accent2:'#ffc247', price:80 },
+  { id:'theme_forest',  name:'Лес',       accent:'#22d88f', accent2:'#0ea5e9', price:80 },
+  { id:'theme_rose',    name:'Розовый',   accent:'#ff5da2', accent2:'#a855f7', price:100 },
+  { id:'theme_mint',    name:'Мята',      accent:'#2dd4bf', accent2:'#4f8eff', price:100 },
+  { id:'theme_gold',    name:'Золото',    accent:'#ffc247', accent2:'#ff7a18', price:150 },
+];
+
+const SHOP_SOUNDS = [
+  { id:'default', icon:'🔔', name:'Классика', price:0 },
+  { id:'bells',   icon:'🎐', name:'Колокольчик', price:50 },
+  { id:'arcade',  icon:'🕹️', name:'Аркада', price:50 },
+  { id:'chime',   icon:'✨', name:'Перезвон', price:75 },
+];
+
+function getOwned(kind) {
+  let o = {};
+  try { o = JSON.parse(localStorage.getItem('etu_shop_owned')) || {}; } catch(e){}
+  return o[kind] || [];
+}
+function setOwned(kind, arr) {
+  let o = {};
+  try { o = JSON.parse(localStorage.getItem('etu_shop_owned')) || {}; } catch(e){}
+  o[kind] = arr;
+  try { localStorage.setItem('etu_shop_owned', JSON.stringify(o)); } catch(e){}
+}
+
+function showShopScreen() {
+  playClick();
+  document.getElementById('dashboardCard').style.display = 'none';
+  showScreen('shopScreen');
+  renderShop();
+}
+
+function renderShop() {
+  document.getElementById('shopXpBalance').textContent = xp + ' XP';
+
+  // Avatars
+  const ownedAv = getOwned('avatars');
+  const avEl = document.getElementById('shopAvatars');
+  avEl.innerHTML = SHOP_AVATARS.map(a => {
+    const owned = ownedAv.includes(a.id);
+    const equipped = profileData.avatar === a.icon;
+    const cls = equipped ? 'equipped' : owned ? 'owned' : (xp < a.price ? 'locked' : '');
+    const priceHtml = equipped
+      ? '<span class="shop-item-price equipped-tag">Надето</span>'
+      : owned
+        ? '<span class="shop-item-price owned-tag">Надеть</span>'
+        : `<span class="shop-item-price">${a.price} XP</span>`;
+    return `<div class="shop-item ${cls}" onclick="buyOrEquipAvatar('${a.id}')">
+      <div class="shop-item-icon">${a.icon}</div>
+      <div class="shop-item-name">${a.name}</div>
+      ${priceHtml}
+    </div>`;
+  }).join('');
+
+  // Themes
+  const ownedTh = getOwned('themes');
+  const equippedTheme = localStorage.getItem('etu_accent_theme') || 'theme_default';
+  const thEl = document.getElementById('shopThemes');
+  thEl.innerHTML = SHOP_THEMES.map(t => {
+    const owned = t.price === 0 || ownedTh.includes(t.id);
+    const equipped = equippedTheme === t.id;
+    const cls = equipped ? 'equipped' : owned ? 'owned' : (xp < t.price ? 'locked' : '');
+    const priceHtml = equipped
+      ? '<span class="shop-item-price equipped-tag">Активна</span>'
+      : owned
+        ? '<span class="shop-item-price owned-tag">Применить</span>'
+        : `<span class="shop-item-price">${t.price} XP</span>`;
+    return `<div class="shop-item ${cls}" onclick="buyOrEquipTheme('${t.id}')">
+      <div class="theme-swatch" style="background:linear-gradient(135deg,${t.accent},${t.accent2});"></div>
+      <div class="shop-item-name">${t.name}</div>
+      ${priceHtml}
+    </div>`;
+  }).join('');
+
+  // Sounds
+  const ownedSnd = getOwned('sounds');
+  const equippedSound = localStorage.getItem('etu_sound_pack') || 'default';
+  const sndEl = document.getElementById('shopSounds');
+  sndEl.innerHTML = SHOP_SOUNDS.map(s => {
+    const owned = s.price === 0 || ownedSnd.includes(s.id);
+    const equipped = equippedSound === s.id;
+    const cls = equipped ? 'equipped' : owned ? 'owned' : (xp < s.price ? 'locked' : '');
+    const priceHtml = equipped
+      ? '<span class="shop-item-price equipped-tag">Включён</span>'
+      : owned
+        ? '<span class="shop-item-price owned-tag">Включить</span>'
+        : `<span class="shop-item-price">${s.price} XP</span>`;
+    return `<div class="shop-item ${cls}" onclick="buyOrEquipSound('${s.id}')">
+      <div class="shop-item-icon">${s.icon}</div>
+      <div class="shop-item-name">${s.name}</div>
+      ${priceHtml}
+    </div>`;
+  }).join('');
+}
+
+function buyOrEquipAvatar(id) {
+  const item = SHOP_AVATARS.find(a => a.id === id);
+  if (!item) return;
+  const owned = getOwned('avatars');
+  if (owned.includes(id)) {
+    // equip
+    playClick();
+    profileData.avatar = item.icon;
+    localStorage.setItem('etu_profile', JSON.stringify(profileData));
+    document.getElementById('menuAvatar').textContent = item.icon;
+    renderShop();
+    return;
+  }
+  if (xp < item.price) { alertPop(`Не хватает XP! Нужно ${item.price} XP`); return; }
+  if (!confirm(`Купить аватар ${item.icon} ${item.name} за ${item.price} XP?`)) return;
+  xp -= item.price; save(); update();
+  owned.push(id); setOwned('avatars', owned);
+  profileData.avatar = item.icon;
+  localStorage.setItem('etu_profile', JSON.stringify(profileData));
+  document.getElementById('menuAvatar').textContent = item.icon;
+  playAchievement(); spawnConfetti(20);
+  showShopToast(`✅ Куплено!<br><span style="font-size:28px;">${item.icon} ${item.name}</span>`);
+  renderShop();
+}
+
+function buyOrEquipTheme(id) {
+  const item = SHOP_THEMES.find(t => t.id === id);
+  if (!item) return;
+  const owned = item.price === 0 || getOwned('themes').includes(id);
+  if (owned) {
+    playClick();
+    applyAccentTheme(id);
+    renderShop();
+    return;
+  }
+  if (xp < item.price) { alertPop(`Не хватает XP! Нужно ${item.price} XP`); return; }
+  if (!confirm(`Купить тему «${item.name}» за ${item.price} XP?`)) return;
+  xp -= item.price; save(); update();
+  const ownedTh = getOwned('themes'); ownedTh.push(id); setOwned('themes', ownedTh);
+  applyAccentTheme(id);
+  playAchievement(); spawnConfetti(20);
+  showShopToast(`✅ Тема применена!<br><span style="font-size:24px;">${item.name}</span>`);
+  renderShop();
+}
+
+function buyOrEquipSound(id) {
+  const item = SHOP_SOUNDS.find(s => s.id === id);
+  if (!item) return;
+  const owned = item.price === 0 || getOwned('sounds').includes(id);
+  if (owned) {
+    playClick();
+    localStorage.setItem('etu_sound_pack', id);
+    unlockAudio(); playCorrect();
+    renderShop();
+    return;
+  }
+  if (xp < item.price) { alertPop(`Не хватает XP! Нужно ${item.price} XP`); return; }
+  if (!confirm(`Купить звук «${item.name}» за ${item.price} XP?`)) return;
+  xp -= item.price; save(); update();
+  const ownedSnd = getOwned('sounds'); ownedSnd.push(id); setOwned('sounds', ownedSnd);
+  localStorage.setItem('etu_sound_pack', id);
+  unlockAudio(); playCorrect(); spawnConfetti(20);
+  showShopToast(`✅ Звук применён!<br><span style="font-size:24px;">${item.icon} ${item.name}</span>`);
+  renderShop();
+}
+
+function applyAccentTheme(id) {
+  const item = SHOP_THEMES.find(t => t.id === id) || SHOP_THEMES[0];
+  document.documentElement.style.setProperty('--accent', item.accent);
+  document.documentElement.style.setProperty('--accent2', item.accent2);
+  localStorage.setItem('etu_accent_theme', id);
+  _syncThemeColor();
+}
+
+function loadAccentTheme() {
+  const id = localStorage.getItem('etu_accent_theme');
+  if (id) applyAccentTheme(id);
+}
+
+// ════════════════════════════════════
 loadTheme();
+loadAccentTheme();
+renderChest();
 document.getElementById("soundBtn").textContent=soundEnabled?"🔊":"🔇";
 
 loadPrefs();
@@ -5177,6 +6187,10 @@ renderHardWords();
 // v7 init
 initWordOfDay();
 checkResumeSprint();
+
+// v8 init
+renderActivityCalendar();
+renderChallenges();
 
 // onCorrect патч убран — level up встроен напрямую
 
