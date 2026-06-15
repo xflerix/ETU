@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -407,6 +407,16 @@ header {
   font-size: 20px; padding: 8px; border-radius: 50%; transition: var(--t);
 }
 .speaker-btn:hover { background: var(--accent); transform: scale(1.1); }
+
+
+/* ── Карточка режима ошибок ── */
+.mode-card.mistakes-card { border-color: rgba(255,79,109,.25); }
+.mode-card.mistakes-card:hover { border-color: #ff4f6d; box-shadow: 0 0 24px rgba(255,79,109,.2); }
+.mistakes-count-badge {
+  display: inline-block; background: var(--err); color: #fff;
+  font-size: 10px; font-weight: 900; padding: 2px 7px;
+  border-radius: 8px; margin-left: 4px; vertical-align: middle;
+}
 
 /* Ввод */
 .input-wrapper { position: relative; width: 100%; margin-bottom: 14px; }
@@ -2036,6 +2046,11 @@ select {
         Предложение
         <div class="mc-sub">Слова перемешаны — составь правильное предложение</div>
       </div>
+      <div class="mode-card mistakes-card" onclick="startPersistentMistakeMode()" style="grid-column:span 2;" id="mistakesModeCard">
+        <span class="mc-icon">💪</span>
+        Только ошибки <span class="mistakes-count-badge" id="mistakesModeCount" style="display:none;"></span>
+        <div class="mc-sub">Повторить слова, в которых были ошибки</div>
+      </div>
     </div>
 
     <div id="sprintLenRow" style="display:none;margin-top:16px;">
@@ -3098,6 +3113,32 @@ const categories = {
 };
 
 // ════════════════════════════════════
+//  РЕЖИМ "ТОЛЬКО ОШИБКИ" (persistent)
+// ════════════════════════════════════
+function updateMistakesModeCard() {
+  const badge = document.getElementById('mistakesModeCount');
+  const card = document.getElementById('mistakesModeCard');
+  if (!badge || !card) return;
+  const count = mistakes.length;
+  if (count > 0) {
+    badge.textContent = count;
+    badge.style.display = 'inline-block';
+    card.style.opacity = '1';
+    card.style.pointerEvents = 'auto';
+  } else {
+    badge.style.display = 'none';
+    card.style.opacity = '0.45';
+    card.style.pointerEvents = 'none';
+  }
+}
+
+function startPersistentMistakeMode() {
+  if (!mistakes.length) { alertPop('Нет сохранённых ошибок! Сначала потренируйся 💪'); return; }
+  startMistakeRetry();
+}
+
+
+// ════════════════════════════════════
 //  ЦИТАТЫ
 // ════════════════════════════════════
 const quotes = [
@@ -3495,10 +3536,17 @@ function goToMainMenu() {
   renderActivityCalendar();
   renderChallenges();
   renderChest();
+  // Показать отложенный баннер уровня
+  if (pendingLevelUp > 0) {
+    const lvl = pendingLevelUp;
+    pendingLevelUp = 0;
+    setTimeout(() => { showLevelUpBanner(lvl); spawnConfetti(50); }, 400);
+  }
 }
 function showModeSelect() {
   playClick();
   document.getElementById("sprintLenRow").style.display = "none";
+  if (typeof updateMistakesModeCard === 'function') updateMistakesModeCard();
   showScreen("modeSelectScreen");
 }
 function showSprintSelect() {
@@ -4215,6 +4263,7 @@ function _renderAchievementsOld() {
 // ════════════════════════════════════
 function renderMistakes() {
   const c=document.getElementById("mistakes");
+  if (typeof updateMistakesModeCard === 'function') updateMistakesModeCard();
   const mBadge = document.getElementById("misCountBadge");
   if (mBadge) {
     mBadge.textContent = mistakes.length || '';
@@ -4336,13 +4385,7 @@ function showAchPop(text) {
   setTimeout(()=>{ pop.style.opacity="0"; pop.style.transition="opacity .5s"; setTimeout(()=>pop.remove(),500); },3000);
 }
 function showStreakBanner(n) {
-  if(n===5||n===10||n===15||n===20||n===25||n===50){
-    const el=document.createElement("div");
-    el.className="streak-banner";
-    el.textContent=`🔥 ${n} серия!`;
-    document.body.appendChild(el);
-    setTimeout(()=>el.remove(),700);
-  }
+  // streak отображается в шапке через gameStreak — всплывашка убрана
 }
 function alertPop(msg) {
   const d=document.createElement("div");
@@ -4722,13 +4765,19 @@ function spawnConfetti(count = 30) {
 //  LEVEL UP BANNER
 // ════════════════════════════════════
 let _lastLevel = 0;
+let pendingLevelUp = 0;
 function checkLevelUp(prevXp, newXp) {
   const prev = getLevel(prevXp);
   const next = getLevel(newXp);
   if (next > prev && next > _lastLevel) {
     _lastLevel = next;
-    showLevelUpBanner(next);
-    spawnConfetti(50);
+    if (isGameActive) {
+      // Отложить баннер до выхода в главное меню
+      pendingLevelUp = next;
+    } else {
+      showLevelUpBanner(next);
+      spawnConfetti(50);
+    }
   }
 }
 
@@ -4950,12 +4999,6 @@ function activateBonusRound() {
   bonusRoundTimer = BONUS_DURATION;
   document.getElementById("bonusActiveBadge").style.display = "flex";
   spawnConfetti(20);
-
-  const banner = document.createElement("div");
-  banner.className = "bonus-banner";
-  banner.innerHTML = `⚡ БОНУС-РАУНД!<br><span style="font-size:14px;font-weight:700;">×2 XP на ${BONUS_DURATION} секунд!</span>`;
-  document.body.appendChild(banner);
-  setTimeout(() => banner.remove(), 2500);
 
   clearInterval(bonusInterval);
   bonusInterval = setInterval(() => {
@@ -5416,6 +5459,7 @@ function playBonusSound() {
     beep(880,'square',.3,.1);
   }, freqs.length*60);
 }
+
 
 function startMistakeRetry() {
   if (!mistakes.length) { alertPop("Нет ошибок для повторения!"); return; }
