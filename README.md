@@ -1,13 +1,44 @@
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<style>
+  html { touch-action: manipulation; }
+</style>
+<script>
+  // Disable pinch-to-zoom and double-tap zoom
+  document.addEventListener('gesturestart', function(e){ e.preventDefault(); }, {passive:false});
+  document.addEventListener('gesturechange', function(e){ e.preventDefault(); }, {passive:false});
+  document.addEventListener('gestureend', function(e){ e.preventDefault(); }, {passive:false});
+  var lastTouchEnd = 0;
+  document.addEventListener('touchend', function(e){
+    var now = Date.now();
+    if (now - lastTouchEnd <= 300) { e.preventDefault(); }
+    lastTouchEnd = now;
+  }, {passive:false});
+  document.addEventListener('touchmove', function(e){
+    if (e.touches.length > 1) e.preventDefault();
+  }, {passive:false});
+  document.addEventListener('wheel', function(e){
+    if (e.ctrlKey) e.preventDefault();
+  }, {passive:false});
+  document.addEventListener('keydown', function(e){
+    if ((e.ctrlKey || e.metaKey) && (e.key==='+' || e.key==='-' || e.key==='=' || e.key==='0')) {
+      e.preventDefault();
+    }
+  });
+</script>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#080c14" id="metaThemeColor">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>English Trainer Ultimate v3 (fixed v14)</title>
+<meta name="apple-mobile-web-app-title" content="ETU">
+<meta name="application-name" content="ETU">
+<meta name="description" content="English Trainer Ultimate — учи английские слова каждый день">
+<link id="pwaManifest" rel="manifest" href="">
+<link id="appleIcon" rel="apple-touch-icon" href="">
+<title>English Trainer Ultimate</title>
 <style>
 /* ════════════════════════════════════
    ПЕРЕМЕННЫЕ И БАЗА
@@ -2054,6 +2085,178 @@ select {
 .screen.slide-in-right { animation: slideInRight .28s cubic-bezier(.4,0,.2,1) both; }
 .screen.slide-in-left  { animation: slideInLeft  .28s cubic-bezier(.4,0,.2,1) both; }
 
+</style>
+<script>
+// PWA: иконка через canvas + манифест
+window.addEventListener('DOMContentLoaded', function() {
+  // ═══ GATE: проверяем — запущено ли как PWA ═══
+  var isStandalone = false;
+  try { isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: fullscreen)').matches; } catch(e){}
+
+  var isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+  if (!isStandalone) {
+    document.getElementById('pwaGate').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    if (isIos) {
+      document.getElementById('gateAndroid').style.display = 'none';
+      document.getElementById('gateIos').style.display = 'block';
+    }
+  }
+
+  // Генерируем иконку
+  function makeIcon(size) {
+    var c = document.createElement('canvas');
+    c.width = c.height = size;
+    var ctx = c.getContext('2d');
+    var g = ctx.createLinearGradient(0, 0, size, size);
+    g.addColorStop(0, '#4f8eff'); g.addColorStop(1, '#7c5cfc');
+    ctx.fillStyle = g;
+    var r = size * 0.22;
+    ctx.beginPath();
+    ctx.moveTo(r,0); ctx.lineTo(size-r,0); ctx.quadraticCurveTo(size,0,size,r);
+    ctx.lineTo(size,size-r); ctx.quadraticCurveTo(size,size,size-r,size);
+    ctx.lineTo(r,size); ctx.quadraticCurveTo(0,size,0,size-r);
+    ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold ' + Math.round(size*0.52) + 'px Segoe UI,system-ui,sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('E', size/2, size/2 + size*0.03);
+    return c.toDataURL('image/png');
+  }
+
+  var icon192 = makeIcon(192);
+  var icon512 = makeIcon(512);
+
+  // apple-touch-icon
+  var link = document.createElement('link');
+  link.rel = 'apple-touch-icon'; link.href = icon192;
+  document.head.appendChild(link);
+
+  // Манифест
+  var manifest = {
+    name: 'English Trainer Ultimate', short_name: 'ETU',
+    description: 'Учи английские слова каждый день',
+    start_url: './', display: 'standalone', orientation: 'portrait',
+    background_color: '#080c14', theme_color: '#080c14', lang: 'ru',
+    icons: [
+      {src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable'},
+      {src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable'}
+    ]
+  };
+  var blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
+  var mLink = document.createElement('link');
+  mLink.rel = 'manifest'; mLink.href = URL.createObjectURL(blob);
+  document.head.appendChild(mLink);
+
+  // Баннер установки (Android Chrome)
+  window._pwaPrompt = null;
+  window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault(); window._pwaPrompt = e;
+    var b=document.getElementById('pwaBanner'); if(b) b.style.display='flex';
+    // Gate: если промпт пришёл, показываем кнопку установки
+    var gb=document.getElementById('gateInstallBtn'); if(gb) gb.disabled=false;
+  });
+  window.addEventListener('appinstalled', function() {
+    var b=document.getElementById('pwaBanner'); if(b) b.style.display='none';
+    var gate=document.getElementById('pwaGate'); if(gate) { gate.classList.remove('show'); document.body.style.overflow=''; }
+  });
+});
+
+function gateInstall() {
+  if (window._pwaPrompt) {
+    document.getElementById('gateInstallBtn').style.display = 'none';
+    document.getElementById('gateWaiting').style.display = 'block';
+    window._pwaPrompt.prompt();
+    window._pwaPrompt.userChoice.then(function(r) {
+      window._pwaPrompt = null;
+      if (r.outcome !== 'accepted') {
+        document.getElementById('gateInstallBtn').style.display = 'block';
+        document.getElementById('gateWaiting').style.display = 'none';
+      }
+    });
+  } else {
+    document.getElementById('gateWaiting').style.display = 'block';
+    document.getElementById('gateWaiting').textContent = '⏳ Браузер ещё не готов. Подожди секунду и попробуй снова.';
+    setTimeout(function(){
+      document.getElementById('gateInstallBtn').style.display = 'block';
+      document.getElementById('gateWaiting').style.display = 'none';
+    }, 2000);
+  }
+}
+
+function pwaInstall() {
+  if (window._pwaPrompt) {
+    window._pwaPrompt.prompt();
+    window._pwaPrompt.userChoice.then(function() { window._pwaPrompt = null; });
+  } else {
+    alert('iPhone/iPad:\n1. Кнопка «Поделиться» (□↑) в Safari\n2. «На экран «Домой»»\n3. «Добавить»');
+  }
+}
+</script>
+<style>
+#pwaGate {
+  display: none;
+  position: fixed; inset: 0; z-index: 99999;
+  background: #080c14;
+  flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 32px 24px; text-align: center;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+#pwaGate.show { display: flex; }
+.pwa-gate-icon {
+  font-size: 72px; margin-bottom: 20px;
+  animation: gateIconPulse 2s ease-in-out infinite;
+}
+@keyframes gateIconPulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+.pwa-gate-title {
+  font-size: 24px; font-weight: 900; color: #f0f4ff;
+  margin-bottom: 10px; letter-spacing: -0.5px;
+}
+.pwa-gate-sub {
+  font-size: 15px; color: #8899bb; line-height: 1.6;
+  margin-bottom: 32px; max-width: 300px;
+}
+.pwa-gate-steps {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 18px; padding: 20px 24px;
+  margin-bottom: 28px; width: 100%; max-width: 320px;
+  text-align: left;
+}
+.pwa-gate-step {
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: 14px; color: #ccd6f6; line-height: 1.5;
+  margin-bottom: 14px;
+}
+.pwa-gate-step:last-child { margin-bottom: 0; }
+.pwa-gate-step-num {
+  background: linear-gradient(135deg, #4f8eff, #7c5cfc);
+  color: #fff; font-weight: 900; font-size: 12px;
+  width: 24px; height: 24px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.pwa-gate-btn {
+  background: linear-gradient(135deg, #4f8eff, #7c5cfc);
+  border: none; border-radius: 16px;
+  padding: 16px 32px; color: #fff;
+  font-size: 16px; font-weight: 900;
+  cursor: pointer; width: 100%; max-width: 320px;
+  box-shadow: 0 8px 30px rgba(79,142,255,0.4);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.pwa-gate-btn:active { transform: scale(0.97); }
+.pwa-gate-ios { display: none; }
+.pwa-gate-ios-note {
+  margin-top: 20px; font-size: 13px; color: #5566aa;
+  max-width: 300px; line-height: 1.6;
+}
 </style>
 </head>
 <body onclick="unlockAudio()">
@@ -5608,6 +5811,65 @@ function exportProgress() {
 
   <div class="seal"><span class="seal-icon">✦</span></div>
   <div class="date-line">Выдан ${date} · ETU v1.0</div>
+</div>
+
+<!-- PWA баннер -->
+<div id="pwaBanner" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;align-items:center;gap:10px;background:linear-gradient(135deg,#1a2540,#0d1525);border:1px solid rgba(79,142,255,0.4);border-radius:18px;padding:12px 16px;box-shadow:0 8px 40px rgba(0,0,0,0.6);width:calc(100% - 32px);max-width:340px;">
+  <span style="font-size:32px">📲</span>
+  <div style="flex:1">
+    <div style="font-size:13px;font-weight:800;color:#f0f4ff">Установить приложение</div>
+    <div style="font-size:11px;color:#8899bb">Работает офлайн · Без браузера</div>
+  </div>
+  <button onclick="pwaInstall()" style="background:linear-gradient(135deg,#4f8eff,#7c5cfc);border:none;border-radius:10px;padding:8px 14px;color:#fff;font-size:13px;font-weight:800;cursor:pointer">Установить</button>
+  <button onclick="this.parentElement.style.display='none'" style="background:rgba(255,255,255,0.08);border:none;border-radius:8px;padding:6px 9px;color:#8899bb;cursor:pointer;font-size:15px">✕</button>
+</div>
+
+<!-- ═══ PWA GATE — блокирует доступ без установки ═══ -->
+<div id="pwaGate">
+  <div class="pwa-gate-icon">📲</div>
+  <div class="pwa-gate-title">Установи приложение</div>
+  <div class="pwa-gate-sub">English Trainer Ultimate доступен только как установленное приложение</div>
+
+  <!-- Android -->
+  <div id="gateAndroid">
+    <div class="pwa-gate-steps">
+      <div class="pwa-gate-step">
+        <div class="pwa-gate-step-num">1</div>
+        <div>Нажми кнопку <strong>«Установить»</strong> ниже</div>
+      </div>
+      <div class="pwa-gate-step">
+        <div class="pwa-gate-step-num">2</div>
+        <div>Подтверди установку в появившемся окне</div>
+      </div>
+      <div class="pwa-gate-step">
+        <div class="pwa-gate-step-num">3</div>
+        <div>Открой приложение с <strong>главного экрана</strong></div>
+      </div>
+    </div>
+    <button class="pwa-gate-btn" id="gateInstallBtn" onclick="gateInstall()">📲 Установить приложение</button>
+    <div id="gateWaiting" style="display:none;margin-top:16px;font-size:13px;color:#8899bb">
+      ⏳ Ожидаем подтверждения от браузера...
+    </div>
+  </div>
+
+  <!-- iOS -->
+  <div id="gateIos" style="display:none">
+    <div class="pwa-gate-steps">
+      <div class="pwa-gate-step">
+        <div class="pwa-gate-step-num">1</div>
+        <div>Нажми кнопку <strong>«Поделиться»</strong> (□↑) внизу Safari</div>
+      </div>
+      <div class="pwa-gate-step">
+        <div class="pwa-gate-step-num">2</div>
+        <div>Выбери <strong>«На экран «Домой»»</strong></div>
+      </div>
+      <div class="pwa-gate-step">
+        <div class="pwa-gate-step-num">3</div>
+        <div>Нажми <strong>«Добавить»</strong> и открой приложение</div>
+      </div>
+    </div>
+    <div class="pwa-gate-ios-note">После добавления на экран — открывай только оттуда 👇</div>
+  </div>
 </div>
 </body>
 </html>`;
