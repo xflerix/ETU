@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -2585,6 +2585,10 @@ select {
         <option value="dailyRoutines">🌅 Распорядок дня</option>
         <option value="activities">📅 Занятия и дни недели</option>
         <option value="aroundTown">🏙️ По городу</option>
+        <option value="directions">🗺️ Ориентирование</option>
+        <option value="adjectives">🎨 Прилагательные</option>
+        <option value="scenery">🌄 Природа и пейзажи</option>
+        <option value="aroundHouse">🏠 Дом и квартира</option>
         <option value="myWords">⭐ Мои слова</option>
       </select>
     </div>
@@ -2896,6 +2900,10 @@ select {
         <option value="dailyRoutines">🌅 Распорядок дня</option>
         <option value="activities">📅 Занятия и дни недели</option>
         <option value="aroundTown">🏙️ По городу</option>
+        <option value="directions">🗺️ Ориентирование</option>
+        <option value="adjectives">🎨 Прилагательные</option>
+        <option value="scenery">🌄 Природа и пейзажи</option>
+        <option value="aroundHouse">🏠 Дом и квартира</option>
         <option value="myWords">⭐ Мои слова</option>
       </select>
     </div>
@@ -2995,6 +3003,96 @@ const categories = {
     {ru:"рядом",en:"near"},{ru:"церковь",en:"church"},
     {ru:"мечеть",en:"mosque"},{ru:"синагога",en:"synagogue"},
     {ru:"храм",en:"temple"},{ru:"далеко",en:"far"}
+  ],
+  // Theme 21 — Directions
+  directions:[
+    {ru:"идти прямо",en:"go straight ahead"},
+    {ru:"повернуть налево",en:"turn left"},
+    {ru:"повернуть направо",en:"turn right"},
+    {ru:"пройти мимо",en:"go past"},
+    {ru:"повернуть на первом повороте направо",en:"take the first right"},
+    {ru:"повернуть на втором повороте направо",en:"take the second right"},
+    {ru:"рядом с",en:"next to"},
+    {ru:"напротив",en:"opposite"},
+    {ru:"между",en:"between"},
+    {ru:"на углу",en:"on the corner"},
+    {ru:"позади",en:"behind"},
+    {ru:"перед",en:"in front of"},
+    {ru:"справа",en:"on the right"},
+    {ru:"слева",en:"on the left"},
+    {ru:"перекрёсток",en:"intersection / crossroads"},
+    {ru:"квартал",en:"block"}
+  ],
+  // Theme 22 — Adjectives
+  adjectives:[
+    {ru:"старый",en:"old"},
+    {ru:"новый",en:"new"},
+    {ru:"красивый",en:"beautiful"},
+    {ru:"ужасный",en:"horrible"},
+    {ru:"оживлённый",en:"busy"},
+    {ru:"тихий",en:"quiet"},
+    {ru:"маленький",en:"small"},
+    {ru:"большой",en:"big"},
+    {ru:"старый дом",en:"old house"},
+    {ru:"новый дом",en:"new house"},
+    {ru:"красивый дом",en:"beautiful house"},
+    {ru:"ужасный дом",en:"horrible house"},
+    {ru:"оживлённая улица",en:"busy street"},
+    {ru:"тихая улица",en:"quiet street"},
+    {ru:"маленький дом",en:"small house"},
+    {ru:"большой дом",en:"big house"}
+  ],
+  // Theme 23 — Places and Scenery
+  scenery:[
+    {ru:"пляж",en:"beach"},
+    {ru:"море",en:"sea"},
+    {ru:"песок",en:"sand"},
+    {ru:"сельская местность, деревня",en:"countryside"},
+    {ru:"дерево",en:"tree"},
+    {ru:"холм",en:"hill"},
+    {ru:"гора",en:"mountain"},
+    {ru:"озеро",en:"lake"},
+    {ru:"небо",en:"sky"},
+    {ru:"трава",en:"grass"},
+    {ru:"река",en:"river"},
+    {ru:"облако",en:"cloud"}
+  ],
+  // Theme 24 — Around the House
+  aroundHouse:[
+    {ru:"многоквартирный дом",en:"block of flats"},
+    {ru:"дом",en:"house"},
+    {ru:"гараж",en:"garage"},
+    {ru:"ванная комната",en:"bathroom"},
+    {ru:"гостиная",en:"living room"},
+    {ru:"кабинет",en:"study"},
+    {ru:"спальня",en:"bedroom"},
+    {ru:"кухня",en:"kitchen"},
+    {ru:"столовая",en:"dining room"},
+    {ru:"книжный шкаф",en:"bookcase"},
+    {ru:"письменный стол",en:"desk"},
+    {ru:"кресло",en:"armchair"},
+    {ru:"диван",en:"sofa"},
+    {ru:"телевизор",en:"television"},
+    {ru:"шкаф для одежды",en:"wardrobe"},
+    {ru:"лампа",en:"lamp"},
+    {ru:"кровать",en:"bed"},
+    {ru:"холодильник",en:"fridge"},
+    {ru:"плита",en:"cooker"},
+    {ru:"раковина",en:"sink"},
+    {ru:"стол",en:"table"},
+    {ru:"стул",en:"chair"},
+    {ru:"душ",en:"shower"},
+    {ru:"туалет",en:"toilet"},
+    {ru:"ванна",en:"bathtub"},
+    {ru:"дверь",en:"door"},
+    {ru:"крыша",en:"roof"},
+    {ru:"лестница",en:"stairs"},
+    {ru:"чердак",en:"attic"},
+    {ru:"верхний этаж",en:"upstairs"},
+    {ru:"нижний этаж",en:"downstairs"},
+    {ru:"подвал",en:"basement"},
+    {ru:"сад, двор",en:"garden"},
+    {ru:"окно",en:"window"}
   ],
   myWords:[]
 };
@@ -5025,7 +5123,7 @@ function dictSearch(q) {
   }
   const catLabels = {
     jobs:"💼 Профессии", workplaces:"🏭 Места работы", dailyRoutines:"🌅 Распорядок",
-    activities:"📅 Занятия", aroundTown:"🏙️ Город", myWords:"⭐ Мои слова"
+    activities:"📅 Занятия", aroundTown:"🏙️ Город", directions:"🗺️ Ориентирование", adjectives:"🎨 Прилагательные", scenery:"🌄 Природа", aroundHouse:"🏠 Дом", myWords:"⭐ Мои слова"
   };
   let results = [];
   Object.entries(categories).forEach(([cat, words]) => {
@@ -5229,7 +5327,7 @@ function renderCatStats() {
   try { raw = JSON.parse(localStorage.getItem("etu_cat_stats")) || {}; } catch(e){}
   const catLabels = {
     jobs:"💼 Профессии", workplaces:"🏭 Места работы", dailyRoutines:"🌅 Распорядок",
-    activities:"📅 Занятия", aroundTown:"🏙️ Город", myWords:"⭐ Мои слова"
+    activities:"📅 Занятия", aroundTown:"🏙️ Город", directions:"🗺️ Ориентирование", adjectives:"🎨 Прилагательные", scenery:"🌄 Природа", aroundHouse:"🏠 Дом", myWords:"⭐ Мои слова"
   };
   const entries = Object.entries(raw).filter(([k,v])=>(v.total||0)>=3)
     .sort((a,b)=>b[1].total-a[1].total);
