@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#080c14" id="metaThemeColor">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>English Trainer Ultimate v3</title>
+<title>English Trainer Ultimate v3 (fixed v14)</title>
 <style>
 /* ════════════════════════════════════
    ПЕРЕМЕННЫЕ И БАЗА
@@ -164,8 +164,26 @@ header {
   background: linear-gradient(135deg, #4f8eff, #7c5cfc);
   display: flex; align-items: center; justify-content: center;
   font-size: 30px; flex-shrink: 0; animation: pulse 3s ease-in-out infinite;
+  overflow: hidden;
 }
 @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(79,142,255,.4)} 50%{box-shadow:0 0 0 10px rgba(79,142,255,0)} }
+.avatar img { width:100%; height:100%; object-fit:cover; border-radius:16px; display:block; }
+.avatar-photo-btn {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(79,142,255,.15); color:var(--accent);
+  border:1px solid rgba(79,142,255,.4); border-radius:10px;
+  padding:7px 14px; font-size:13px; font-weight:800;
+  cursor:pointer; transition:var(--t); margin-bottom:10px;
+}
+.avatar-photo-btn:hover { background:rgba(79,142,255,.28); }
+.avatar-photo-del {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(255,79,109,.1); color:var(--err);
+  border:1px solid rgba(255,79,109,.3); border-radius:10px;
+  padding:7px 14px; font-size:13px; font-weight:800;
+  cursor:pointer; transition:var(--t); margin-bottom:10px; margin-left:8px;
+}
+.avatar-photo-del:hover { background:rgba(255,79,109,.22); }
 .menu-info { text-align: left; flex: 1; }
 .menu-name { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
 .rank-badge {
@@ -691,6 +709,17 @@ li:hover { border-color: rgba(79,142,255,.3); }
 .pause-title { font-size: 22px; font-weight: 900; margin-bottom: 16px; }
 .pause-menu-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
 .pause-menu-actions button { width: 100%; }
+.pause-sound-toggle {
+  width: 100%; padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 800;
+  background: rgba(79,142,255,.12); color: var(--accent);
+  border: 1.5px solid rgba(79,142,255,.35); cursor: pointer; transition: var(--t);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.pause-sound-toggle:hover { background: rgba(79,142,255,.22); }
+.pause-sound-toggle.muted {
+  background: rgba(255,255,255,.05); color: var(--text2);
+  border-color: var(--card-border);
+}
 
 select {
   width: 100%; padding: 12px 14px; border: 1px solid var(--card-border);
@@ -1105,11 +1134,22 @@ select:focus { border-color: var(--accent); }
 .profile-ring-wrap .ring-bg { fill: none; stroke: var(--muted); stroke-width: 6; }
 .profile-ring-wrap .ring-fg {
   fill: none; stroke-width: 6; stroke-linecap: round;
-  stroke: url(#ringGrad); transition: stroke-dashoffset 1s ease;
+  transition: stroke-dashoffset 1s ease, stroke .4s ease;
+}
+@keyframes rainbowStroke {
+  0%   { stroke: #ff4f6d; }
+  25%  { stroke: #ffc247; }
+  50%  { stroke: #22d88f; }
+  75%  { stroke: #4f8eff; }
+  100% { stroke: #ff4f6d; }
 }
 .profile-avatar-center {
-  position: absolute; inset: 0; display: flex; align-items: center;
+  position: absolute; inset: 8px; display: flex; align-items: center;
   justify-content: center; font-size: 48px; cursor: pointer;
+  border-radius: 50%; overflow: hidden;
+}
+.profile-avatar-center img {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;
 }
 
 /* Confetti particle */
@@ -1310,11 +1350,6 @@ header {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(79,142,255,.3); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(79,142,255,.5); }
-
-/* Кольцо профиля — гладкий переход */
-#profileRingFg {
-  stroke: url(#ringGrad);
-}
 
 /* Улучшить timer ring цвет когда мало времени */
 .timer-ring .fg-ring.danger { stroke: var(--err); }
@@ -1792,6 +1827,101 @@ select {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
 }
 .shop-grid.themes { grid-template-columns: repeat(3, 1fr); }
+
+/* ── Кроппер фото ── */
+.cropper-modal {
+  display: none; position: fixed; inset: 0;
+  background: rgba(8,12,20,.95); backdrop-filter: blur(16px);
+  z-index: 9999; flex-direction: column;
+  align-items: center; justify-content: center; padding: 20px;
+}
+.cropper-modal.open { display: flex; }
+.cropper-title { font-size: 18px; font-weight: 900; margin-bottom: 16px; color: var(--text); }
+.cropper-canvas-wrap {
+  position: relative; width: 280px; height: 280px;
+  border-radius: 20px; overflow: hidden;
+  background: #000; touch-action: none; cursor: grab; flex-shrink: 0;
+}
+.cropper-canvas-wrap:active { cursor: grabbing; }
+.cropper-canvas-wrap canvas { display: block; width: 100%; height: 100%; }
+.cropper-overlay {
+  position: absolute; inset: 0; pointer-events: none;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.5);
+  border-radius: 20px;
+}
+.cropper-circle-mask {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle 120px at center, transparent 119px, rgba(0,0,0,0.55) 120px);
+}
+.cropper-hint { font-size: 12px; color: var(--text2); margin: 12px 0 4px; font-weight: 600; }
+.cropper-zoom-row {
+  display: flex; align-items: center; gap: 12px; margin: 8px 0 16px; width: 280px;
+}
+.cropper-zoom-row span { font-size: 16px; }
+.cropper-zoom-row input[type=range] {
+  flex: 1; accent-color: var(--accent); height: 4px;
+}
+.cropper-btns { display: flex; gap: 10px; width: 280px; }
+.cropper-btn-cancel {
+  flex: 1; padding: 14px; border-radius: 14px;
+  background: var(--muted); color: var(--text);
+  border: 1px solid var(--card-border); font-size: 15px; font-weight: 700; cursor: pointer;
+}
+.cropper-btn-ok {
+  flex: 1; padding: 14px; border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff; border: none; font-size: 15px; font-weight: 800; cursor: pointer;
+}
+.frame-preview-wrap {
+  width: 48px; height: 48px; border-radius: 14px;
+  margin: 0 auto 6px; position: relative; flex-shrink: 0;
+  isolation: isolate;
+}
+.frame-preview-inner {
+  width: 100%; height: 100%; border-radius: 12px;
+  background: linear-gradient(135deg,#4f8eff,#7c5cfc);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; overflow: hidden; position: relative; z-index: 1;
+}
+.frame-preview-ring {
+  position: absolute; inset: -3px; border-radius: 16px; z-index: 0;
+}
+@keyframes rainbowSpin {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.frame-preview-ring.animated {
+  background: linear-gradient(270deg,#ff4f6d,#ffc247,#22d88f,#4f8eff,#a78bfa,#ff4f6d);
+  background-size: 300% 300%;
+  animation: rainbowSpin 3s ease infinite;
+}
+
+/* Применённая рамка на реальном аватаре */
+.avatar-frame-wrap {
+  position: relative; display: inline-flex; flex-shrink: 0;
+}
+.avatar-frame-wrap .avatar {
+  position: relative; z-index: 1;
+}
+.avatar-frame-ring {
+  position: absolute; inset: -4px; border-radius: 22px; z-index: 0; pointer-events: none;
+}
+.avatar-frame-ring.animated {
+  background: linear-gradient(270deg,#ff4f6d,#ffc247,#22d88f,#4f8eff,#a78bfa,#ff4f6d);
+  background-size: 300% 300%;
+  animation: rainbowSpin 3s ease infinite;
+  border-radius: 22px;
+}
+/* Профиль — рамка вокруг кольца XP */
+.profile-frame-ring {
+  position: absolute; inset: -4px; border-radius: 50%; z-index: 0; pointer-events: none;
+}
+.profile-frame-ring.animated {
+  background: linear-gradient(270deg,#ff4f6d,#ffc247,#22d88f,#4f8eff,#a78bfa,#ff4f6d);
+  background-size: 300% 300%;
+  animation: rainbowSpin 3s ease infinite;
+}
 .shop-item {
   background: var(--muted2); border: 2px solid var(--card-border);
   border-radius: 14px; padding: 10px 6px; text-align: center;
@@ -1934,6 +2064,24 @@ select {
     <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#4f8eff"/>
       <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="frameGradGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffc247"/><stop offset="100%" stop-color="#ff8c42"/>
+    </linearGradient>
+    <linearGradient id="frameGradFire" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff4f6d"/><stop offset="100%" stop-color="#ff8c42"/>
+    </linearGradient>
+    <linearGradient id="frameGradNeon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d88f"/><stop offset="100%" stop-color="#4f8eff"/>
+    </linearGradient>
+    <linearGradient id="frameGradGalaxy" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7c5cfc"/><stop offset="50%" stop-color="#4f8eff"/><stop offset="100%" stop-color="#22d88f"/>
+    </linearGradient>
+    <linearGradient id="frameGradRainbow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff4f6d"/><stop offset="33%" stop-color="#ffc247"/><stop offset="66%" stop-color="#22d88f"/><stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="frameGradDiamond" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e0f2ff"/><stop offset="50%" stop-color="#74c0fc"/><stop offset="100%" stop-color="#e0f2ff"/>
     </linearGradient>
   </defs>
 </svg>
@@ -2260,6 +2408,10 @@ select {
       <div class="profile-ring-wrap">
         <svg width="110" height="110" viewBox="0 0 110 110">
           <circle class="ring-bg" cx="55" cy="55" r="48"/>
+          <circle id="profileFrameRing" cx="55" cy="55" r="48"
+            fill="none" stroke-width="5" stroke-linecap="round"
+            stroke-dasharray="301.6" stroke-dashoffset="0"
+            stroke="transparent" style="transition:stroke .4s ease;"/>
           <circle class="ring-fg" id="profileRingFg" cx="55" cy="55" r="48"
             stroke-dasharray="301.6" stroke-dashoffset="301.6"/>
         </svg>
@@ -2271,6 +2423,11 @@ select {
     </div>
     <div id="avatarPicker" style="display:none;margin-bottom:16px;">
       <div style="font-size:13px;font-weight:800;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;">Выбери аватар</div>
+      <div style="margin-bottom:12px;">
+        <button class="avatar-photo-btn" onclick="document.getElementById('avatarPhotoInput').click()">📷 Загрузить фото</button>
+        <button class="avatar-photo-del" id="avatarPhotoDelBtn" style="display:none;" onclick="removePhotoAvatar()">🗑 Удалить фото</button>
+        <input type="file" id="avatarPhotoInput" accept="image/*" style="display:none;" onchange="handleAvatarPhoto(this)">
+      </div>
       <div id="avatarGrid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;"></div>
     </div>
     <div style="margin-bottom:14px;">
@@ -2805,7 +2962,7 @@ select {
 <!-- ═══ МАГАЗИН ═══ -->
 <div id="shopScreen" class="card screen">
   <div style="font-size:20px;font-weight:900;margin-bottom:4px;">🛍️ Магазин</div>
-  <div style="color:var(--text2);font-size:13px;margin-bottom:14px;">Трать XP на аватары, темы и звуки</div>
+  <div style="color:var(--text2);font-size:13px;margin-bottom:14px;">Трать XP на рамки, темы и звуки</div>
 
   <div class="shop-balance">
     <div>
@@ -2815,8 +2972,8 @@ select {
     <div style="font-size:36px;">💰</div>
   </div>
 
-  <div class="shop-section-title">🦸 Эксклюзивные аватары</div>
-  <div class="shop-grid" id="shopAvatars"></div>
+  <div class="shop-section-title">🖼️ Рамки аватара</div>
+  <div class="shop-grid" id="shopFrames" style="grid-template-columns:repeat(4,1fr);"></div>
 
   <div class="shop-section-title">🎨 Цветовые темы</div>
   <div class="shop-grid themes" id="shopThemes"></div>
@@ -2921,6 +3078,10 @@ select {
         <option value="aroundHouse">🏠 Дом и квартира</option>
         <option value="myWords">⭐ Мои слова</option>
       </select>
+    </div>
+    <div class="settings-row">
+      <label>Звук</label>
+      <button id="pauseSoundToggle" class="pause-sound-toggle" onclick="toggleSoundFromPause()">🔊 Звук включён</button>
     </div>
     <div class="pause-menu-actions">
       <button class="btn-primary" onclick="resumeGame()">▶️ Продолжить</button>
@@ -3385,6 +3546,7 @@ function playFlip(){
 }
 
 function speak(text) {
+  if (!soundEnabled) return;           // не озвучивать если звук выключен
   if ('speechSynthesis' in window) {
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
@@ -3395,6 +3557,32 @@ function speak(text) {
 function speakCurrent() {
   unlockAudio();
   if (currentWordObj && currentLanguage === 'en') speak(currentWordObj.en.split('/')[0].trim());
+}
+
+function _syncPauseSoundBtn() {
+  const btn = document.getElementById('pauseSoundToggle');
+  if (!btn) return;
+  if (soundEnabled) {
+    btn.textContent = '🔊 Звук включён';
+    btn.classList.remove('muted');
+  } else {
+    btn.textContent = '🔇 Звук выключен';
+    btn.classList.add('muted');
+  }
+}
+
+function toggleSoundFromPause() {
+  unlockAudio();
+  soundEnabled = !soundEnabled;
+  if (!soundEnabled) speechSynthesis.cancel();   // сразу останавливаем текущую озвучку
+  localStorage.setItem('soundEnabled', soundEnabled);
+  // синхронизируем все кнопки звука в интерфейсе
+  const mainBtn = document.getElementById('soundBtn');
+  if (mainBtn) mainBtn.textContent = soundEnabled ? '🔊' : '🔇';
+  const settingsWrap = document.getElementById('soundToggleWrap');
+  if (settingsWrap) settingsWrap.classList.toggle('on', soundEnabled);
+  _syncPauseSoundBtn();
+  if (soundEnabled) playClick();
 }
 
 // ════════════════════════════════════
@@ -3472,9 +3660,11 @@ function save() {
   localStorage.setItem("wordWeights", JSON.stringify(wordWeights));
   localStorage.setItem("etu_dailyXp", dailyXp);
   localStorage.setItem("etu_wordErrors", JSON.stringify(wordErrorCount));
-  // v4: weekly chart + day streak
+  // v4: weekly chart data
   if (typeof saveWeeklyData === 'function') saveWeeklyData();
-  if (typeof renderWeeklyChart === 'function') renderWeeklyChart();
+  // OPTIMIZATION v14: renderWeeklyChart() вызывается только при переходе в меню/статистику,
+  // а не при каждом сохранении (каждый правильный ответ). Убираем из save().
+  // if (typeof renderWeeklyChart === 'function') renderWeeklyChart();
   // v7: sprint state persistence
   saveSprintState();
 }
@@ -3536,6 +3726,8 @@ function goToMainMenu() {
   renderActivityCalendar();
   renderChallenges();
   renderChest();
+  // OPTIMIZATION v14: рендерим недельный график при возврате в меню (раньше вызывалось из save())
+  if (typeof renderWeeklyChart === 'function') renderWeeklyChart();
   // Показать отложенный баннер уровня
   if (pendingLevelUp > 0) {
     const lvl = pendingLevelUp;
@@ -3577,7 +3769,7 @@ function updateMenu() {
   document.getElementById("levelTxt").textContent = `${xpLeft} XP до уровня ${lvl+1}`;
   const rank = getRankObj(xp);
   document.getElementById("userRank").textContent = rank.label;
-  document.getElementById("menuAvatar").textContent = profileData.avatar || rank.avatar;
+  _applyAvatarToEl(document.getElementById("menuAvatar"), profileData.avatar || rank.avatar, profileData.avatarPhoto);
   if (profileData.name) document.querySelector(".menu-name").textContent = profileData.name;
   document.getElementById("dailyGoalText").textContent = `цель: ${DAILY_GOALS[dailyDifficulty].xp} XP`;
   document.getElementById("dailyXpDone").textContent = `${dailyXp} XP набрано`;
@@ -3935,6 +4127,7 @@ function resetTimer() {
 function pauseGame() {
   clearInterval(interval); isPaused=true;
   document.getElementById("pauseOverlay").classList.add("active");
+  _syncPauseSoundBtn();
 }
 function resumeGame() {
   isPaused=false; savePrefs();
@@ -4157,8 +4350,10 @@ function agHint(){
   if (pos >= agTarget.length) return;
   const nextChar = agTarget[pos];
   const tile = [...document.querySelectorAll('.letter-tile')].find(t=>!t.classList.contains('used')&&t.dataset.letter===nextChar);
-  if(tile) agAddLetter(tile);
+  // BUG FIX v14: XP списывался даже если подходящая буква не найдена (тайл уже использован или отсутствует).
+  if (!tile) return;
   xp=Math.max(0,xp-3); update(); save();
+  agAddLetter(tile);
 }
 function agSkip(){
   clearInterval(agInterval);
@@ -4287,9 +4482,12 @@ function studyMistake(src,tgt,idx) {
   document.getElementById("dashboardCard").style.display="none";
   document.getElementById("sprintCounterRow").style.display="none";
   document.getElementById("sprintProgWrap").style.display="none";
-  currentWordObj={ru:currentLanguage==='ru'?src:tgt, en:currentLanguage==='ru'?tgt:src};
+  // BUG FIX v14: src — всегда русское слово, tgt — английское.
+  // Старый код некорректно использовал currentLanguage (который мог быть от предыдущей игры).
+  currentWordObj = { ru: src, en: tgt };
+  currentLanguage = 'ru';
+  correctAnswerString = tgt;
   document.getElementById("word").textContent=src;
-  correctAnswerString=tgt;
   document.getElementById("answer").value="";
   document.getElementById("result").innerHTML="💪 Режим отработки ошибки!";
   document.getElementById("result").className="result";
@@ -4539,16 +4737,26 @@ const ENG_LEVELS = [
   {code:"C2", label:"C2 — Свободный"},
 ];
 
-let profileData = { name:"", avatar:"🦁", goal:"", engLevel:"", bio:"" };
+let profileData = { name:"", avatar:"🦁", goal:"", engLevel:"", bio:"", avatarPhoto: null, frame: "frame_blue" };
 try { profileData = Object.assign(profileData, JSON.parse(localStorage.getItem("etu_profile")) || {}); } catch(e){}
+// Load photo separately (stored outside JSON due to size)
+try { const _ph = localStorage.getItem("etu_avatarPhoto"); if (_ph) profileData.avatarPhoto = _ph; } catch(e){}
 
 function loadProfile() {
   // Apply name to main menu
   if (profileData.name) {
     document.querySelector(".menu-name").textContent = profileData.name;
   }
-  if (profileData.avatar) {
-    document.getElementById("menuAvatar").textContent = profileData.avatar;
+  _applyAvatarToEl(document.getElementById("menuAvatar"), profileData.avatar, profileData.avatarPhoto);
+}
+
+function _applyAvatarToEl(el, emoji, photoData) {
+  if (!el) return;
+  if (photoData) {
+    el.innerHTML = `<img src="${photoData}" alt="avatar">`;
+  } else {
+    el.innerHTML = '';
+    el.textContent = emoji || '🦁';
   }
 }
 
@@ -4559,7 +4767,11 @@ function showProfileScreen() {
   document.getElementById("profileName").value = profileData.name || "";
   document.getElementById("profileGoal").value = profileData.goal || "";
   document.getElementById("profileBio").value = profileData.bio || "";
-  document.getElementById("profileAvatarBig").textContent = profileData.avatar || "🦁";
+  // Apply avatar (photo or emoji)
+  _applyAvatarToEl(document.getElementById("profileAvatarBig"), profileData.avatar, profileData.avatarPhoto);
+  // Show/hide delete photo button
+  const delBtn = document.getElementById("avatarPhotoDelBtn");
+  if (delBtn) delBtn.style.display = profileData.avatarPhoto ? "inline-flex" : "none";
   document.getElementById("bioCounter").textContent = (profileData.bio||"").length + " / 120";
 
   // Stats
@@ -4618,13 +4830,34 @@ function openAvatarPicker() {
 
 function selectAvatar(emoji) {
   profileData.avatar = emoji;
-  document.getElementById("profileAvatarBig").textContent = emoji;
+  profileData.avatarPhoto = null; // clear photo
+  _applyAvatarToEl(document.getElementById("profileAvatarBig"), emoji, null);
+  const delBtn = document.getElementById("avatarPhotoDelBtn");
+  if (delBtn) delBtn.style.display = "none";
   // refresh grid highlight
   document.getElementById("avatarGrid").querySelectorAll("div").forEach(d => {
     const match = d.textContent === emoji;
     d.style.borderColor = match ? "var(--accent)" : "transparent";
     d.style.background = match ? "rgba(79,142,255,.15)" : "var(--muted2)";
   });
+}
+
+function handleAvatarPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) { openCropper(e.target.result); };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+function removePhotoAvatar() {
+  profileData.avatarPhoto = null;
+  localStorage.removeItem("etu_avatarPhoto");
+  _applyAvatarToEl(document.getElementById("profileAvatarBig"), profileData.avatar, null);
+  _applyAvatarToEl(document.getElementById("menuAvatar"), profileData.avatar, null);
+  const delBtn = document.getElementById("avatarPhotoDelBtn");
+  if (delBtn) delBtn.style.display = "none";
 }
 
 function selectEngLevel(code) {
@@ -4648,7 +4881,7 @@ function saveProfile() {
   } else {
     document.querySelector(".menu-name").textContent = "English Trainer";
   }
-  document.getElementById("menuAvatar").textContent = profileData.avatar || "🦁";
+  _applyAvatarToEl(document.getElementById("menuAvatar"), profileData.avatar, profileData.avatarPhoto);
 
   playCorrect();
   alertPop("✅ Профиль сохранён!");
@@ -4847,6 +5080,35 @@ function updateProfileRing() {
   const pct = _getLevelProgress(xp) / 100;
   const circumference = 301.6;
   ring.style.strokeDashoffset = circumference * (1 - pct);
+
+  // Color XP ring with frame's gradient
+  const frameId = profileData.frame || 'frame_blue';
+  const frameGradMap = {
+    frame_none:    'url(#ringGrad)',
+    frame_blue:    'url(#ringGrad)',
+    frame_gold:    'url(#frameGradGold)',
+    frame_fire:    'url(#frameGradFire)',
+    frame_neon:    'url(#frameGradNeon)',
+    frame_galaxy:  'url(#frameGradGalaxy)',
+    frame_rainbow: 'url(#frameGradRainbow)',
+    frame_diamond: 'url(#frameGradDiamond)',
+  };
+  const frameGlowMap = {
+    frame_none:    '',
+    frame_blue:    'drop-shadow(0 0 6px rgba(79,142,255,0.6))',
+    frame_gold:    'drop-shadow(0 0 8px rgba(255,194,71,0.8))',
+    frame_fire:    'drop-shadow(0 0 10px rgba(255,79,109,0.8))',
+    frame_neon:    'drop-shadow(0 0 10px rgba(34,216,143,0.9))',
+    frame_galaxy:  'drop-shadow(0 0 10px rgba(124,92,252,0.8))',
+    frame_rainbow: 'drop-shadow(0 0 12px rgba(167,139,250,0.7))',
+    frame_diamond: 'drop-shadow(0 0 12px rgba(116,192,252,0.9))',
+  };
+  ring.style.stroke = frameGradMap[frameId] ?? 'url(#ringGrad)';
+  ring.style.filter = frameGlowMap[frameId] ?? '';
+
+  // Hide the separate frame ring (not needed anymore)
+  const frameRing = document.getElementById("profileFrameRing");
+  if (frameRing) frameRing.setAttribute('stroke', 'transparent');
 }
 
 // ════════════════════════════════════
@@ -5613,7 +5875,7 @@ function onboardFinish() {
 
   // Применить
   document.querySelector(".menu-name").textContent = profileData.name;
-  document.getElementById("menuAvatar").textContent = profileData.avatar;
+  _applyAvatarToEl(document.getElementById("menuAvatar"), profileData.avatar, profileData.avatarPhoto);
   updateMenu();
 
   localStorage.setItem("etu_onboard_done", "1");
@@ -5832,12 +6094,12 @@ function getTodayChallenges() {
   try { saved = JSON.parse(localStorage.getItem(todayKey)); } catch(e){}
   if (saved && Array.isArray(saved)) return saved;
   // Pick 3 random challenges deterministically by date
+  // BUG FIX v14: старый алгоритм использовал a.id.length как хеш,
+  // из-за чего несколько челленджей с одинаковой длиной id давали одинаковый хеш
+  // и порядок был нестабильным / нерандомным. Исправлено: уникальный хеш по символам id.
   const seed = new Date().toDateString().split(' ').reduce((a,c)=>a+c.charCodeAt(0),0);
-  const shuffled = [...CHALLENGE_TEMPLATES].sort((a,b) => {
-    const ha = (seed * 1103515245 + a.id.length) & 0x7fffffff;
-    const hb = (seed * 1103515245 + b.id.length * 2) & 0x7fffffff;
-    return ha - hb;
-  });
+  const _hashId = (id, s) => id.split('').reduce((h,c,i)=>(h ^ (c.charCodeAt(0) * (i+1) * s)) & 0x7fffffff, s);
+  const shuffled = [...CHALLENGE_TEMPLATES].sort((a,b) => _hashId(a.id,seed) - _hashId(b.id,seed));
   const picked = shuffled.slice(0, 3).map(c => c.id);
   try { localStorage.setItem(todayKey, JSON.stringify(picked)); } catch(e){}
   return picked;
@@ -5900,9 +6162,23 @@ function trackChStat(key, val=1) {
   try { s = JSON.parse(localStorage.getItem(todayKey)) || {}; } catch(e){}
   s[key] = (s[key] || 0) + val;
   try { localStorage.setItem(todayKey, JSON.stringify(s)); } catch(e){}
-  // alias so check() finds it
+  // alias so check() finds it — всегда синхронизируем с текущим днём
   try { localStorage.setItem('etu_ch_stats', JSON.stringify(s)); } catch(e){}
 }
+
+// BUG FIX v14: сбрасываем 'etu_ch_stats' при старте нового дня,
+// чтобы вчерашняя статистика не была видна как выполненные сегодняшние задания.
+(function _resetChStatsIfNewDay() {
+  const todayKey = 'etu_ch_stats_' + new Date().toDateString();
+  const todayStats = localStorage.getItem(todayKey);
+  if (!todayStats) {
+    // Новый день — обнуляем глобальный ключ
+    try { localStorage.setItem('etu_ch_stats', JSON.stringify({})); } catch(e){}
+  } else {
+    // Синхронизируем с сегодняшними данными
+    try { localStorage.setItem('etu_ch_stats', todayStats); } catch(e){}
+  }
+})();
 
 // ════════════════════════════════════
 //  РЕЖИМ «СОСТАВЬ ПРЕДЛОЖЕНИЕ»
@@ -6085,7 +6361,9 @@ function showSentenceResult() {
   document.getElementById('senResXp').textContent = senXpEarned;
   document.getElementById('senResStreak').textContent = senMaxStreak;
   document.getElementById('senResVerdict').innerHTML = `Правильно: <b>${senCorrect} из ${SEN_TOTAL}</b><br>Заработано: <b>+${senXpEarned} XP</b>`;
-  xp += senXpEarned; dailyXp += senXpEarned;
+  // BUG FIX v14: XP уже начислен в senCheck() при каждом правильном ответе.
+  // Повторное добавление здесь вызывало двойное начисление XP за весь раунд.
+  // xp += senXpEarned; dailyXp += senXpEarned; — УДАЛЕНО
   save(); updateMenu(); claimChallengeXp();
   showScreen('sentenceResultScreen');
   document.getElementById('dashboardCard').style.display = 'none';
@@ -6153,10 +6431,10 @@ function renderChest() {
     state.creditedToday = true;
     saveChestState(state);
   }
-  if (!allDone) {
-    state.creditedToday = false;
-    saveChestState(state);
-  }
+  // BUG FIX v14: не сбрасываем creditedToday при каждом рендере —
+  // только при смене дня (уже сделано выше в блоке lastDate).
+  // Старый код сбрасывал флаг при каждом открытии меню, если не все задания выполнены,
+  // что позволяло получить прогресс сундука повторно в тот же день.
 
   // Render track
   track.innerHTML = '';
@@ -6217,19 +6495,53 @@ function showShopToast(html) {
 // ════════════════════════════════════
 //  МАГАЗИН
 // ════════════════════════════════════
-const SHOP_AVATARS = [
-  { id:'av_wizard2', icon:'🧞', name:'Джинн', price:60 },
-  { id:'av_alien',   icon:'👽', name:'Пришелец', price:60 },
-  { id:'av_ninja2',  icon:'🦹', name:'Злодей', price:80 },
-  { id:'av_king',    icon:'🤴', name:'Принц', price:80 },
-  { id:'av_queen',   icon:'👸', name:'Принцесса', price:80 },
-  { id:'av_robot2',  icon:'🦾', name:'Киборг', price:100 },
-  { id:'av_dragon2', icon:'🐲', name:'Дракон', price:120 },
-  { id:'av_crown',   icon:'👑', name:'Корона', price:150 },
-  { id:'av_gem',     icon:'💎', name:'Бриллиант', price:200 },
-  { id:'av_trophy',  icon:'🏆', name:'Чемпион', price:250 },
-  { id:'av_star2',   icon:'🌠', name:'Звездопад', price:300 },
-  { id:'av_phoenix', icon:'🔥', name:'Феникс', price:400 },
+const SHOP_FRAMES = [
+  {
+    id: 'frame_none', name: 'Без рамки', price: 0,
+    css: 'none'
+  },
+  {
+    id: 'frame_blue', name: 'Синяя', price: 0,
+    css: '3px solid #4f8eff',
+    shadow: '0 0 0 2px rgba(79,142,255,0.35)'
+  },
+  {
+    id: 'frame_gold', name: 'Золото', price: 80,
+    css: '3px solid #ffc247',
+    shadow: '0 0 12px rgba(255,194,71,0.5)',
+    gradient: 'linear-gradient(135deg,#ffc247,#ff8c42)'
+  },
+  {
+    id: 'frame_fire', name: 'Огонь', price: 120,
+    css: '3px solid #ff4f6d',
+    shadow: '0 0 16px rgba(255,79,109,0.6)',
+    gradient: 'linear-gradient(135deg,#ff4f6d,#ff8c42)'
+  },
+  {
+    id: 'frame_neon', name: 'Неон', price: 150,
+    css: '3px solid #22d88f',
+    shadow: '0 0 18px rgba(34,216,143,0.7)',
+    gradient: 'linear-gradient(135deg,#22d88f,#4f8eff)'
+  },
+  {
+    id: 'frame_galaxy', name: 'Галактика', price: 200,
+    css: '3px solid #a78bfa',
+    shadow: '0 0 20px rgba(167,139,250,0.7)',
+    gradient: 'linear-gradient(135deg,#7c5cfc,#4f8eff,#22d88f)'
+  },
+  {
+    id: 'frame_rainbow', name: 'Радуга', price: 300,
+    css: '3px solid transparent',
+    bgImage: 'linear-gradient(135deg,#ff4f6d,#ffc247,#22d88f,#4f8eff,#a78bfa)',
+    shadow: '0 0 22px rgba(167,139,250,0.5)',
+    animated: true
+  },
+  {
+    id: 'frame_diamond', name: 'Алмаз', price: 400,
+    css: '3px solid #e0f2ff',
+    shadow: '0 0 24px rgba(224,242,255,0.8), 0 0 8px rgba(79,142,255,0.6)',
+    gradient: 'linear-gradient(135deg,#e0f2ff,#a5d8ff,#74c0fc,#e0f2ff)'
+  },
 ];
 
 const SHOP_THEMES = [
@@ -6270,21 +6582,40 @@ function showShopScreen() {
 function renderShop() {
   document.getElementById('shopXpBalance').textContent = xp + ' XP';
 
-  // Avatars
-  const ownedAv = getOwned('avatars');
-  const avEl = document.getElementById('shopAvatars');
-  avEl.innerHTML = SHOP_AVATARS.map(a => {
-    const owned = ownedAv.includes(a.id);
-    const equipped = profileData.avatar === a.icon;
-    const cls = equipped ? 'equipped' : owned ? 'owned' : (xp < a.price ? 'locked' : '');
+  // Frames
+  const ownedFr = getOwned('frames');
+  const equippedFrame = profileData.frame || 'frame_blue';
+  const frEl = document.getElementById('shopFrames');
+  frEl.innerHTML = SHOP_FRAMES.map(f => {
+    const owned = f.price === 0 || ownedFr.includes(f.id);
+    const equipped = equippedFrame === f.id;
+    const cls = equipped ? 'equipped' : owned ? 'owned' : (xp < f.price ? 'locked' : '');
     const priceHtml = equipped
       ? '<span class="shop-item-price equipped-tag">Надето</span>'
       : owned
         ? '<span class="shop-item-price owned-tag">Надеть</span>'
-        : `<span class="shop-item-price">${a.price} XP</span>`;
-    return `<div class="shop-item ${cls}" onclick="buyOrEquipAvatar('${a.id}')">
-      <div class="shop-item-icon">${a.icon}</div>
-      <div class="shop-item-name">${a.name}</div>
+        : `<span class="shop-item-price">${f.price} XP</span>`;
+
+    // Build frame preview
+    let ringStyle = '';
+    if (f.id === 'frame_none') {
+      ringStyle = 'display:none;';
+    } else if (f.animated) {
+      // handled by class
+    } else if (f.gradient) {
+      ringStyle = `background:${f.gradient};`;
+    } else {
+      ringStyle = `background:${f.css.replace('3px solid ','')};`;
+    }
+    const animClass = f.animated ? ' animated' : '';
+    const shadowStyle = f.shadow ? `box-shadow:${f.shadow};` : '';
+
+    return `<div class="shop-item ${cls}" onclick="buyOrEquipFrame('${f.id}')">
+      <div class="frame-preview-wrap">
+        <div class="frame-preview-ring${animClass}" style="${ringStyle}${shadowStyle}"></div>
+        <div class="frame-preview-inner">🦁</div>
+      </div>
+      <div class="shop-item-name">${f.name}</div>
       ${priceHtml}
     </div>`;
   }).join('');
@@ -6330,31 +6661,82 @@ function renderShop() {
   }).join('');
 }
 
-function buyOrEquipAvatar(id) {
-  const item = SHOP_AVATARS.find(a => a.id === id);
+function buyOrEquipFrame(id) {
+  const item = SHOP_FRAMES.find(f => f.id === id);
   if (!item) return;
-  const owned = getOwned('avatars');
-  if (owned.includes(id)) {
-    // equip
+  const owned = item.price === 0 || getOwned('frames').includes(id);
+  if (owned) {
     playClick();
-    profileData.avatar = item.icon;
+    profileData.frame = id;
     localStorage.setItem('etu_profile', JSON.stringify(profileData));
-    document.getElementById('menuAvatar').textContent = item.icon;
+    applyAvatarFrame(id);
+    if (typeof updateProfileRing === 'function') updateProfileRing();
     renderShop();
     return;
   }
   if (xp < item.price) { alertPop(`Не хватает XP! Нужно ${item.price} XP`); return; }
-  shopConfirm(`Купить аватар ${item.icon} <b>${item.name}</b> за <b>${item.price} XP</b>?`, () => {
-    owned.push(id); setOwned('avatars', owned);
+  shopConfirm(`Купить рамку «<b>${item.name}</b>» за <b>${item.price} XP</b>?`, () => {
+    const ownedFr = getOwned('frames'); ownedFr.push(id); setOwned('frames', ownedFr);
     xp -= item.price;
-    profileData.avatar = item.icon;
+    profileData.frame = id;
     localStorage.setItem('etu_profile', JSON.stringify(profileData));
     save(); update();
-    document.getElementById('menuAvatar').textContent = item.icon;
+    applyAvatarFrame(id);
+    if (typeof updateProfileRing === 'function') updateProfileRing();
     playAchievement(); spawnConfetti(20);
-    showShopToast(`✅ Куплено!<br><span style="font-size:28px;">${item.icon} ${item.name}</span>`);
+    showShopToast(`✅ Рамка надета!<br><span style="font-size:22px;">🖼️ ${item.name}</span>`);
     renderShop();
   });
+}
+
+function applyAvatarFrame(frameId) {
+  const frame = SHOP_FRAMES.find(f => f.id === frameId) || SHOP_FRAMES[1];
+  const menuAvEl = document.getElementById('menuAvatar');
+  if (!menuAvEl) return;
+
+  // Wrap menuAvatar in frame-wrap if not already
+  let wrap = document.getElementById('menuAvatarFrameWrap');
+  if (!wrap) {
+    const parent = menuAvEl.parentNode;
+    wrap = document.createElement('div');
+    wrap.id = 'menuAvatarFrameWrap';
+    wrap.className = 'avatar-frame-wrap';
+    parent.insertBefore(wrap, menuAvEl);
+    wrap.appendChild(menuAvEl);
+  }
+
+  // Remove old ring
+  let ring = document.getElementById('menuAvatarFrameRing');
+  if (ring) ring.remove();
+  // Also reset any inline styles on avatar
+  menuAvEl.style.outline = '';
+  menuAvEl.style.boxShadow = '';
+
+  if (frameId === 'frame_none') return;
+
+  if (frame.animated || frame.gradient) {
+    // Use a background div behind the avatar
+    ring = document.createElement('div');
+    ring.id = 'menuAvatarFrameRing';
+    ring.className = 'avatar-frame-ring' + (frame.animated ? ' animated' : '');
+    if (!frame.animated && frame.gradient) {
+      ring.style.background = frame.gradient;
+    }
+    if (frame.shadow) ring.style.boxShadow = frame.shadow;
+    wrap.insertBefore(ring, menuAvEl);
+  } else {
+    // Solid color — use outline on the avatar element itself (no z-index issues)
+    const color = frame.css.replace('3px solid ', '');
+    menuAvEl.style.outline = `3px solid ${color}`;
+    menuAvEl.style.outlineOffset = '2px';
+    if (frame.shadow) menuAvEl.style.boxShadow = frame.shadow;
+  }
+}
+
+function loadAvatarFrame() {
+  const frameId = profileData.frame || 'frame_blue';
+  // Defer until DOM ready
+  setTimeout(() => applyAvatarFrame(frameId), 0);
 }
 
 function buyOrEquipTheme(id) {
@@ -6450,6 +6832,9 @@ checkResumeSprint();
 renderActivityCalendar();
 renderChallenges();
 
+// v13 init — рамки аватара
+loadAvatarFrame();
+
 // onCorrect патч убран — level up встроен напрямую
 
 // ════ Custom shop confirm modal (replaces browser confirm) ════
@@ -6471,6 +6856,148 @@ function shopConfirm(message, onYes, yesLabel) {
   modal.onclick = (e) => { if (e.target === modal) hide(); };
 }
 
+// ════ КРОППЕР ФОТО ════
+const _crop = {
+  img: null, scale: 1, ox: 0, oy: 0,
+  dragging: false, lastX: 0, lastY: 0,
+  SIZE: 560
+};
+
+function openCropper(dataUrl) {
+  const modal = document.getElementById('cropperModal');
+  const canvas = document.getElementById('cropperCanvas');
+  const ctx = canvas.getContext('2d');
+  const zoom = document.getElementById('cropperZoom');
+
+  _crop.img = new Image();
+  _crop.img.onload = () => {
+    // Fit image to canvas initially
+    const s = Math.max(_crop.SIZE / _crop.img.width, _crop.SIZE / _crop.img.height);
+    _crop.scale = s;
+    _crop.ox = (_crop.SIZE - _crop.img.width * s) / 2;
+    _crop.oy = (_crop.SIZE - _crop.img.height * s) / 2;
+    zoom.value = 1;
+    _cropDraw();
+  };
+  _crop.img.src = dataUrl;
+  modal.classList.add('open');
+
+  // OPTIMIZATION v14: регистрируем обработчики только один раз, а не при каждом открытии
+  if (!_crop._handlersAttached) {
+    _crop._handlersAttached = true;
+
+    zoom.oninput = () => {
+      const z = parseFloat(zoom.value);
+      const base = Math.max(_crop.SIZE / _crop.img.width, _crop.SIZE / _crop.img.height);
+      const newScale = base * z;
+      const cx = _crop.SIZE / 2;
+      const cy = _crop.SIZE / 2;
+      _crop.ox = cx - (cx - _crop.ox) * (newScale / _crop.scale);
+      _crop.oy = cy - (cy - _crop.oy) * (newScale / _crop.scale);
+      _crop.scale = newScale;
+      _cropClamp();
+      _cropDraw();
+    };
+
+    const wrap = document.getElementById('cropperWrap');
+    wrap.ontouchstart = (e) => {
+      if (e.touches.length === 1) {
+        _crop.dragging = true;
+        _crop.lastX = e.touches[0].clientX;
+        _crop.lastY = e.touches[0].clientY;
+      }
+    };
+    wrap.ontouchmove = (e) => {
+      e.preventDefault();
+      if (!_crop.dragging || e.touches.length !== 1) return;
+      const dx = e.touches[0].clientX - _crop.lastX;
+      const dy = e.touches[0].clientY - _crop.lastY;
+      _crop.lastX = e.touches[0].clientX;
+      _crop.lastY = e.touches[0].clientY;
+      _crop.ox += dx * 2;
+      _crop.oy += dy * 2;
+      _cropClamp();
+      _cropDraw();
+    };
+    wrap.ontouchend = () => { _crop.dragging = false; };
+
+    wrap.onmousedown = (e) => { _crop.dragging = true; _crop.lastX = e.clientX; _crop.lastY = e.clientY; };
+    wrap.onmousemove = (e) => {
+      if (!_crop.dragging) return;
+      _crop.ox += (e.clientX - _crop.lastX) * 2;
+      _crop.oy += (e.clientY - _crop.lastY) * 2;
+      _crop.lastX = e.clientX; _crop.lastY = e.clientY;
+      _cropClamp(); _cropDraw();
+    };
+    wrap.onmouseup = wrap.onmouseleave = () => { _crop.dragging = false; };
+  }
+}
+
+function _cropClamp() {
+  const w = _crop.img.width * _crop.scale;
+  const h = _crop.img.height * _crop.scale;
+  const S = _crop.SIZE;
+  _crop.ox = Math.min(0, Math.max(S - w, _crop.ox));
+  _crop.oy = Math.min(0, Math.max(S - h, _crop.oy));
+}
+
+function _cropDraw() {
+  const canvas = document.getElementById('cropperCanvas');
+  // OPTIMIZATION v14: кешируем контекст на canvas-элементе, а не получаем каждый раз
+  if (!canvas._ctx) canvas._ctx = canvas.getContext('2d');
+  const ctx = canvas._ctx;
+  ctx.clearRect(0, 0, _crop.SIZE, _crop.SIZE);
+  ctx.drawImage(_crop.img, _crop.ox, _crop.oy, _crop.img.width * _crop.scale, _crop.img.height * _crop.scale);
+}
+
+function confirmCrop() {
+  const canvas = document.getElementById('cropperCanvas');
+  // Export 400x400 final
+  const out = document.createElement('canvas');
+  out.width = 400; out.height = 400;
+  const ctx = out.getContext('2d');
+  const ratio = 400 / _crop.SIZE;
+  ctx.drawImage(canvas, 0, 0, _crop.SIZE, _crop.SIZE, 0, 0, 400, 400);
+  const dataUrl = out.toDataURL('image/jpeg', 0.85);
+  closeCropper();
+  // Apply as avatar photo
+  profileData.avatarPhoto = dataUrl;
+  try { localStorage.setItem("etu_avatarPhoto", dataUrl); } catch(err) {
+    alertPop("⚠️ Фото слишком большое."); return;
+  }
+  _applyAvatarToEl(document.getElementById("profileAvatarBig"), profileData.avatar, dataUrl);
+  _applyAvatarToEl(document.getElementById("menuAvatar"), profileData.avatar, dataUrl);
+  const delBtn = document.getElementById("avatarPhotoDelBtn");
+  if (delBtn) delBtn.style.display = "inline-flex";
+  document.getElementById("avatarGrid").querySelectorAll("div").forEach(d => {
+    d.style.borderColor = "transparent"; d.style.background = "var(--muted2)";
+  });
+}
+
+function closeCropper() {
+  document.getElementById('cropperModal').classList.remove('open');
+}
+
 </script>
+
+<!-- ═══ КРОППЕР ФОТО ═══ -->
+<div class="cropper-modal" id="cropperModal">
+  <div class="cropper-title">✂️ Обрезка фото</div>
+  <div class="cropper-canvas-wrap" id="cropperWrap">
+    <canvas id="cropperCanvas" width="560" height="560"></canvas>
+    <div class="cropper-circle-mask"></div>
+    <div class="cropper-overlay"></div>
+  </div>
+  <div class="cropper-hint">Тяни пальцем чтобы переместить</div>
+  <div class="cropper-zoom-row">
+    <span>🔍</span>
+    <input type="range" id="cropperZoom" min="0.5" max="3" step="0.01" value="1">
+    <span>🔎</span>
+  </div>
+  <div class="cropper-btns">
+    <button class="cropper-btn-cancel" onclick="closeCropper()">Отмена</button>
+    <button class="cropper-btn-ok" onclick="confirmCrop()">Готово ✓</button>
+  </div>
+</div>
 </body>
 </html>
