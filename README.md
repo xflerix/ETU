@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -2784,6 +2784,10 @@ select {
         <option value="adjectives">🎨 Прилагательные</option>
         <option value="scenery">🌄 Природа и пейзажи</option>
         <option value="aroundHouse">🏠 Дом и квартира</option>
+        <option value="householdObjects">🍽️ Предметы быта</option>
+        <option value="foodDrink">🍎 Еда и напитки</option>
+        <option value="foodContainers">📦 Упаковка еды</option>
+        <option value="clothes">👕 Одежда и аксессуары</option>
         <option value="myWords">⭐ Мои слова</option>
       </select>
     </div>
@@ -3099,6 +3103,10 @@ select {
         <option value="adjectives">🎨 Прилагательные</option>
         <option value="scenery">🌄 Природа и пейзажи</option>
         <option value="aroundHouse">🏠 Дом и квартира</option>
+        <option value="householdObjects">🍽️ Предметы быта</option>
+        <option value="foodDrink">🍎 Еда и напитки</option>
+        <option value="foodContainers">📦 Упаковка еды</option>
+        <option value="clothes">👕 Одежда и аксессуары</option>
         <option value="myWords">⭐ Мои слова</option>
       </select>
     </div>
@@ -3292,6 +3300,58 @@ const categories = {
     {ru:"подвал",en:"basement"},
     {ru:"сад, двор",en:"garden"},
     {ru:"окно",en:"window"}
+  ],
+  // Household Objects
+  householdObjects:[
+    {ru:"тостер",en:"toaster"},{ru:"микроволновая печь",en:"microwave"},
+    {ru:"стиральная машина",en:"washing machine"},{ru:"посудомоечная машина",en:"dishwasher"},
+    {ru:"чайник",en:"kettle"},{ru:"тарелка",en:"plate"},
+    {ru:"миска",en:"bowl"},{ru:"чашка",en:"cup"},
+    {ru:"столовые приборы",en:"cutlery"},{ru:"нож",en:"knife"},
+    {ru:"вилка",en:"fork"},{ru:"ложка",en:"spoon"}
+  ],
+  // Food and Drink
+  foodDrink:[
+    {ru:"еда",en:"food"},{ru:"напитки",en:"drinks"},
+    {ru:"завтрак",en:"breakfast"},{ru:"обед",en:"lunch"},
+    {ru:"ужин",en:"dinner"},{ru:"мясо",en:"meat"},
+    {ru:"рыба",en:"fish"},{ru:"морепродукты",en:"seafood"},
+    {ru:"фрукты",en:"fruit"},{ru:"овощи",en:"vegetables"},
+    {ru:"хлеб",en:"bread"},{ru:"макароны",en:"pasta"},
+    {ru:"рис",en:"rice"},{ru:"лапша",en:"noodles"},
+    {ru:"картофель",en:"potatoes"},{ru:"молоко",en:"milk"},
+    {ru:"сыр",en:"cheese"},{ru:"сливочное масло",en:"butter"},
+    {ru:"йогурт",en:"yogurt"},{ru:"яйца",en:"eggs"},
+    {ru:"сахар",en:"sugar"},{ru:"печенье",en:"biscuit"},
+    {ru:"шоколад",en:"chocolate"},{ru:"торт",en:"cake"},
+    {ru:"хлопья",en:"cereal"},{ru:"апельсин",en:"orange"},
+    {ru:"яблоко",en:"apple"},{ru:"банан",en:"banana"},
+    {ru:"клубника",en:"strawberry"},{ru:"манго",en:"mango"},
+    {ru:"сэндвич",en:"sandwich"},{ru:"бургер",en:"burger"},
+    {ru:"картофель фри",en:"chips"},{ru:"спагетти",en:"spaghetti"},
+    {ru:"салат",en:"salad"},{ru:"кофе",en:"coffee"},
+    {ru:"чай",en:"tea"},{ru:"сок",en:"juice"},
+    {ru:"вода",en:"water"},{ru:"лимонад",en:"lemonade"}
+  ],
+  // Food Containers
+  foodContainers:[
+    {ru:"коробка",en:"box"},{ru:"бутылка",en:"bottle"},
+    {ru:"пакет / мешок",en:"bag"},{ru:"плитка (шоколада)",en:"bar"},
+    {ru:"тюбик",en:"tube"},{ru:"стакан",en:"glass"},
+    {ru:"картонная упаковка",en:"carton"},{ru:"банка",en:"jar"}
+  ],
+  // Clothes and Accessories
+  clothes:[
+    {ru:"футболка",en:"t-shirt"},{ru:"блузка",en:"blouse"},
+    {ru:"рубашка",en:"shirt"},{ru:"платье",en:"dress"},
+    {ru:"юбка",en:"skirt"},{ru:"брюки",en:"trousers"},
+    {ru:"джинсы",en:"jeans"},{ru:"куртка",en:"jacket"},
+    {ru:"пальто",en:"coat"},{ru:"дождевик",en:"raincoat"},
+    {ru:"носки",en:"socks"},{ru:"сапоги / ботинки",en:"boots"},
+    {ru:"туфли / обувь",en:"shoes"},{ru:"сандалии",en:"sandals"},
+    {ru:"кроссовки",en:"trainers"},{ru:"шарф",en:"scarf"},
+    {ru:"шляпа / шапка",en:"hat"},{ru:"перчатки",en:"gloves"},
+    {ru:"ремень",en:"belt"},{ru:"сумка",en:"handbag"}
   ],
   myWords:[]
 };
@@ -5451,7 +5511,8 @@ function dictSearch(q) {
   }
   const catLabels = {
     jobs:"💼 Профессии", workplaces:"🏭 Места работы", dailyRoutines:"🌅 Распорядок",
-    activities:"📅 Занятия", aroundTown:"🏙️ Город", directions:"🗺️ Ориентирование", adjectives:"🎨 Прилагательные", scenery:"🌄 Природа", aroundHouse:"🏠 Дом", myWords:"⭐ Мои слова"
+    activities:"📅 Занятия", aroundTown:"🏙️ Город", directions:"🗺️ Ориентирование", adjectives:"🎨 Прилагательные", scenery:"🌄 Природа", aroundHouse:"🏠 Дом",
+    householdObjects:"🍽️ Предметы быта", foodDrink:"🍎 Еда и напитки", foodContainers:"📦 Упаковка", clothes:"👕 Одежда", myWords:"⭐ Мои слова"
   };
   let results = [];
   Object.entries(categories).forEach(([cat, words]) => {
@@ -5655,7 +5716,8 @@ function renderCatStats() {
   try { raw = JSON.parse(localStorage.getItem("etu_cat_stats")) || {}; } catch(e){}
   const catLabels = {
     jobs:"💼 Профессии", workplaces:"🏭 Места работы", dailyRoutines:"🌅 Распорядок",
-    activities:"📅 Занятия", aroundTown:"🏙️ Город", directions:"🗺️ Ориентирование", adjectives:"🎨 Прилагательные", scenery:"🌄 Природа", aroundHouse:"🏠 Дом", myWords:"⭐ Мои слова"
+    activities:"📅 Занятия", aroundTown:"🏙️ Город", directions:"🗺️ Ориентирование", adjectives:"🎨 Прилагательные", scenery:"🌄 Природа", aroundHouse:"🏠 Дом",
+    householdObjects:"🍽️ Предметы быта", foodDrink:"🍎 Еда и напитки", foodContainers:"📦 Упаковка", clothes:"👕 Одежда", myWords:"⭐ Мои слова"
   };
   const entries = Object.entries(raw).filter(([k,v])=>(v.total||0)>=3)
     .sort((a,b)=>b[1].total-a[1].total);
