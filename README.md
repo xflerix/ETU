@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -2222,6 +2222,11 @@ select {
         Только ошибки <span class="mistakes-count-badge" id="mistakesModeCount" style="display:none;"></span>
         <div class="mc-sub">Повторить слова, в которых были ошибки</div>
       </div>
+      <div class="mode-card" onclick="startIrvStudy()" style="grid-column:span 2;">
+        <span class="mc-icon">📜</span>
+        Неправильные глаголы
+        <div class="mc-sub">Быстрая карточка-шпаргалка + тест на V1, V2, V3 — все 50 за 5 минут</div>
+      </div>
     </div>
 
     <div id="sprintLenRow" style="display:none;margin-top:16px;">
@@ -2352,6 +2357,144 @@ select {
     <div style="display:flex;flex-direction:column;gap:10px;">
       <button class="btn-primary" onclick="startFlashcards()">🔄 Ещё раз</button>
       <button class="btn-secondary" onclick="fcRepeatUnknown()" id="fcRepeatBtn">📚 Повторить ошибки</button>
+      <button class="btn-secondary" onclick="showScreen('menuScreen');updateMenu();">🏠 В меню</button>
+    </div>
+  </div>
+
+  <!-- ═══ НЕПРАВИЛЬНЫЕ ГЛАГОЛЫ: БЫСТРОЕ ИЗУЧЕНИЕ ═══ -->
+  <div id="irvStudyScreen" class="card screen">
+    <div class="game-header">
+      <button class="pause-btn" onclick="exitIrv()">← Выйти</button>
+      <div class="stats-bar">
+        <div class="mini-stat">🧩 Блок <span id="irvStudyChunkNum">1</span>/<span id="irvStudyChunkTotal">5</span></div>
+        <div class="mini-stat">📜 <span id="irvStudyPos">1</span>/<span id="irvStudyTotal">10</span></div>
+      </div>
+    </div>
+
+    <div class="prog-wrap"><div class="prog-bar sprint" id="irvStudyBar"></div></div>
+
+    <div style="text-align:center;color:var(--text2);font-size:13px;font-weight:700;margin:10px 0 16px;">
+      💡 Полистай карточки, чтобы быстро запомнить все формы — потом проверим себя в тесте
+    </div>
+
+    <div class="flashcard-wrap" style="height:230px;cursor:default;">
+      <div class="flashcard" id="irvStudyCard" style="cursor:default;">
+        <div class="fc-face fc-front" style="flex-direction:column;gap:10px;">
+          <div class="fc-lang">🇷🇺 <span id="irvStudyRu">слово</span></div>
+          <div style="font-size:34px;font-weight:900;color:var(--accent);" id="irvStudyV1">go</div>
+          <div class="fc-hint">Свайп / стрелка → следующая форма 👆</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="irv-forms-row" style="display:flex;gap:10px;margin:14px 0;">
+      <div style="flex:1;background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:14px 8px;text-align:center;">
+        <div style="font-size:10px;color:var(--text2);font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;">V1</div>
+        <div style="font-size:17px;font-weight:900;" id="irvStudyFormV1">go</div>
+      </div>
+      <div style="flex:1;background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:14px 8px;text-align:center;">
+        <div style="font-size:10px;color:var(--text2);font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;">V2</div>
+        <div style="font-size:17px;font-weight:900;color:var(--accent);" id="irvStudyFormV2">went</div>
+      </div>
+      <div style="flex:1;background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:14px 8px;text-align:center;">
+        <div style="font-size:10px;color:var(--text2);font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;">V3</div>
+        <div style="font-size:17px;font-weight:900;color:var(--accent2);" id="irvStudyFormV3">gone</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-secondary" onclick="irvStudyPrev()" id="irvStudyPrevBtn">⬅ Назад</button>
+      <button class="btn-primary" onclick="irvStudyNext()" id="irvStudyNextBtn">Далее ➡</button>
+    </div>
+    <button class="btn-secondary" style="width:100%;margin-top:10px;" onclick="startIrregularVerbs()">⚡ Сразу к тесту</button>
+  </div>
+
+  <!-- ═══ НЕПРАВИЛЬНЫЕ ГЛАГОЛЫ ═══ -->
+  <div id="irvScreen" class="card screen">
+    <div class="game-header">
+      <button class="pause-btn" onclick="exitIrv()">← Выйти</button>
+      <div class="stats-bar">
+        <div class="mini-stat">✅ <span id="irvCorrect">0</span></div>
+        <div class="mini-stat">❌ <span id="irvErrors">0</span></div>
+      </div>
+    </div>
+
+    <div class="prog-wrap"><div class="prog-bar sprint" id="irvBar"></div></div>
+    <div class="sprint-counter" id="irvCounter" style="text-align:right;margin-bottom:6px;">Глагол 1 из 50</div>
+
+    <div class="word-display" style="margin-bottom:4px;">
+      <span style="font-size:11px;color:var(--text2);font-weight:800;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:6px;">V1 (Present)</span>
+      <span id="irvV1"></span>
+    </div>
+    <div style="text-align:center;color:var(--text2);font-size:13px;font-weight:700;margin-bottom:14px;" id="irvRu"></div>
+
+    <div id="irvInputSection">
+      <div class="input-wrapper" style="margin-bottom:10px;">
+        <label style="display:block;font-size:11px;color:var(--text2);font-weight:800;margin-bottom:4px;letter-spacing:.5px;">V2 (Past Simple)</label>
+        <input type="text" id="irvV2input" placeholder="V2…" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="input-wrapper">
+        <label style="display:block;font-size:11px;color:var(--text2);font-weight:800;margin-bottom:4px;letter-spacing:.5px;">V3 (Past Participle)</label>
+        <input type="text" id="irvV3input" placeholder="V3…" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-secondary" onclick="irvSkip()" id="irvSkipBtn">⏭ Пропуск</button>
+      <button class="btn-primary" onclick="irvCheck()" id="irvCheckBtn">✅ Проверить <span style="opacity:.5;font-size:11px;font-weight:600;">[Enter]</span></button>
+    </div>
+    <div class="result" id="irvResult"></div>
+  </div>
+
+  <!-- ═══ РЕЗУЛЬТАТ: НЕПРАВИЛЬНЫЕ ГЛАГОЛЫ ═══ -->
+  <div id="irvResultScreen" class="card screen">
+    <div class="result-hero" id="irvResEmoji">📜</div>
+    <div class="result-title" id="irvResTitle">Раунд завершён!</div>
+    <div class="result-pct" id="irvResPct">0%</div>
+    <div class="result-stats">
+      <div class="result-stat">✅ Правильно<strong id="irvResCorrect">0</strong></div>
+      <div class="result-stat">❌ Ошибок<strong id="irvResErrors">0</strong></div>
+    </div>
+    <div class="result-verdict" id="irvResVerdict"></div>
+    <div id="irvBadgeBox" style="display:none;background:linear-gradient(135deg,rgba(79,142,255,.15),rgba(124,92,252,.15));border:1px solid var(--card-border);border-radius:16px;padding:16px;margin-bottom:16px;text-align:center;">
+      <div style="font-size:38px;margin-bottom:4px;" id="irvBadgeEmoji">🏆</div>
+      <div style="font-size:16px;font-weight:900;" id="irvBadgeTitle">Мастер глаголов</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:4px;" id="irvBadgeSub"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn-primary" onclick="startIrvStudy()">🔄 Пройти заново</button>
+      <button class="btn-secondary" onclick="irvRepeatMistakes()" id="irvRepeatBtn">📚 Повторить ошибки</button>
+      <button class="btn-secondary" onclick="showScreen('menuScreen');updateMenu();">🏠 В меню</button>
+    </div>
+  </div>
+
+  <!-- ═══ НЕПРАВИЛЬНЫЕ ГЛАГОЛЫ: РАУНД ПРОЙДЕН ═══ -->
+  <div id="irvInterimScreen" class="card screen">
+    <div class="result-hero" id="irvInterimEmoji">🎯</div>
+    <div class="result-title" id="irvInterimTitle">Блок 1 из 5 пройден!</div>
+    <div class="result-pct" id="irvInterimPct">0%</div>
+    <div class="result-stats">
+      <div class="result-stat">✅ Правильно<strong id="irvInterimCorrect">0</strong></div>
+      <div class="result-stat">❌ Ошибок<strong id="irvInterimErrors">0</strong></div>
+    </div>
+    <div class="prog-wrap" style="margin-bottom:18px;"><div class="prog-bar sprint" id="irvInterimOverallBar"></div></div>
+    <div class="result-verdict" id="irvInterimVerdict" style="margin-bottom:18px;"></div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn-primary" onclick="irvInterimContinue()" id="irvInterimContinueBtn">Дальше ➡</button>
+      <button class="btn-secondary" onclick="showScreen('menuScreen');updateMenu();">🏠 В меню</button>
+    </div>
+  </div>
+
+  <!-- ═══ НЕПРАВИЛЬНЫЕ ГЛАГОЛЫ: ПЕРЕД ФИНАЛОМ ═══ -->
+  <div id="irvFinalIntroScreen" class="card screen">
+    <div class="result-hero">🏁</div>
+    <div class="result-title">Все блоки пройдены!</div>
+    <div class="result-verdict" id="irvFinalIntroVerdict" style="margin-bottom:18px;"></div>
+    <div style="background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:16px;margin-bottom:18px;font-size:13px;color:var(--text2);line-height:1.5;text-align:center;">
+      Сейчас будет <b>финальный тест</b> — все 50 глаголов вперемешку, без подсказок по блокам. Это покажет, что ты реально запомнил 💪
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn-primary" onclick="startIrvFinalTest()">🏁 Начать финальный тест</button>
       <button class="btn-secondary" onclick="showScreen('menuScreen');updateMenu();">🏠 В меню</button>
     </div>
   </div>
@@ -2519,6 +2662,81 @@ select {
 
     <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveProfile()">💾 Сохранить профиль</button>
     <button class="btn-secondary" style="width:100%;" onclick="showScreen('menuScreen')">← Назад</button>
+    <div style="text-align:center;margin-top:18px;">
+      <span onclick="openAdminLogin()" style="font-size:11px;color:var(--text2);opacity:.5;cursor:pointer;letter-spacing:.5px;">⚙️</span>
+    </div>
+  </div>
+
+  <!-- ═══ АДМИН: ВХОД ═══ -->
+  <div class="overlay" id="adminLoginOverlay">
+    <div class="pause-card">
+      <div class="pause-title">🔐 Техническая панель</div>
+      <div style="margin-bottom:16px;">
+        <input type="password" id="adminPassInput" placeholder="Пароль…" autocomplete="off"
+          style="width:100%;padding:12px 14px;background:var(--muted2);border:1px solid var(--card-border);border-radius:var(--r2);color:var(--text);font-size:15px;font-weight:700;outline:none;">
+        <div id="adminLoginError" style="color:var(--err);font-size:12px;font-weight:700;margin-top:8px;display:none;">❌ Неверный пароль</div>
+      </div>
+      <div class="pause-menu-actions">
+        <button class="btn-primary" onclick="checkAdminPassword()">Войти</button>
+        <button class="btn-secondary" onclick="closeAdminLogin()">Отмена</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ АДМИН-ПАНЕЛЬ ═══ -->
+  <div id="adminScreen" class="card screen">
+    <div style="font-size:20px;font-weight:900;margin-bottom:4px;">🛠️ Техническая панель</div>
+    <div style="color:var(--text2);font-size:12px;margin-bottom:18px;">Изменения сразу сохраняются в профиль</div>
+
+    <div style="background:var(--muted2);border:1px solid var(--card-border);border-radius:var(--r2);padding:14px 16px;margin-bottom:16px;">
+      <div style="font-size:12px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">📊 Текущие значения</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;">
+        <div><div id="adminCurXp" style="font-size:18px;font-weight:900;color:var(--accent);">0</div><div style="font-size:10px;color:var(--text2);">XP</div></div>
+        <div><div id="adminCurLvl" style="font-size:18px;font-weight:900;color:var(--warn);">1</div><div style="font-size:10px;color:var(--text2);">Уровень</div></div>
+        <div><div id="adminCurStreak" style="font-size:18px;font-weight:900;color:var(--ok);">0</div><div style="font-size:10px;color:var(--text2);">Стрик</div></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label style="font-size:12px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">⭐ Выдать XP (+ к текущему)</label>
+      <div style="display:flex;gap:8px;">
+        <input type="number" id="adminAddXpInput" placeholder="Например 500" style="flex:1;padding:12px 14px;background:var(--muted2);border:1px solid var(--card-border);border-radius:var(--r2);color:var(--text);font-size:15px;font-weight:700;outline:none;">
+        <button class="btn-primary" style="padding:0 18px;" onclick="adminAddXp()">Выдать</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label style="font-size:12px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">🎯 Установить XP напрямую</label>
+      <div style="display:flex;gap:8px;">
+        <input type="number" id="adminSetXpInput" placeholder="Точное значение XP" style="flex:1;padding:12px 14px;background:var(--muted2);border:1px solid var(--card-border);border-radius:var(--r2);color:var(--text);font-size:15px;font-weight:700;outline:none;">
+        <button class="btn-primary" style="padding:0 18px;" onclick="adminSetXp()">Установить</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label style="font-size:12px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">📊 Установить уровень</label>
+      <div style="display:flex;gap:8px;">
+        <input type="number" id="adminSetLvlInput" placeholder="Например 25" style="flex:1;padding:12px 14px;background:var(--muted2);border:1px solid var(--card-border);border-radius:var(--r2);color:var(--text);font-size:15px;font-weight:700;outline:none;">
+        <button class="btn-primary" style="padding:0 18px;" onclick="adminSetLevel()">Установить</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label style="font-size:12px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px;">🔥 Установить макс. серию (streak)</label>
+      <div style="display:flex;gap:8px;">
+        <input type="number" id="adminSetStreakInput" placeholder="Например 100" style="flex:1;padding:12px 14px;background:var(--muted2);border:1px solid var(--card-border);border-radius:var(--r2);color:var(--text);font-size:15px;font-weight:700;outline:none;">
+        <button class="btn-primary" style="padding:0 18px;" onclick="adminSetStreak()">Установить</button>
+      </div>
+    </div>
+
+    <div style="background:rgba(255,79,109,.08);border:1px solid rgba(255,79,109,.25);border-radius:var(--r2);padding:14px 16px;margin-bottom:20px;">
+      <div style="font-size:12px;font-weight:800;color:var(--err);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">⚠️ Опасная зона</div>
+      <button class="btn-secondary" style="width:100%;margin-bottom:8px;" onclick="adminUnlockAllAchievements()">🏆 Открыть все достижения</button>
+      <button class="btn-secondary" style="width:100%;margin-bottom:8px;" onclick="adminClearMistakes()">🧹 Очистить список ошибок</button>
+      <button class="btn-secondary" style="width:100%;" onclick="adminResetProgress()">🗑️ Сбросить весь прогресс</button>
+    </div>
+
+    <button class="btn-secondary" style="width:100%;" onclick="exitAdminPanel()">← Выйти из админки</button>
   </div>
 
   <!-- ═══ СТАТИСТИКА ═══ -->
@@ -3126,7 +3344,345 @@ console.log("ETU v3 - profile build OK");
 // ════════════════════════════════════
 //  ДАННЫЕ — СЛОВАРИ
 // ════════════════════════════════════
+// ════════════════════════════════════
+//  НЕПРАВИЛЬНЫЕ ГЛАГОЛЫ
+// ════════════════════════════════════
+const IRREGULAR_VERBS = [
+  {v1:"say",v2:"said",v3:"said",ru:"сказать"},
+  {v1:"make",v2:"made",v3:"made",ru:"делать"},
+  {v1:"go",v2:"went",v3:"gone",ru:"идти"},
+  {v1:"take",v2:"took",v3:"taken",ru:"брать"},
+  {v1:"come",v2:"came",v3:"come",ru:"приходить"},
+  {v1:"see",v2:"saw",v3:"seen",ru:"видеть"},
+  {v1:"know",v2:"knew",v3:"known",ru:"знать"},
+  {v1:"get",v2:"got",v3:"got/gotten",ru:"получать"},
+  {v1:"give",v2:"gave",v3:"given",ru:"давать"},
+  {v1:"find",v2:"found",v3:"found",ru:"находить"},
+  {v1:"think",v2:"thought",v3:"thought",ru:"думать"},
+  {v1:"tell",v2:"told",v3:"told",ru:"рассказывать"},
+  {v1:"become",v2:"became",v3:"become",ru:"становиться"},
+  {v1:"show",v2:"showed",v3:"shown",ru:"показывать"},
+  {v1:"leave",v2:"left",v3:"left",ru:"оставлять"},
+  {v1:"feel",v2:"felt",v3:"felt",ru:"чувствовать"},
+  {v1:"put",v2:"put",v3:"put",ru:"помещать"},
+  {v1:"bring",v2:"brought",v3:"brought",ru:"приносить"},
+  {v1:"begin",v2:"began",v3:"begun",ru:"начинать"},
+  {v1:"keep",v2:"kept",v3:"kept",ru:"сохранять"},
+  {v1:"hold",v2:"held",v3:"held",ru:"держать"},
+  {v1:"write",v2:"wrote",v3:"written",ru:"писать"},
+  {v1:"stand",v2:"stood",v3:"stood",ru:"стоять"},
+  {v1:"hear",v2:"heard",v3:"heard",ru:"слышать"},
+  {v1:"let",v2:"let",v3:"let",ru:"позволять"},
+  {v1:"mean",v2:"meant",v3:"meant",ru:"иметь в виду"},
+  {v1:"set",v2:"set",v3:"set",ru:"настраивать"},
+  {v1:"meet",v2:"met",v3:"met",ru:"встретиться"},
+  {v1:"run",v2:"ran",v3:"run",ru:"бегать"},
+  {v1:"pay",v2:"paid",v3:"paid",ru:"платить"},
+  {v1:"sit",v2:"sat",v3:"sat",ru:"сидеть"},
+  {v1:"speak",v2:"spoke",v3:"spoken",ru:"говорить"},
+  {v1:"lie",v2:"lay",v3:"lain",ru:"лежать/лгать"},
+  {v1:"lead",v2:"led",v3:"led",ru:"вести"},
+  {v1:"read",v2:"read",v3:"read",ru:"читать"},
+  {v1:"grow",v2:"grew",v3:"grown",ru:"расти"},
+  {v1:"lose",v2:"lost",v3:"lost",ru:"терять"},
+  {v1:"fall",v2:"fell",v3:"fallen",ru:"падать"},
+  {v1:"send",v2:"sent",v3:"sent",ru:"отправлять"},
+  {v1:"build",v2:"built",v3:"built",ru:"строить"},
+  {v1:"understand",v2:"understood",v3:"understood",ru:"понимать"},
+  {v1:"draw",v2:"drew",v3:"drawn",ru:"рисовать"},
+  {v1:"break",v2:"broke",v3:"broken",ru:"ломать"},
+  {v1:"spend",v2:"spent",v3:"spent",ru:"тратить"},
+  {v1:"cut",v2:"cut",v3:"cut",ru:"резать"},
+  {v1:"rise",v2:"rose",v3:"risen",ru:"подниматься"},
+  {v1:"drive",v2:"drove",v3:"driven",ru:"водить машину"},
+  {v1:"buy",v2:"bought",v3:"bought",ru:"купить"},
+  {v1:"wear",v2:"wore",v3:"worn",ru:"носить"},
+  {v1:"choose",v2:"chose",v3:"chosen",ru:"выбирать"}
+];
+const IRV_CHUNK_SIZE = 10;
+let irvChunks = [];          // массив блоков по 10 глаголов
+let irvChunkIdx = 0;         // текущий блок (study)
+let irvChunkResults = [];    // {correct,total} по каждому мини-тесту
+let irvMode = 'chunkStudy';  // chunkStudy | chunkTest | finalTest | direct
+let irvStudyIdx = 0;
+let irvStudyPool = [];
+let irvPool = [];
+let irvIdx = 0;
+let irvCorrect = 0;
+let irvErrors = 0;
+let irvXp = 0;
+let irvWrongList = [];
+let irvFinalWrongList = [];
+
+function irvShuffle(arr){ return arr.slice().sort(()=>Math.random()-.5); }
+function irvChunkArray(arr, size){
+  const out = [];
+  for (let i=0;i<arr.length;i+=size) out.push(arr.slice(i,i+size));
+  return out;
+}
+
+// ─── Запуск всей сессии ───
+function startIrvStudy() {
+  playStart();
+  irvChunks = irvChunkArray(irvShuffle(IRREGULAR_VERBS), IRV_CHUNK_SIZE);
+  irvChunkIdx = 0;
+  irvChunkResults = [];
+  irvFinalWrongList = [];
+  startIrvChunkStudy(0);
+}
+
+// ─── Изучение карточек одного блока ───
+function startIrvChunkStudy(idx) {
+  irvMode = 'chunkStudy';
+  irvChunkIdx = idx;
+  irvStudyPool = irvChunks[idx];
+  irvStudyIdx = 0;
+  document.getElementById("dashboardCard").style.display = "none";
+  document.getElementById("irvStudyChunkNum").textContent = idx+1;
+  document.getElementById("irvStudyChunkTotal").textContent = irvChunks.length;
+  document.getElementById("irvStudyTotal").textContent = irvStudyPool.length;
+  showScreen("irvStudyScreen");
+  irvStudyRender();
+}
+function irvStudyRender() {
+  const v = irvStudyPool[irvStudyIdx];
+  document.getElementById("irvStudyRu").textContent = v.ru;
+  document.getElementById("irvStudyV1").textContent = v.v1;
+  document.getElementById("irvStudyFormV1").textContent = v.v1;
+  document.getElementById("irvStudyFormV2").textContent = v.v2;
+  document.getElementById("irvStudyFormV3").textContent = v.v3;
+  document.getElementById("irvStudyPos").textContent = irvStudyIdx+1;
+  document.getElementById("irvStudyBar").style.width = ((irvStudyIdx+1)/irvStudyPool.length*100)+"%";
+  document.getElementById("irvStudyPrevBtn").disabled = irvStudyIdx===0;
+  document.getElementById("irvStudyPrevBtn").style.opacity = irvStudyIdx===0 ? .4 : 1;
+  const nextBtn = document.getElementById("irvStudyNextBtn");
+  if (irvStudyIdx === irvStudyPool.length-1) {
+    nextBtn.textContent = "Мини-тест 🎯";
+    nextBtn.onclick = () => startIrvChunkTest(irvChunkIdx);
+  } else {
+    nextBtn.textContent = "Далее ➡";
+    nextBtn.onclick = irvStudyNext;
+  }
+}
+function irvStudyNext() {
+  playClick();
+  if (irvStudyIdx < irvStudyPool.length-1) { irvStudyIdx++; irvStudyRender(); }
+}
+function irvStudyPrev() {
+  playClick();
+  if (irvStudyIdx > 0) { irvStudyIdx--; irvStudyRender(); }
+}
+
+// ─── Прямой полный тест (запасной вариант "Сразу к тесту" / "Повторить ошибки") ───
+function startIrregularVerbs(customPool) {
+  playStart();
+  irvMode = 'direct';
+  irvPool = irvShuffle(customPool || IRREGULAR_VERBS);
+  irvIdx = 0; irvCorrect = 0; irvErrors = 0; irvXp = 0; irvWrongList = [];
+  document.getElementById("dashboardCard").style.display = "none";
+  showScreen("irvScreen");
+  irvRender();
+}
+
+// ─── Мини-тест по блоку ───
+function startIrvChunkTest(idx) {
+  playStart();
+  irvMode = 'chunkTest';
+  irvChunkIdx = idx;
+  irvPool = irvShuffle(irvChunks[idx]);
+  irvIdx = 0; irvCorrect = 0; irvErrors = 0; irvXp = 0; irvWrongList = [];
+  document.getElementById("dashboardCard").style.display = "none";
+  showScreen("irvScreen");
+  irvRender();
+}
+
+// ─── Финальный тест по всем 50 ───
+function startIrvFinalTest() {
+  playStart();
+  irvMode = 'finalTest';
+  irvPool = irvShuffle(IRREGULAR_VERBS);
+  irvIdx = 0; irvCorrect = 0; irvErrors = 0; irvXp = 0; irvWrongList = [];
+  document.getElementById("dashboardCard").style.display = "none";
+  showScreen("irvScreen");
+  irvRender();
+}
+
+function irvRender() {
+  if (irvIdx >= irvPool.length) { irvShowResult(); return; }
+  const v = irvPool[irvIdx];
+  document.getElementById("irvV1").textContent = v.v1;
+  document.getElementById("irvRu").textContent = v.ru;
+  document.getElementById("irvCounter").textContent = `Глагол ${irvIdx+1} из ${irvPool.length}`;
+  document.getElementById("irvBar").style.width = (irvIdx/irvPool.length*100)+"%";
+  document.getElementById("irvCorrect").textContent = irvCorrect;
+  document.getElementById("irvErrors").textContent = irvErrors;
+  document.getElementById("irvResult").innerHTML = "";
+  document.getElementById("irvResult").className = "result";
+  const v2input = document.getElementById("irvV2input");
+  const v3input = document.getElementById("irvV3input");
+  v2input.value = ""; v3input.value = "";
+  v2input.className = ""; v3input.className = "";
+  if (window.innerWidth>768) v2input.focus();
+}
+function irvNormalize(s) {
+  return s.trim().toLowerCase().replace(/\s+/g,' ');
+}
+function irvCheck() {
+  unlockAudio();
+  const v = irvPool[irvIdx];
+  const v2input = document.getElementById("irvV2input");
+  const v3input = document.getElementById("irvV3input");
+  const userV2 = irvNormalize(v2input.value);
+  const userV3 = irvNormalize(v3input.value);
+  const validV2 = v.v2.split('/').map(s=>irvNormalize(s));
+  const validV3 = v.v3.split('/').map(s=>irvNormalize(s));
+  const okV2 = validV2.includes(userV2);
+  const okV3 = validV3.includes(userV3);
+  v2input.className = okV2 ? "input-correct" : "input-wrong";
+  v3input.className = okV3 ? "input-correct" : "input-wrong";
+  const resultEl = document.getElementById("irvResult");
+  if (okV2 && okV3) {
+    irvCorrect++; irvXp += 4;
+    playCorrect();
+    resultEl.className = "result";
+    resultEl.innerHTML = "<span class='ok-text'>✅ Правильно!</span>";
+  } else {
+    irvErrors++;
+    irvWrongList.push(v);
+    if (irvMode==='finalTest') irvFinalWrongList.push(v);
+    playWrong();
+    resultEl.className = "result";
+    resultEl.innerHTML = `<span class='err-text'>❌ Правильно: <b>${v.v2}</b> — <b>${v.v3}</b></span>`;
+  }
+  irvIdx++;
+  setTimeout(irvRender, okV2 && okV3 ? 600 : 1600);
+}
+function irvSkip() {
+  unlockAudio(); playClick && playClick();
+  const v = irvPool[irvIdx];
+  irvErrors++; irvWrongList.push(v);
+  if (irvMode==='finalTest') irvFinalWrongList.push(v);
+  const resultEl = document.getElementById("irvResult");
+  resultEl.className = "result";
+  resultEl.innerHTML = `<span class='err-text'>⏭ Ответ: <b>${v.v2}</b> — <b>${v.v3}</b></span>`;
+  irvIdx++;
+  setTimeout(irvRender, 1200);
+}
+
+function irvAwardXp() {
+  xp += irvXp; dailyXp += irvXp; save(); updateMenu();
+  trackChStat && trackChStat('flashDone');
+  claimChallengeXp && claimChallengeXp();
+  renderActivityCalendar && renderActivityCalendar();
+}
+
+function irvShowResult() {
+  if (irvMode === 'chunkTest') { irvAwardXp(); irvShowInterim(); return; }
+  if (irvMode === 'finalTest') { irvAwardXp(); irvShowGrandFinale(); return; }
+  // 'direct' — обычный полный/повторный тест
+  const total = irvCorrect + irvErrors;
+  const pct = total ? Math.round(irvCorrect/total*100) : 0;
+  let emoji="📚", title="Продолжай учить!";
+  if (pct===100){ emoji="🎉"; title="Все глаголы знаешь!"; }
+  else if (pct>=80){ emoji="🌟"; title="Отлично!"; }
+  else if (pct>=60){ emoji="👍"; title="Хорошо!"; }
+  document.getElementById("irvBadgeBox").style.display = "none";
+  document.getElementById("irvResEmoji").textContent = emoji;
+  document.getElementById("irvResTitle").textContent = title;
+  document.getElementById("irvResPct").textContent = pct+"%";
+  document.getElementById("irvResCorrect").textContent = irvCorrect;
+  document.getElementById("irvResErrors").textContent = irvErrors;
+  document.getElementById("irvResVerdict").innerHTML = `Правильно <b>${irvCorrect}</b> из <b>${total}</b>${irvWrongList.length>0?`<br>Повторить: <b>${irvWrongList.length}</b> глаголов`:'.'}`;
+  document.getElementById("irvRepeatBtn").style.display = irvWrongList.length>0 ? 'flex' : 'none';
+  showScreen("irvResultScreen");
+  irvAwardXp();
+}
+
+// ─── Экран "блок пройден" между мини-тестами ───
+function irvShowInterim() {
+  const total = irvCorrect + irvErrors;
+  const pct = total ? Math.round(irvCorrect/total*100) : 0;
+  irvChunkResults[irvChunkIdx] = {correct: irvCorrect, total: total};
+  let emoji="🎯";
+  if (pct===100) emoji="🔥"; else if (pct>=80) emoji="🌟"; else if (pct<50) emoji="💪";
+  document.getElementById("irvInterimEmoji").textContent = emoji;
+  document.getElementById("irvInterimTitle").textContent = `Блок ${irvChunkIdx+1} из ${irvChunks.length} пройден!`;
+  document.getElementById("irvInterimPct").textContent = pct+"%";
+  document.getElementById("irvInterimCorrect").textContent = irvCorrect;
+  document.getElementById("irvInterimErrors").textContent = irvErrors;
+  document.getElementById("irvInterimOverallBar").style.width = (((irvChunkIdx+1)/irvChunks.length)*100)+"%";
+  const isLast = irvChunkIdx === irvChunks.length-1;
+  let verdict = pct===100 ? "Идеально! Эти 10 глаголов теперь твои 💪" :
+                pct>=80 ? "Почти безупречно, едем дальше!" :
+                pct>=50 ? "Неплохо, но в финале повторим эти ещё раз." :
+                "Эти глаголы попадут в повторение в финале — не страшно!";
+  document.getElementById("irvInterimVerdict").innerHTML = verdict;
+  document.getElementById("irvInterimContinueBtn").textContent = isLast ? "К финальному тесту 🏁" : `Блок ${irvChunkIdx+2} 📚`;
+  showScreen("irvInterimScreen");
+}
+function irvInterimContinue() {
+  playClick();
+  if (irvChunkIdx < irvChunks.length-1) {
+    startIrvChunkStudy(irvChunkIdx+1);
+  } else {
+    irvShowFinalIntro();
+  }
+}
+function irvShowFinalIntro() {
+  const totalCorrect = irvChunkResults.reduce((s,r)=>s+r.correct,0);
+  const totalAll = irvChunkResults.reduce((s,r)=>s+r.total,0);
+  const pct = totalAll ? Math.round(totalCorrect/totalAll*100) : 0;
+  document.getElementById("irvFinalIntroVerdict").innerHTML =
+    `По мини-тестам: <b>${totalCorrect}</b> из <b>${totalAll}</b> (${pct}%)`;
+  showScreen("irvFinalIntroScreen");
+}
+
+// ─── Грандфинал: итог финального теста на все 50 ───
+function irvShowGrandFinale() {
+  const total = irvCorrect + irvErrors;
+  const pct = total ? Math.round(irvCorrect/total*100) : 0;
+  let emoji, title, badgeEmoji, badgeTitle, badgeSub;
+  if (pct>=90){
+    emoji="🏆"; title="Невероятно!";
+    badgeEmoji="🏆"; badgeTitle="Мастер неправильных глаголов";
+    badgeSub="Ты знаешь практически все формы наизусть!";
+  } else if (pct>=75){
+    emoji="🌟"; title="Отличный результат!";
+    badgeEmoji="🌟"; badgeTitle="Почти профи";
+    badgeSub="Совсем немного — и будет идеально.";
+  } else if (pct>=50){
+    emoji="👍"; title="Хорошая база!";
+    badgeEmoji="📈"; badgeTitle="Уверенный прогресс";
+    badgeSub="Повтори ошибки — и результат подрастёт быстро.";
+  } else {
+    emoji="📚"; title="Это только начало!";
+    badgeEmoji="🌱"; badgeTitle="Растущий полиглот";
+    badgeSub="Память работает на повторении — попробуй ещё раз.";
+  }
+  document.getElementById("irvBadgeBox").style.display = "block";
+  document.getElementById("irvBadgeEmoji").textContent = badgeEmoji;
+  document.getElementById("irvBadgeTitle").textContent = badgeTitle;
+  document.getElementById("irvBadgeSub").textContent = badgeSub;
+  document.getElementById("irvResEmoji").textContent = emoji;
+  document.getElementById("irvResTitle").textContent = title;
+  document.getElementById("irvResPct").textContent = pct+"%";
+  document.getElementById("irvResCorrect").textContent = irvCorrect;
+  document.getElementById("irvResErrors").textContent = irvErrors;
+  document.getElementById("irvResVerdict").innerHTML = `Финальный тест: <b>${irvCorrect}</b> из <b>${total}</b>${irvFinalWrongList.length>0?`<br>В "Повторить ошибки" попадут: <b>${irvFinalWrongList.length}</b> глаголов`:'.'}`;
+  irvWrongList = irvFinalWrongList;
+  document.getElementById("irvRepeatBtn").style.display = irvWrongList.length>0 ? 'flex' : 'none';
+  showScreen("irvResultScreen");
+  triggerAch && triggerAch("ach_irv_master");
+}
+
+function irvRepeatMistakes() {
+  if (irvWrongList.length>0) startIrregularVerbs(irvWrongList);
+}
+function exitIrv() { goToMainMenu(); }
+
 const categories = {
+
+
   // Theme 9 — Jobs
   jobs:[
     {ru:"уборщик / уборщица",en:"cleaner"},{ru:"водитель",en:"driver"},
@@ -4707,7 +5263,15 @@ document.addEventListener("keydown",e=>{
     if(document.getElementById("pauseOverlay").classList.contains("active")) resumeGame();
     else if(isGameActive) pauseGame();
   }
-  if(e.key==="Enter"){ unlockAudio(); checkAnswer(); }
+  if(e.key==="Enter"){
+    unlockAudio();
+    if (document.getElementById("irvScreen").classList.contains("active")) { irvCheck(); }
+    else { checkAnswer(); }
+  }
+  if (document.getElementById("irvStudyScreen").classList.contains("active")) {
+    if (e.key==="ArrowRight") irvStudyNext();
+    if (e.key==="ArrowLeft") irvStudyPrev();
+  }
 });
 
 
@@ -4969,6 +5533,102 @@ function saveProfile() {
   playCorrect();
   alertPop("✅ Профиль сохранён!");
   setTimeout(() => { showScreen("menuScreen"); }, 800);
+}
+
+// ════════════════════════════════════
+//  ТЕХНИЧЕСКАЯ ПАНЕЛЬ (АДМИНКА)
+// ════════════════════════════════════
+const ADMIN_PASSWORD = "flerixadm";
+
+function openAdminLogin() {
+  document.getElementById("adminPassInput").value = "";
+  document.getElementById("adminLoginError").style.display = "none";
+  document.getElementById("adminLoginOverlay").classList.add("active");
+  setTimeout(()=>document.getElementById("adminPassInput").focus(), 100);
+}
+function closeAdminLogin() {
+  document.getElementById("adminLoginOverlay").classList.remove("active");
+}
+function checkAdminPassword() {
+  const val = document.getElementById("adminPassInput").value;
+  if (val === ADMIN_PASSWORD) {
+    closeAdminLogin();
+    openAdminPanel();
+  } else {
+    document.getElementById("adminLoginError").style.display = "block";
+  }
+}
+function openAdminPanel() {
+  playCorrect();
+  document.getElementById("dashboardCard").style.display = "none";
+  showScreen("adminScreen");
+  adminRefreshDisplay();
+}
+function exitAdminPanel() {
+  showScreen("profileScreen");
+  showProfileScreen();
+}
+function adminRefreshDisplay() {
+  document.getElementById("adminCurXp").textContent = xp;
+  document.getElementById("adminCurLvl").textContent = getLevel(xp);
+  document.getElementById("adminCurStreak").textContent = maxStreak;
+}
+function adminAddXp() {
+  const val = parseInt(document.getElementById("adminAddXpInput").value);
+  if (isNaN(val)) { alertPop("Введи число"); return; }
+  xp = Math.max(0, xp + val);
+  dailyXp += val>0 ? val : 0;
+  save(); updateMenu(); adminRefreshDisplay();
+  document.getElementById("adminAddXpInput").value = "";
+  playCorrect();
+  alertPop(`✅ Выдано ${val} XP`);
+}
+function adminSetXp() {
+  const val = parseInt(document.getElementById("adminSetXpInput").value);
+  if (isNaN(val) || val < 0) { alertPop("Введи число ≥ 0"); return; }
+  xp = val;
+  save(); updateMenu(); adminRefreshDisplay();
+  playCorrect();
+  alertPop(`✅ XP установлен: ${val}`);
+}
+function adminSetLevel() {
+  const val = parseInt(document.getElementById("adminSetLvlInput").value);
+  if (isNaN(val) || val < 1) { alertPop("Введи число ≥ 1"); return; }
+  xp = _xpForLevel(val);
+  save(); updateMenu(); adminRefreshDisplay();
+  playCorrect();
+  alertPop(`✅ Уровень установлен: ${val}`);
+}
+function adminSetStreak() {
+  const val = parseInt(document.getElementById("adminSetStreakInput").value);
+  if (isNaN(val) || val < 0) { alertPop("Введи число ≥ 0"); return; }
+  maxStreak = val;
+  streak = val;
+  save(); updateMenu(); adminRefreshDisplay();
+  playCorrect();
+  alertPop(`✅ Серия установлена: ${val}`);
+}
+function adminUnlockAllAchievements() {
+  Object.keys(achievementList).forEach(id => {
+    if (!earnedAchievements.includes(id)) earnedAchievements.push(id);
+  });
+  save();
+  playCorrect();
+  alertPop("🏆 Все достижения открыты!");
+}
+function adminClearMistakes() {
+  mistakes = [];
+  save();
+  playCorrect();
+  alertPop("🧹 Список ошибок очищен");
+}
+function adminResetProgress() {
+  if (!confirm("Точно сбросить ВЕСЬ прогресс? Это нельзя отменить.")) return;
+  xp = 0; dailyXp = 0; correct = 0; total = 0; streak = 0; maxStreak = 0;
+  earnedAchievements = []; mistakes = [];
+  save(); updateMenu(); adminRefreshDisplay();
+  playWrong();
+  alertPop("🗑️ Прогресс сброшен");
 }
 
 
