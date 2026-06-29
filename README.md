@@ -1,5 +1,4 @@
-
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -2226,7 +2225,17 @@ select {
       <div class="mode-card" onclick="startIrvStudy()" style="grid-column:span 2;">
         <span class="mc-icon">📜</span>
         Неправильные глаголы
-        <div class="mc-sub">Быстрая карточка-шпаргалка + тест на V1, V2, V3 — все 50 за 5 минут</div>
+        <div class="mc-sub">Карточки блоками по 10 → мини-тест → финал на все 50</div>
+      </div>
+      <div class="mode-card" onclick="startIrvQuick()">
+        <span class="mc-icon">⚡</span>
+        Быстрый тест
+        <div class="mc-sub">Выбери V2/V3 из 4 — без печати, одним тапом</div>
+      </div>
+      <div class="mode-card" onclick="showIrvCheatsheet()">
+        <span class="mc-icon">📋</span>
+        Шпаргалка
+        <div class="mc-sub">Все 50 глаголов таблицей для быстрого обзора</div>
       </div>
     </div>
 
@@ -2359,6 +2368,69 @@ select {
       <button class="btn-primary" onclick="startFlashcards()">🔄 Ещё раз</button>
       <button class="btn-secondary" onclick="fcRepeatUnknown()" id="fcRepeatBtn">📚 Повторить ошибки</button>
       <button class="btn-secondary" onclick="showScreen('menuScreen');updateMenu();">🏠 В меню</button>
+    </div>
+  </div>
+
+  <!-- ═══ БЫСТРЫЙ ТЕСТ ГЛАГОЛОВ ═══ -->
+  <div id="irvQuickScreen" class="card screen">
+    <div class="game-header">
+      <button class="pause-btn" onclick="exitIrv()">← Выйти</button>
+      <div class="stats-bar">
+        <div class="mini-stat">✅ <span id="iqCorrect">0</span></div>
+        <div class="mini-stat">❌ <span id="iqErrors">0</span></div>
+      </div>
+    </div>
+    <div class="prog-wrap"><div class="prog-bar sprint" id="iqBar"></div></div>
+    <div class="sprint-counter" style="text-align:right;margin-bottom:10px;">
+      Глагол <span id="iqPos">1</span> из <span id="iqTotal">50</span>
+    </div>
+    <div style="text-align:center;margin-bottom:18px;">
+      <div style="font-size:11px;color:var(--text2);font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;">V1 · Infinitive</div>
+      <div style="font-size:40px;font-weight:900;color:var(--accent);line-height:1.1;" id="iqV1">go</div>
+      <div style="font-size:14px;color:var(--text2);font-weight:700;margin-top:4px;" id="iqRu">идти</div>
+    </div>
+    <div style="font-size:11px;color:var(--text2);font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;" id="iqStageLabel">Выбери V2 · Past Simple</div>
+    <div id="iqOptions" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;"></div>
+    <div class="result" id="iqResult"></div>
+  </div>
+
+  <!-- ═══ РЕЗУЛЬТАТ БЫСТРОГО ТЕСТА ═══ -->
+  <div id="irvQuickResultScreen" class="card screen">
+    <div class="result-hero" id="iqResEmoji">⚡</div>
+    <div class="result-title" id="iqResTitle">Тест завершён!</div>
+    <div class="result-pct" id="iqResPct">0%</div>
+    <div class="result-stats">
+      <div class="result-stat">✅ Правильно<strong id="iqResCorrect">0</strong></div>
+      <div class="result-stat">❌ Ошибок<strong id="iqResErrors">0</strong></div>
+    </div>
+    <div class="result-verdict" id="iqResVerdict"></div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn-primary" onclick="startIrvQuick()">🔄 Ещё раз</button>
+      <button class="btn-secondary" onclick="startIrvQuickRepeat()" id="iqRepeatBtn" style="display:none;">📚 Повторить ошибки</button>
+      <button class="btn-secondary" onclick="showScreen('menuScreen');updateMenu();">🏠 В меню</button>
+    </div>
+  </div>
+
+  <!-- ═══ ШПАРГАЛКА ГЛАГОЛОВ ═══ -->
+  <div id="irvCheatsheetScreen" class="card screen">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div style="font-size:18px;font-weight:900;">📋 Шпаргалка</div>
+      <button class="pause-btn" onclick="exitIrv()">← Выйти</button>
+    </div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Все 50 неправильных глаголов — листай, запоминай</div>
+    <input type="text" id="iqSearchInput" placeholder="🔍 Поиск глагола…" autocomplete="off" spellcheck="false"
+      oninput="filterCheatsheet(this.value)"
+      style="margin-bottom:12px;width:100%;padding:10px 14px;border:1px solid var(--card-border);border-radius:12px;background:var(--muted2);color:var(--text);font-size:14px;outline:none;">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1.4fr;gap:0;border-radius:12px 12px 0 0;overflow:hidden;border:1px solid var(--card-border);border-bottom:none;">
+      <div style="background:var(--muted);padding:8px 6px;font-size:10px;font-weight:900;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;text-align:center;">V1</div>
+      <div style="background:var(--muted);padding:8px 6px;font-size:10px;font-weight:900;color:var(--accent);letter-spacing:.5px;text-transform:uppercase;text-align:center;">V2</div>
+      <div style="background:var(--muted);padding:8px 6px;font-size:10px;font-weight:900;color:var(--accent2);letter-spacing:.5px;text-transform:uppercase;text-align:center;">V3</div>
+      <div style="background:var(--muted);padding:8px 6px;font-size:10px;font-weight:900;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;text-align:center;">🇷🇺</div>
+    </div>
+    <div id="iqCheatList" style="border:1px solid var(--card-border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden;max-height:430px;overflow-y:auto;"></div>
+    <div style="margin-top:12px;display:flex;gap:10px;">
+      <button class="btn-primary" style="flex:1;" onclick="startIrvQuick()">⚡ Быстрый тест</button>
+      <button class="btn-secondary" style="flex:1;" onclick="startIrvStudy()">📜 Полный курс</button>
     </div>
   </div>
 
@@ -3680,6 +3752,196 @@ function irvRepeatMistakes() {
   if (irvWrongList.length>0) startIrregularVerbs(irvWrongList);
 }
 function exitIrv() { goToMainMenu(); }
+
+// ════════════════════════════════════
+//  БЫСТРЫЙ ТЕСТ НЕПРАВИЛЬНЫХ ГЛАГОЛОВ
+// ════════════════════════════════════
+let iqPool = [];
+let iqIdx = 0;
+let iqCorrectCount = 0;
+let iqErrorCount = 0;
+let iqXpEarned = 0;
+let iqWrongList = [];
+let iqStage = 'v2'; // 'v2' or 'v3'
+let iqV2ok = false;
+
+function startIrvQuick(customPool) {
+  playStart();
+  iqPool = irvShuffle(customPool || IRREGULAR_VERBS);
+  iqIdx = 0; iqCorrectCount = 0; iqErrorCount = 0; iqXpEarned = 0; iqWrongList = [];
+  document.getElementById("dashboardCard").style.display = "none";
+  showScreen("irvQuickScreen");
+  iqRender();
+}
+
+function startIrvQuickRepeat() {
+  if (iqWrongList.length > 0) startIrvQuick(iqWrongList);
+}
+
+function iqGetDistractors(correct, field) {
+  const all = IRREGULAR_VERBS.map(v => v[field]).filter(v => v !== correct);
+  const shuffled = irvShuffle(all);
+  return shuffled.slice(0, 3);
+}
+
+function iqRender() {
+  if (iqIdx >= iqPool.length) { iqShowResult(); return; }
+  iqStage = 'v2';
+  iqV2ok = false;
+  const v = iqPool[iqIdx];
+  document.getElementById("iqV1").textContent = v.v1;
+  document.getElementById("iqRu").textContent = v.ru;
+  document.getElementById("iqPos").textContent = iqIdx + 1;
+  document.getElementById("iqTotal").textContent = iqPool.length;
+  document.getElementById("iqBar").style.width = (iqIdx / iqPool.length * 100) + "%";
+  document.getElementById("iqResult").innerHTML = "";
+  document.getElementById("iqResult").className = "result";
+  document.getElementById("iqCorrect").textContent = iqCorrectCount;
+  document.getElementById("iqErrors").textContent = iqErrorCount;
+  iqRenderOptions('v2', v);
+}
+
+function iqRenderOptions(stage, v) {
+  const correctVal = v[stage];
+  const distractors = iqGetDistractors(correctVal, stage);
+  const options = irvShuffle([correctVal, ...distractors]);
+  const label = stage === 'v2' ? 'Выбери V2 · Past Simple' : 'Теперь V3 · Past Participle';
+  document.getElementById("iqStageLabel").textContent = label;
+  const container = document.getElementById("iqOptions");
+  container.innerHTML = options.map(opt => `
+    <button onclick="iqAnswer(this,'${opt.replace(/'/g,"\\'")}','${correctVal.replace(/'/g,"\\'")}','${stage}')"
+      style="padding:14px 8px;border-radius:14px;border:2px solid var(--card-border);background:var(--muted2);
+      color:var(--text);font-size:16px;font-weight:800;cursor:pointer;transition:all .15s;
+      touch-action:manipulation;-webkit-tap-highlight-color:transparent;">
+      ${opt}
+    </button>`).join('');
+}
+
+function iqAnswer(btn, chosen, correct, stage) {
+  // Disable all buttons
+  const container = document.getElementById("iqOptions");
+  container.querySelectorAll('button').forEach(b => { b.style.pointerEvents = 'none'; });
+
+  const isOk = chosen === correct;
+  btn.style.background = isOk ? 'rgba(34,216,143,.3)' : 'rgba(255,79,109,.3)';
+  btn.style.borderColor = isOk ? 'var(--ok)' : 'var(--err)';
+  if (!isOk) {
+    // highlight correct
+    container.querySelectorAll('button').forEach(b => {
+      if (b.textContent.trim() === correct) {
+        b.style.background = 'rgba(34,216,143,.2)';
+        b.style.borderColor = 'var(--ok)';
+      }
+    });
+  }
+
+  const v = iqPool[iqIdx];
+  const resultEl = document.getElementById("iqResult");
+
+  if (stage === 'v2') {
+    iqV2ok = isOk;
+    if (isOk) {
+      playCorrect && playCorrect();
+      resultEl.innerHTML = "<span class='ok-text'>✅ V2 правильно! Теперь V3…</span>";
+      resultEl.className = "result";
+      setTimeout(() => {
+        iqStage = 'v3';
+        iqRenderOptions('v3', v);
+        resultEl.innerHTML = "";
+      }, 500);
+    } else {
+      playWrong && playWrong();
+      iqErrorCount++;
+      iqWrongList.push(v);
+      resultEl.innerHTML = `<span class='err-text'>❌ V2: <b>${v.v2}</b> · V3: <b>${v.v3}</b></span>`;
+      resultEl.className = "result";
+      iqIdx++;
+      setTimeout(iqRender, 1400);
+    }
+  } else {
+    // v3 stage
+    if (isOk && iqV2ok) {
+      iqCorrectCount++;
+      const earned = 3;
+      iqXpEarned += earned;
+      xp += earned; dailyXp += earned;
+      playCorrect && playCorrect();
+      if (navigator.vibrate) navigator.vibrate(30);
+      resultEl.innerHTML = `<span class='ok-text'>✅ Отлично! +${earned} XP</span>`;
+      spawnXpPop && spawnXpPop(earned);
+    } else {
+      if (!iqV2ok) {
+        // already counted error at v2 stage
+      } else {
+        iqErrorCount++;
+        iqWrongList.push(v);
+      }
+      playWrong && playWrong();
+      resultEl.innerHTML = `<span class='err-text'>❌ V2: <b>${v.v2}</b> · V3: <b>${v.v3}</b></span>`;
+    }
+    resultEl.className = "result";
+    update && update(); save && save();
+    iqIdx++;
+    setTimeout(iqRender, isOk && iqV2ok ? 600 : 1400);
+  }
+}
+
+function iqShowResult() {
+  const total = iqCorrectCount + iqErrorCount;
+  const pct = total ? Math.round(iqCorrectCount / total * 100) : 0;
+  let emoji = "📚", title = "Продолжай тренироваться!";
+  if (pct === 100) { emoji = "🏆"; title = "Все глаголы знаешь!"; }
+  else if (pct >= 80) { emoji = "🌟"; title = "Отличный результат!"; }
+  else if (pct >= 60) { emoji = "👍"; title = "Хорошая работа!"; }
+  document.getElementById("iqResEmoji").textContent = emoji;
+  document.getElementById("iqResTitle").textContent = title;
+  document.getElementById("iqResPct").textContent = pct + "%";
+  document.getElementById("iqResCorrect").textContent = iqCorrectCount;
+  document.getElementById("iqResErrors").textContent = iqErrorCount;
+  document.getElementById("iqResVerdict").innerHTML = `Правильно <b>${iqCorrectCount}</b> из <b>${total}</b><br>Заработано: <b>+${iqXpEarned} XP</b>`;
+  document.getElementById("iqRepeatBtn").style.display = iqWrongList.length > 0 ? "block" : "none";
+  showScreen("irvQuickResultScreen");
+  playSprint && playSprint();
+  xp += 0; // already added per-answer
+  save && save();
+  trackChStat && trackChStat('flashDone');
+  claimChallengeXp && claimChallengeXp();
+  renderActivityCalendar && renderActivityCalendar();
+  spawnConfetti && spawnConfetti(20);
+}
+
+// ════════════════════════════════════
+//  ШПАРГАЛКА ГЛАГОЛОВ
+// ════════════════════════════════════
+function showIrvCheatsheet() {
+  playClick && playClick();
+  document.getElementById("dashboardCard").style.display = "none";
+  document.getElementById("iqSearchInput").value = "";
+  renderCheatsheetRows(IRREGULAR_VERBS);
+  showScreen("irvCheatsheetScreen");
+}
+
+function renderCheatsheetRows(list) {
+  const container = document.getElementById("iqCheatList");
+  container.innerHTML = list.map((v, i) => `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1.4fr;gap:0;
+      background:${i%2===0?'var(--muted2)':'transparent'};
+      border-bottom:1px solid var(--card-border);">
+      <div style="padding:9px 6px;font-size:13px;font-weight:800;color:var(--text);text-align:center;">${v.v1}</div>
+      <div style="padding:9px 6px;font-size:13px;font-weight:700;color:var(--accent);text-align:center;">${v.v2}</div>
+      <div style="padding:9px 6px;font-size:13px;font-weight:700;color:var(--accent2);text-align:center;">${v.v3}</div>
+      <div style="padding:9px 6px;font-size:12px;color:var(--text2);font-weight:600;text-align:center;">${v.ru}</div>
+    </div>`).join('');
+}
+
+function filterCheatsheet(query) {
+  const q = query.trim().toLowerCase();
+  if (!q) { renderCheatsheetRows(IRREGULAR_VERBS); return; }
+  const filtered = IRREGULAR_VERBS.filter(v =>
+    v.v1.includes(q) || v.v2.includes(q) || v.v3.includes(q) || v.ru.toLowerCase().includes(q)
+  );
+  renderCheatsheetRows(filtered);
+}
 
 const categories = {
 
