@@ -1,5 +1,4 @@
-
-
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -1405,19 +1404,51 @@ header {
   position:absolute; right:12px; top:50%; transform:translateY(-50%);
   background:none; border:none; color:var(--text2); font-size:18px; cursor:pointer; padding:0; line-height:1;
 }
-.dict-results {
-  max-height:220px; overflow-y:auto; margin-bottom:10px;
+.dict-cat-chips {
+  display:flex; gap:8px; overflow-x:auto; padding:2px 2px 10px; margin-bottom:4px;
+  scrollbar-width:none;
+}
+.dict-cat-chips::-webkit-scrollbar { display:none; }
+.dict-chip {
+  flex:0 0 auto; padding:8px 14px; border-radius:20px;
+  background:var(--muted2); border:1.5px solid var(--card-border);
+  color:var(--text2); font-size:12px; font-weight:800; cursor:pointer;
+  white-space:nowrap; transition:var(--t); user-select:none;
+}
+.dict-chip:hover { border-color:rgba(79,142,255,.35); }
+.dict-chip.active { background:rgba(79,142,255,.15); border-color:var(--accent); color:var(--accent); }
+.dict-count-row { font-size:12px; color:var(--text2); margin-bottom:10px; }
+.dict-results { padding-bottom:6px; }
+.dict-group-title {
+  font-size:13px; font-weight:900; color:var(--accent); letter-spacing:.2px;
+  margin:18px 2px 8px; display:flex; align-items:center; gap:8px;
+}
+.dict-group-title:first-child { margin-top:2px; }
+.dict-group-count {
+  font-size:10px; font-weight:800; color:var(--text2); background:var(--muted);
+  padding:2px 7px; border-radius:8px;
 }
 .dict-result-item {
-  display:flex; justify-content:space-between; align-items:center;
-  padding:10px 14px; background:var(--muted2); border:1px solid var(--card-border);
-  border-radius:10px; margin-bottom:6px; font-size:14px; font-weight:600;
-  transition:var(--t);
+  display:flex; justify-content:space-between; align-items:center; gap:10px;
+  padding:14px 16px; background:var(--muted2); border:1px solid var(--card-border);
+  border-radius:14px; margin-bottom:8px; transition:var(--t);
 }
 .dict-result-item:hover { border-color:rgba(79,142,255,.3); }
-.dict-result-ru { color:var(--text2); font-size:12px; }
-.dict-no-result { text-align:center; color:var(--text2); padding:16px 0; font-style:italic; font-size:14px; }
-.dict-result-cat { font-size:10px; color:var(--text2); background:var(--muted); padding:2px 7px; border-radius:6px; font-weight:700; letter-spacing:.3px; }
+.dict-result-text { min-width:0; }
+.dict-result-en { font-weight:800; color:var(--text); font-size:16px; }
+.dict-result-ru { color:var(--text2); font-size:13px; margin-top:2px; }
+.dict-result-actions { display:flex; align-items:center; gap:10px; flex:0 0 auto; }
+.dict-result-cat {
+  font-size:10px; color:var(--text2); background:var(--muted); padding:3px 8px;
+  border-radius:6px; font-weight:700; letter-spacing:.3px; white-space:nowrap;
+}
+.dict-speak-btn {
+  width:34px; height:34px; border-radius:50%; border:1.5px solid var(--card-border);
+  background:var(--card); color:var(--accent); font-size:15px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:var(--t); flex:0 0 auto;
+}
+.dict-speak-btn:hover { border-color:var(--accent); transform:scale(1.08); }
+.dict-no-result { text-align:center; color:var(--text2); padding:30px 0; font-style:italic; font-size:14px; }
 
 /* Экспорт прогресса */
 .export-btn-row { display:flex; gap:8px; margin-top:10px; }
@@ -3067,19 +3098,22 @@ select {
       </div>
       <select id="settingsCategory" onchange="document.getElementById('category').value=this.value;savePrefs();" style="margin-bottom:0;">
         <option value="all">🌍 Все категории</option>
-        <option value="jobs">💼 Профессии</option>
-        <option value="workplaces">🏭 Места работы</option>
-        <option value="dailyRoutines">🌅 Распорядок дня</option>
-        <option value="activities">📅 Занятия и дни недели</option>
-        <option value="aroundTown">🏙️ По городу</option>
-        <option value="directions">🗺️ Ориентирование</option>
-        <option value="adjectives">🎨 Прилагательные</option>
-        <option value="scenery">🌄 Природа и пейзажи</option>
-        <option value="aroundHouse">🏠 Дом и квартира</option>
-        <option value="householdObjects">🍽️ Предметы быта</option>
-        <option value="foodDrink">🍎 Еда и напитки</option>
-        <option value="foodContainers">📦 Упаковка еды</option>
-        <option value="clothes">👕 Одежда и аксессуары</option>
+        <option value="presentContinuousVerbs">🏃 Глаголы (Present Continuous)</option>
+        <option value="digitalGadgets">📱 Гаджеты</option>
+        <option value="feelingsMoods">😊 Чувства и настроения</option>
+        <option value="transportation">🚗 Транспорт</option>
+        <option value="theBody">🧍 Тело</option>
+        <option value="weather">🌦️ Погода</option>
+        <option value="travel">✈️ Путешествия</option>
+        <option value="geographicalFeatures">🏔️ Природные объекты</option>
+        <option value="entertainment">🎥 Развлечения (медиа)</option>
+        <option value="moviesTheater">🎬 Кино и театр</option>
+        <option value="tools">🔨 Инструменты</option>
+        <option value="kitchenImplements">🍴 Кухонные принадлежности</option>
+        <option value="applyingJob">💼 Поиск работы</option>
+        <option value="resumeWords">📄 Слова резюме</option>
+        <option value="goingOut">🎭 Досуг</option>
+        <option value="entertainmentActivities">🎵 Развлекательные занятия</option>
         <option value="myWords">⭐ Мои слова</option>
       </select>
     </div>
@@ -3118,25 +3152,26 @@ select {
     <div style="text-align:center;font-size:12px;color:var(--text2);margin-top:8px;opacity:.5;">ETU by BV · v1.0</div>
   </div>
 
-</div><!-- /container -->
+  <!-- ═══ ПОИСК ПО СЛОВАРЮ ═══ -->
+  <div id="dictScreen" class="card screen">
+    <div style="font-size:20px;font-weight:900;margin-bottom:6px;">🔍 Словарь</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:14px;">Все слова из всех тем в одном месте — ищи, листай по темам и слушай произношение.</div>
 
-<!-- ═══ ПОИСК ПО СЛОВАРЮ ═══ -->
-<div class="overlay" id="dictOverlay" onclick="if(event.target===this)closeDictSearch()">
-  <div class="pause-card" style="max-height:80vh;overflow-y:auto;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-      <div class="pause-title" style="margin-bottom:0;">🔍 Поиск по словарю</div>
-      <button onclick="closeDictSearch()" style="background:none;border:none;font-size:22px;color:var(--text2);cursor:pointer;padding:4px;">✕</button>
-    </div>
     <div class="dict-search-wrap">
       <input class="dict-search-input" id="dictSearchInput" type="text" placeholder="Введи слово на рус. или англ." oninput="dictSearch(this.value)" autocomplete="off" spellcheck="false">
       <button class="dict-search-clear" onclick="clearDictSearch()">✕</button>
     </div>
-    <div id="dictResults" class="dict-results">
-      <div class="dict-no-result">Начни вводить слово для поиска</div>
-    </div>
-    <div style="font-size:11px;color:var(--text2);text-align:center;margin-top:6px;">Найдено слов: <span id="dictCount">—</span></div>
+
+    <div class="dict-cat-chips" id="dictCatChips"></div>
+
+    <div class="dict-count-row">Слов найдено: <span id="dictCount">—</span></div>
+
+    <div id="dictResults" class="dict-results"></div>
+
+    <button class="btn-secondary" style="width:100%;margin-top:14px;" onclick="showScreen('menuScreen')">← Назад</button>
   </div>
-</div>
+
+</div><!-- /container -->
 
 <!-- ═══ ОБУЧАЮЩИЙ ТЬЮТОРИАЛ ═══ -->
 <div class="tutorial-overlay" id="tutorialOverlay" style="display:none;">
@@ -3386,19 +3421,22 @@ select {
       <label>Категория</label>
       <select id="category" onchange="savePrefs();">
         <option value="all">🌍 Все категории</option>
-        <option value="jobs">💼 Профессии (Jobs)</option>
-        <option value="workplaces">🏭 Места работы</option>
-        <option value="dailyRoutines">🌅 Распорядок дня</option>
-        <option value="activities">📅 Занятия и дни недели</option>
-        <option value="aroundTown">🏙️ По городу</option>
-        <option value="directions">🗺️ Ориентирование</option>
-        <option value="adjectives">🎨 Прилагательные</option>
-        <option value="scenery">🌄 Природа и пейзажи</option>
-        <option value="aroundHouse">🏠 Дом и квартира</option>
-        <option value="householdObjects">🍽️ Предметы быта</option>
-        <option value="foodDrink">🍎 Еда и напитки</option>
-        <option value="foodContainers">📦 Упаковка еды</option>
-        <option value="clothes">👕 Одежда и аксессуары</option>
+        <option value="presentContinuousVerbs">🏃 Глаголы (Present Continuous)</option>
+        <option value="digitalGadgets">📱 Гаджеты</option>
+        <option value="feelingsMoods">😊 Чувства и настроения</option>
+        <option value="transportation">🚗 Транспорт</option>
+        <option value="theBody">🧍 Тело</option>
+        <option value="weather">🌦️ Погода</option>
+        <option value="travel">✈️ Путешествия</option>
+        <option value="geographicalFeatures">🏔️ Природные объекты</option>
+        <option value="entertainment">🎥 Развлечения (медиа)</option>
+        <option value="moviesTheater">🎬 Кино и театр</option>
+        <option value="tools">🔨 Инструменты</option>
+        <option value="kitchenImplements">🍴 Кухонные принадлежности</option>
+        <option value="applyingJob">💼 Поиск работы</option>
+        <option value="resumeWords">📄 Слова резюме</option>
+        <option value="goingOut">🎭 Досуг</option>
+        <option value="entertainmentActivities">🎵 Развлекательные занятия</option>
         <option value="myWords">⭐ Мои слова</option>
       </select>
     </div>
@@ -3946,232 +3984,209 @@ function filterCheatsheet(query) {
 
 const categories = {
 
-
-  // Theme 9 — Jobs
-  jobs:[
-    {ru:"уборщик / уборщица",en:"cleaner"},{ru:"водитель",en:"driver"},
-    {ru:"продавец-консультант",en:"sales assistant"},{ru:"парикмахер",en:"hairdresser"},
-    {ru:"шеф-повар",en:"chef"},{ru:"садовник",en:"gardener"},
-    {ru:"ветеринар",en:"vet"},{ru:"актёр",en:"actor"},
-    {ru:"врач",en:"doctor"},{ru:"медсестра / медбрат",en:"nurse"},
-    {ru:"стоматолог",en:"dentist"},{ru:"полицейский",en:"police officer"},
-    {ru:"пожарный",en:"firefighter"},{ru:"фермер",en:"farmer"},
-    {ru:"строитель",en:"construction worker / builder"},{ru:"художник",en:"artist"},
-    {ru:"администратор / секретарь",en:"receptionist"},{ru:"механик",en:"mechanic"},
-    {ru:"инженер",en:"engineer"},{ru:"учёный",en:"scientist"},
-    {ru:"учитель",en:"teacher"},{ru:"бизнесвумен",en:"businesswoman"},
-    {ru:"бизнесмен",en:"businessman"},{ru:"официант",en:"waiter"},
-    {ru:"официантка",en:"waitress"},{ru:"электрик",en:"electrician"},
-    {ru:"пилот",en:"pilot"},{ru:"судья",en:"judge"}
+  // 4.4 — Common Present Continuous Verbs
+  presentContinuousVerbs:[
+    {ru:"держать",en:"hold"},{ru:"нести",en:"carry"},
+    {ru:"чистить, убирать",en:"clean"},{ru:"использовать",en:"use"}
   ],
-  // Theme 10 — Workplaces / Work with
-  workplaces:[
-    {ru:"ферма",en:"farm"},{ru:"офис",en:"office"},
-    {ru:"театр",en:"theater / theatre"},{ru:"школа",en:"school"},
-    {ru:"лаборатория",en:"laboratory"},{ru:"ресторан",en:"restaurant"},
-    {ru:"строительная площадка",en:"construction site"},{ru:"больница",en:"hospital"},
-    {ru:"животные",en:"animals"},{ru:"дети",en:"children"},
-    {ru:"пациенты",en:"patients"},{ru:"растения",en:"plants"},
-    {ru:"еда",en:"food"},{ru:"люди",en:"people"}
+  // 4.7 — Digital Gadgets
+  digitalGadgets:[
+    {ru:"планшет",en:"tablet"},{ru:"компьютер",en:"computer"},
+    {ru:"смартфон",en:"smartphone"},{ru:"игровая приставка",en:"games console"},
+    {ru:"наушники",en:"headphones"},{ru:"электронная книга",en:"e-reader"}
   ],
-  // Theme 11 — Daily Routines / Times of Day
-  dailyRoutines:[
-    {ru:"просыпаться",en:"wake up"},{ru:"вставать",en:"get up"},
-    {ru:"принимать душ",en:"take a shower / have a shower"},
-    {ru:"принимать ванну",en:"take a bath / have a bath"},
-    {ru:"расчесывать волосы",en:"brush your hair"},
-    {ru:"завтракать",en:"have breakfast / eat breakfast"},
-    {ru:"идти на работу",en:"go to work"},{ru:"идти в школу",en:"go to school"},
-    {ru:"покупать продукты",en:"buy groceries"},{ru:"идти домой",en:"go home"},
-    {ru:"готовить ужин",en:"cook dinner"},{ru:"ужинать",en:"have dinner / eat dinner"},
-    {ru:"гладить рубашку",en:"iron a shirt"},{ru:"одеваться",en:"get dressed"},
-    {ru:"чистить зубы",en:"brush your teeth"},{ru:"умываться",en:"wash your face"},
-    {ru:"начинать работу",en:"start work"},{ru:"обедать",en:"have lunch / eat lunch"},
-    {ru:"заканчивать работу",en:"finish work"},{ru:"уходить с работы",en:"leave work"},
-    {ru:"убирать со стола",en:"clear the table"},
-    {ru:"мыть посуду",en:"do the dishes / wash the dishes"},
-    {ru:"выгуливать собаку",en:"walk the dog"},{ru:"ложиться спать",en:"go to bed"},
-    {ru:"день",en:"day"},{ru:"ночь",en:"night"},
-    {ru:"рассвет",en:"dawn"},{ru:"утро",en:"morning"},
-    {ru:"после обеда",en:"afternoon"},{ru:"сумерки",en:"dusk"},
-    {ru:"вечер",en:"evening"},{ru:"поздний вечер",en:"late evening"}
+  // 6.1 — Feelings and Moods
+  feelingsMoods:[
+    {ru:"спокойный",en:"calm"},{ru:"расслабленный",en:"relaxed"},
+    {ru:"счастливый",en:"happy"},{ru:"уверенный",en:"confident"},
+    {ru:"гордый",en:"proud"},{ru:"взволнованный",en:"excited"},
+    {ru:"удивлённый",en:"surprised"},{ru:"довольный",en:"pleased"},
+    {ru:"жизнерадостный",en:"cheerful"},{ru:"развеселённый",en:"amused"},
+    {ru:"раздражённый",en:"irritated"},{ru:"злой",en:"angry"},
+    {ru:"недовольный, раздражённый",en:"annoyed"},{ru:"в ярости",en:"furious"},
+    {ru:"грустный",en:"sad"},{ru:"несчастный",en:"unhappy"},
+    {ru:"обеспокоенный",en:"worried"},{ru:"одинокий",en:"lonely"},
+    {ru:"испуганный",en:"scared"},{ru:"в ужасе",en:"terrified"},
+    {ru:"нервный",en:"nervous"},{ru:"тревожный",en:"anxious"},
+    {ru:"рассеянный",en:"distracted"},{ru:"растерянный",en:"confused"},
+    {ru:"разочарованный",en:"disappointed"},{ru:"несчастный, подавленный",en:"miserable"},
+    {ru:"испытывающий стресс",en:"stressed"},{ru:"ревнивый",en:"jealous"},
+    {ru:"уставший",en:"tired"},{ru:"скучающий",en:"bored"},
+    {ru:"любопытный",en:"curious"},{ru:"благодарный",en:"grateful"}
   ],
-  // Theme 14 — Activities / Days of the Week
-  activities:[
-    {ru:"понедельник",en:"Monday"},{ru:"вторник",en:"Tuesday"},
-    {ru:"среда",en:"Wednesday"},{ru:"четверг",en:"Thursday"},
-    {ru:"пятница",en:"Friday"},{ru:"суббота",en:"Saturday"},
-    {ru:"воскресенье",en:"Sunday"},{ru:"выходные",en:"weekend"},
-    {ru:"ходить в спортзал",en:"go to the gym"},
-    {ru:"ходить плавать",en:"go swimming"},
-    {ru:"играть в теннис",en:"play tennis"},
-    {ru:"играть в футбол",en:"play soccer"},
-    {ru:"читать газету",en:"read the newspaper"},
-    {ru:"принимать ванну",en:"take a bath"}
+  // 8.1 — Transportation
+  transportation:[
+    {ru:"машина",en:"car"},{ru:"такси",en:"taxi"},
+    {ru:"автобус",en:"bus"},{ru:"междугородний автобус",en:"coach"},
+    {ru:"самолёт",en:"plane"},{ru:"поезд",en:"train"},
+    {ru:"трамвай",en:"tram"},{ru:"мотоцикл",en:"motorcycle / motorbike"},
+    {ru:"велосипед",en:"bicycle"},{ru:"лодка",en:"boat"},
+    {ru:"яхта",en:"yacht"},{ru:"корабль",en:"ship"},
+    {ru:"вертолёт",en:"helicopter"},{ru:"автобусная остановка",en:"bus stop"},
+    {ru:"железнодорожный вокзал",en:"train station"},{ru:"стоянка такси",en:"taxi rank"},
+    {ru:"аэропорт",en:"airport"},{ru:"порт",en:"port"},
+    {ru:"дорога",en:"road"},{ru:"железнодорожные пути",en:"railroad tracks / railway line"},
+    {ru:"ходить пешком",en:"walk"},{ru:"ездить на велосипеде",en:"ride a bike"},
+    {ru:"управлять самолётом",en:"fly a plane"},{ru:"водить машину",en:"drive a car"},
+    {ru:"билет",en:"ticket"},{ru:"стоимость проезда",en:"fare"},
+    {ru:"руль",en:"steering wheel"},{ru:"шины",en:"tires (US) / tyres (UK)"},
+    {ru:"багажник",en:"trunk (US) / boot (UK)"},{ru:"капот",en:"hood (US) / bonnet (UK)"},
+    {ru:"двигатель",en:"engine"},{ru:"фары",en:"headlights"},
+    {ru:"колёса",en:"wheels"}
   ],
-  // Theme 20 — Around Town
-  aroundTown:[
-    {ru:"деревня",en:"village"},{ru:"небольшой город",en:"town"},
-    {ru:"крупный город",en:"city"},{ru:"больница",en:"hospital"},
-    {ru:"полицейский участок",en:"police station"},{ru:"автовокзал",en:"bus station"},
-    {ru:"автобусная остановка",en:"bus stop"},{ru:"железнодорожный вокзал",en:"train station"},
-    {ru:"аэропорт",en:"airport"},{ru:"школа",en:"school"},
-    {ru:"фабрика / завод",en:"factory"},{ru:"супермаркет",en:"supermarket"},
-    {ru:"магазин",en:"store / shop"},{ru:"аптека",en:"pharmacy"},
-    {ru:"банк",en:"bank"},{ru:"почтовое отделение",en:"post office"},
-    {ru:"библиотека",en:"library"},{ru:"музей",en:"museum"},
-    {ru:"мэрия / городская администрация",en:"town hall"},{ru:"замок",en:"castle"},
-    {ru:"офисное здание",en:"office building"},{ru:"парк",en:"park"},
-    {ru:"здесь",en:"here"},{ru:"мост",en:"bridge"},
-    {ru:"плавательный бассейн",en:"swimming pool"},{ru:"ресторан",en:"restaurant"},
-    {ru:"кафе",en:"cafe"},{ru:"там",en:"there"},
-    {ru:"бар",en:"bar"},{ru:"кинотеатр",en:"movie theater / cinema"},
-    {ru:"театр",en:"theater / theatre"},{ru:"отель",en:"hotel"},
-    {ru:"рядом",en:"near"},{ru:"церковь",en:"church"},
-    {ru:"мечеть",en:"mosque"},{ru:"синагога",en:"synagogue"},
-    {ru:"храм",en:"temple"},{ru:"далеко",en:"far"}
+  // 10.1 — The Body
+  theBody:[
+    {ru:"голова",en:"head"},{ru:"волосы",en:"hair"},
+    {ru:"лицо",en:"face"},{ru:"шея",en:"neck"},
+    {ru:"щека",en:"cheek"},{ru:"подбородок",en:"chin"},
+    {ru:"плечи",en:"shoulders"},{ru:"ухо",en:"ear"},
+    {ru:"глаз",en:"eye"},{ru:"бровь",en:"eyebrow"},
+    {ru:"ресницы",en:"eyelashes"},{ru:"нос",en:"nose"},
+    {ru:"рот",en:"mouth"},{ru:"губы",en:"lips"},
+    {ru:"зубы",en:"teeth"},{ru:"зуб",en:"tooth"},
+    {ru:"грудь",en:"chest"},{ru:"живот",en:"stomach"},
+    {ru:"рука",en:"arm"},{ru:"кисть руки",en:"hand"},
+    {ru:"пальцы",en:"fingers"},{ru:"большой палец",en:"thumb"},
+    {ru:"костяшки пальцев",en:"knuckles"},{ru:"ноготь",en:"fingernail"},
+    {ru:"нога",en:"leg"},{ru:"бедро",en:"thigh"},
+    {ru:"колено",en:"knee"},{ru:"голень",en:"shin"},
+    {ru:"ступня",en:"foot"},{ru:"пальцы ног",en:"toes"},
+    {ru:"лодыжка",en:"ankle"},{ru:"пятка",en:"heel"}
   ],
-  // Theme 21 — Directions
-  directions:[
-    {ru:"идти прямо",en:"go straight ahead"},
-    {ru:"повернуть налево",en:"turn left"},
-    {ru:"повернуть направо",en:"turn right"},
-    {ru:"пройти мимо",en:"go past"},
-    {ru:"повернуть на первом повороте направо",en:"take the first right"},
-    {ru:"повернуть на втором повороте направо",en:"take the second right"},
-    {ru:"рядом с",en:"next to"},
-    {ru:"напротив",en:"opposite"},
-    {ru:"между",en:"between"},
-    {ru:"на углу",en:"on the corner"},
-    {ru:"позади",en:"behind"},
-    {ru:"перед",en:"in front of"},
-    {ru:"справа",en:"on the right"},
-    {ru:"слева",en:"on the left"},
-    {ru:"перекрёсток",en:"intersection / crossroads"},
-    {ru:"квартал",en:"block"}
+  // 12.1 — Weather
+  weather:[
+    {ru:"облако",en:"cloud"},{ru:"туман",en:"fog"},
+    {ru:"лёд",en:"ice"},{ru:"снег",en:"snow"},
+    {ru:"мороз",en:"frost"},{ru:"солнце",en:"sun"},
+    {ru:"морось",en:"drizzle"},{ru:"дождь",en:"rain"},
+    {ru:"град",en:"hail"},{ru:"ветер",en:"wind"},
+    {ru:"сильный ветер",en:"gale"},{ru:"шторм, буря",en:"storm"},
+    {ru:"гром",en:"thunder"},{ru:"молния",en:"lightning"},
+    {ru:"ураган, тайфун, циклон",en:"hurricane / typhoon / cyclone"},
+    {ru:"торнадо, смерч",en:"tornado"},{ru:"наводнение",en:"flood"},
+    {ru:"сухой",en:"dry"},{ru:"мокрый",en:"wet"},
+    {ru:"влажность",en:"humidity"},{ru:"температура",en:"temperature"},
+    {ru:"тёплый",en:"warm"},{ru:"жаркий",en:"hot"},
+    {ru:"очень жарко",en:"boiling"},{ru:"холодный",en:"cold"},
+    {ru:"очень холодно, морозно",en:"freezing"},{ru:"радуга",en:"rainbow"},
+    {ru:"лужа",en:"puddle"},{ru:"серое небо",en:"gray sky (US) / grey sky (UK)"},
+    {ru:"голубое небо",en:"blue sky"}
   ],
-  // Theme 22 — Adjectives
-  adjectives:[
-    {ru:"старый",en:"old"},
-    {ru:"новый",en:"new"},
-    {ru:"красивый",en:"beautiful"},
-    {ru:"ужасный",en:"horrible"},
-    {ru:"оживлённый",en:"busy"},
-    {ru:"тихий",en:"quiet"},
-    {ru:"маленький",en:"small"},
-    {ru:"большой",en:"big"},
-    {ru:"старый дом",en:"old house"},
-    {ru:"новый дом",en:"new house"},
-    {ru:"красивый дом",en:"beautiful house"},
-    {ru:"ужасный дом",en:"horrible house"},
-    {ru:"оживлённая улица",en:"busy street"},
-    {ru:"тихая улица",en:"quiet street"},
-    {ru:"маленький дом",en:"small house"},
-    {ru:"большой дом",en:"big house"}
+  // 14.1 — Travel
+  travel:[
+    {ru:"опоздавший, поздно",en:"late"},{ru:"вовремя",en:"on time"},
+    {ru:"собирать вещи",en:"pack your bags"},{ru:"багаж",en:"luggage"},
+    {ru:"прибыть в аэропорт",en:"arrive at the airport"},{ru:"терминал",en:"terminal"},
+    {ru:"регистрация",en:"check-in"},{ru:"посадочный талон",en:"boarding card"},
+    {ru:"рейс",en:"flight"},{ru:"ручная кладь",en:"hand luggage"},
+    {ru:"служба безопасности, досмотр",en:"security"},{ru:"задержка",en:"delay"},
+    {ru:"сесть в самолёт",en:"board a plane"},{ru:"лететь на самолёте",en:"fly in a plane"},
+    {ru:"приземлиться в аэропорту",en:"land at the airport"},{ru:"паспортный контроль",en:"passport control"},
+    {ru:"опоздать на рейс",en:"miss a flight"},{ru:"взлётно-посадочная полоса",en:"runway"},
+    {ru:"отправиться в путешествие",en:"set off on a journey"},{ru:"путешествие на автомобиле",en:"road trip"},
+    {ru:"посетить музей",en:"visit a museum"},{ru:"осматривать достопримечательности",en:"go sightseeing"},
+    {ru:"сесть в автобус",en:"get on a bus"},{ru:"выйти из автобуса",en:"get off a bus"},
+    {ru:"отель",en:"hotel"},{ru:"апартаменты, квартира",en:"apartment"},
+    {ru:"хостел",en:"hostel"},{ru:"круиз",en:"cruise"},
+    {ru:"прибыть в отель",en:"arrive at a hotel"},{ru:"стойка регистрации",en:"reception"},
+    {ru:"остановиться в отеле",en:"stay in a hotel"},{ru:"выехать из отеля",en:"leave a hotel"}
   ],
-  // Theme 23 — Places and Scenery
-  scenery:[
-    {ru:"пляж",en:"beach"},
-    {ru:"море",en:"sea"},
-    {ru:"песок",en:"sand"},
-    {ru:"сельская местность, деревня",en:"countryside"},
-    {ru:"дерево",en:"tree"},
-    {ru:"холм",en:"hill"},
-    {ru:"гора",en:"mountain"},
-    {ru:"озеро",en:"lake"},
-    {ru:"небо",en:"sky"},
-    {ru:"трава",en:"grass"},
-    {ru:"река",en:"river"},
-    {ru:"облако",en:"cloud"}
+  // 17.1 — Geographical Features
+  geographicalFeatures:[
+    {ru:"океан",en:"ocean"},{ru:"море",en:"sea"},
+    {ru:"побережье",en:"coast"},{ru:"пляж",en:"beach"},
+    {ru:"остров",en:"island"},{ru:"утёс, скала",en:"cliff"},
+    {ru:"скалы, камни",en:"rocks"},{ru:"пещера",en:"cave"},
+    {ru:"водопад",en:"waterfall"},{ru:"сельская местность",en:"countryside"},
+    {ru:"поле",en:"field"},{ru:"холм",en:"hill"},
+    {ru:"гора",en:"mountain"},{ru:"долина",en:"valley"},
+    {ru:"каньон",en:"canyon"},{ru:"песчаная дюна",en:"sand dune"},
+    {ru:"ручей",en:"stream"},{ru:"река",en:"river"},
+    {ru:"пруд",en:"pond"},{ru:"озеро",en:"lake"},
+    {ru:"лес",en:"woods"},{ru:"джунгли",en:"jungle"},
+    {ru:"тропический лес",en:"rainforest"},{ru:"болото",en:"swamp"},
+    {ru:"пустыня",en:"desert"},{ru:"оазис",en:"oasis"},
+    {ru:"вулкан",en:"volcano"},{ru:"полярный регион",en:"polar region"},
+    {ru:"ледник",en:"glacier"},{ru:"айсберг",en:"iceberg"}
   ],
-  // Theme 24 — Around the House
-  aroundHouse:[
-    {ru:"многоквартирный дом",en:"block of flats"},
-    {ru:"дом",en:"house"},
-    {ru:"гараж",en:"garage"},
-    {ru:"ванная комната",en:"bathroom"},
-    {ru:"гостиная",en:"living room"},
-    {ru:"кабинет",en:"study"},
-    {ru:"спальня",en:"bedroom"},
-    {ru:"кухня",en:"kitchen"},
-    {ru:"столовая",en:"dining room"},
-    {ru:"книжный шкаф",en:"bookcase"},
-    {ru:"письменный стол",en:"desk"},
-    {ru:"кресло",en:"armchair"},
-    {ru:"диван",en:"sofa"},
-    {ru:"телевизор",en:"television"},
-    {ru:"шкаф для одежды",en:"wardrobe"},
-    {ru:"лампа",en:"lamp"},
-    {ru:"кровать",en:"bed"},
-    {ru:"холодильник",en:"fridge"},
-    {ru:"плита",en:"cooker"},
-    {ru:"раковина",en:"sink"},
-    {ru:"стол",en:"table"},
-    {ru:"стул",en:"chair"},
-    {ru:"душ",en:"shower"},
-    {ru:"туалет",en:"toilet"},
-    {ru:"ванна",en:"bathtub"},
-    {ru:"дверь",en:"door"},
-    {ru:"крыша",en:"roof"},
-    {ru:"лестница",en:"stairs"},
-    {ru:"чердак",en:"attic"},
-    {ru:"верхний этаж",en:"upstairs"},
-    {ru:"нижний этаж",en:"downstairs"},
-    {ru:"подвал",en:"basement"},
-    {ru:"сад, двор",en:"garden"},
-    {ru:"окно",en:"window"}
+  // 25.1 — Entertainment (media & genres)
+  entertainment:[
+    {ru:"фильм",en:"movie (US) / film (UK)"},{ru:"роман",en:"novel"},
+    {ru:"пьеса, спектакль",en:"play"},{ru:"телешоу",en:"TV show"},
+    {ru:"новости",en:"the news"},{ru:"газета",en:"newspaper"},
+    {ru:"журнал",en:"magazine"},{ru:"комедия",en:"comedy"},
+    {ru:"научная фантастика",en:"science fiction"},{ru:"триллер",en:"thriller"},
+    {ru:"документальный фильм",en:"documentary"},{ru:"боевик",en:"action"},
+    {ru:"фильм ужасов",en:"horror"},{ru:"мюзикл",en:"musical"},
+    {ru:"романтика, романтический фильм",en:"romance"},{ru:"криминал, детектив",en:"crime"}
   ],
-  // Household Objects
-  householdObjects:[
-    {ru:"тостер",en:"toaster"},{ru:"микроволновая печь",en:"microwave"},
-    {ru:"стиральная машина",en:"washing machine"},{ru:"посудомоечная машина",en:"dishwasher"},
-    {ru:"чайник",en:"kettle"},{ru:"тарелка",en:"plate"},
-    {ru:"миска",en:"bowl"},{ru:"чашка",en:"cup"},
-    {ru:"столовые приборы",en:"cutlery"},{ru:"нож",en:"knife"},
-    {ru:"вилка",en:"fork"},{ru:"ложка",en:"spoon"}
+  // 🎬 Movies, Theater & Entertainment
+  moviesTheater:[
+    {ru:"герой",en:"hero"},{ru:"злодей",en:"villain"},
+    {ru:"зрители, публика",en:"audience"},{ru:"хлопать",en:"clap"},
+    {ru:"кинозвезда",en:"movie star / film star"},{ru:"актер",en:"actor"},
+    {ru:"главный герой",en:"main character"},{ru:"режиссер",en:"director"},
+    {ru:"автор",en:"author"},{ru:"сюжет",en:"plot"},
+    {ru:"спецэффекты",en:"special effects"},{ru:"трюк",en:"stunt"},
+    {ru:"кинотеатр",en:"movie theater / cinema"},{ru:"театр",en:"theater / theatre"},
+    {ru:"книжный магазин",en:"bookstore / bookshop"},{ru:"выставка",en:"exhibition"}
   ],
-  // Food and Drink
-  foodDrink:[
-    {ru:"еда",en:"food"},{ru:"напитки",en:"drinks"},
-    {ru:"завтрак",en:"breakfast"},{ru:"обед",en:"lunch"},
-    {ru:"ужин",en:"dinner"},{ru:"мясо",en:"meat"},
-    {ru:"рыба",en:"fish"},{ru:"морепродукты",en:"seafood"},
-    {ru:"фрукты",en:"fruit"},{ru:"овощи",en:"vegetables"},
-    {ru:"хлеб",en:"bread"},{ru:"макароны",en:"pasta"},
-    {ru:"рис",en:"rice"},{ru:"лапша",en:"noodles"},
-    {ru:"картофель",en:"potatoes"},{ru:"молоко",en:"milk"},
-    {ru:"сыр",en:"cheese"},{ru:"сливочное масло",en:"butter"},
-    {ru:"йогурт",en:"yogurt"},{ru:"яйца",en:"eggs"},
-    {ru:"сахар",en:"sugar"},{ru:"печенье",en:"biscuit"},
-    {ru:"шоколад",en:"chocolate"},{ru:"торт",en:"cake"},
-    {ru:"хлопья",en:"cereal"},{ru:"апельсин",en:"orange"},
-    {ru:"яблоко",en:"apple"},{ru:"банан",en:"banana"},
-    {ru:"клубника",en:"strawberry"},{ru:"манго",en:"mango"},
-    {ru:"сэндвич",en:"sandwich"},{ru:"бургер",en:"burger"},
-    {ru:"картофель фри",en:"chips"},{ru:"спагетти",en:"spaghetti"},
-    {ru:"салат",en:"salad"},{ru:"кофе",en:"coffee"},
-    {ru:"чай",en:"tea"},{ru:"сок",en:"juice"},
-    {ru:"вода",en:"water"},{ru:"лимонад",en:"lemonade"}
+  // 🔨 Tools
+  tools:[
+    {ru:"рулетка",en:"tape measure"},{ru:"молоток",en:"hammer"},
+    {ru:"струбцина, зажим",en:"clamp"},{ru:"напильник",en:"file"},
+    {ru:"ножовка по металлу",en:"hacksaw"},{ru:"отвертка",en:"screwdriver"},
+    {ru:"гайка",en:"nut"},{ru:"болт",en:"bolt"},
+    {ru:"шуруп, винт",en:"screw"},{ru:"гвоздь",en:"nail"},
+    {ru:"плоскогубцы",en:"pliers"},{ru:"гаечный ключ",en:"wrench / spanner"},
+    {ru:"мастерок",en:"trowel"},{ru:"садовые ножницы",en:"shears"},
+    {ru:"вилы",en:"fork"},{ru:"лопата",en:"spade"},
+    {ru:"мотыга, тяпка",en:"hoe"},{ru:"грабли",en:"rake"},
+    {ru:"пила",en:"saw"},{ru:"дрель",en:"drill"},
+    {ru:"лобзик",en:"jigsaw"},{ru:"строительный уровень",en:"level / spirit level"}
   ],
-  // Food Containers
-  foodContainers:[
-    {ru:"коробка",en:"box"},{ru:"бутылка",en:"bottle"},
-    {ru:"пакет / мешок",en:"bag"},{ru:"плитка (шоколада)",en:"bar"},
-    {ru:"тюбик",en:"tube"},{ru:"стакан",en:"glass"},
-    {ru:"картонная упаковка",en:"carton"},{ru:"банка",en:"jar"}
+  // 🍴 Kitchen Implements
+  kitchenImplements:[
+    {ru:"терка",en:"grater"},{ru:"овощечистка",en:"peeler"},
+    {ru:"венчик",en:"whisk"},{ru:"разделочная доска",en:"cutting board / chopping board"},
+    {ru:"кухонный нож",en:"kitchen knife"},{ru:"ножницы",en:"scissors"},
+    {ru:"консервный нож",en:"can opener / tin opener"},{ru:"открывалка для бутылок",en:"bottle opener"},
+    {ru:"штопор",en:"corkscrew"},{ru:"деревянная ложка",en:"wooden spoon"},
+    {ru:"лопатка",en:"spatula"},{ru:"половник",en:"ladle"}
   ],
-  // Clothes and Accessories
-  clothes:[
-    {ru:"футболка",en:"t-shirt"},{ru:"блузка",en:"blouse"},
-    {ru:"рубашка",en:"shirt"},{ru:"платье",en:"dress"},
-    {ru:"юбка",en:"skirt"},{ru:"брюки",en:"trousers"},
-    {ru:"джинсы",en:"jeans"},{ru:"куртка",en:"jacket"},
-    {ru:"пальто",en:"coat"},{ru:"дождевик",en:"raincoat"},
-    {ru:"носки",en:"socks"},{ru:"сапоги / ботинки",en:"boots"},
-    {ru:"туфли / обувь",en:"shoes"},{ru:"сандалии",en:"sandals"},
-    {ru:"кроссовки",en:"trainers"},{ru:"шарф",en:"scarf"},
-    {ru:"шляпа / шапка",en:"hat"},{ru:"перчатки",en:"gloves"},
-    {ru:"ремень",en:"belt"},{ru:"сумка",en:"handbag"}
+  // 💼 Applying for a Job
+  applyingJob:[
+    {ru:"искать работу",en:"look for a job"},{ru:"резюме",en:"résumé / CV"},
+    {ru:"подать заявку на работу",en:"apply for a job"},{ru:"проходить собеседование",en:"have an interview"},
+    {ru:"получить работу",en:"get the job"},{ru:"начать работу",en:"start the job"}
+  ],
+  // 📄 Words in Your Résumé
+  resumeWords:[
+    {ru:"квалификация",en:"qualification"},{ru:"опыт работы",en:"work experience"},
+    {ru:"хобби",en:"hobby"},{ru:"интерес, увлечение",en:"interest"},
+    {ru:"рекомендация",en:"reference"}
+  ],
+  // 🎭 Going Out
+  goingOut:[
+    {ru:"художественная галерея",en:"art gallery"},{ru:"книжный клуб",en:"book club"},
+    {ru:"ночной клуб",en:"night club"},{ru:"концертный зал",en:"concert hall"},
+    {ru:"парк аттракционов, ярмарка",en:"fun fair"},{ru:"цирк",en:"circus"},
+    {ru:"ресторан",en:"restaurant"},{ru:"бар",en:"bar"},
+    {ru:"меню",en:"menu"},{ru:"официант",en:"waiter"},
+    {ru:"официантка",en:"waitress"},{ru:"счет",en:"check / bill"},
+    {ru:"балет",en:"ballet"},{ru:"опера",en:"opera"},
+    {ru:"музыкальная группа",en:"band"},{ru:"оркестр",en:"orchestra"}
+  ],
+  // 🎵 Entertainment Activities
+  entertainmentActivities:[
+    {ru:"музыкант",en:"musician"},{ru:"фестиваль",en:"festival"},
+    {ru:"концерт",en:"concert"},{ru:"шоу, представление",en:"show"},
+    {ru:"зрители, публика",en:"audience"},{ru:"аплодисменты",en:"applause"},
+    {ru:"встречаться с друзьями",en:"meet friends"},{ru:"ходить в клубы",en:"go clubbing"},
+    {ru:"ходить танцевать",en:"go dancing"},{ru:"идти на вечеринку",en:"go to a party"},
+    {ru:"идти в ресторан",en:"go to a restaurant"},{ru:"идти в кино",en:"go to the movies / cinema"},
+    {ru:"смотреть спектакль",en:"see a play"},{ru:"петь караоке",en:"do karaoke"},
+    {ru:"играть в боулинг",en:"go bowling"},{ru:"купить билет",en:"buy a ticket"}
   ],
   myWords:[]
 };
@@ -6412,54 +6427,97 @@ function wodSpeak() {
 // ════════════════════════════════════
 //  ПОИСК ПО СЛОВАРЮ
 // ════════════════════════════════════
+const DICT_CAT_LABELS = {
+  presentContinuousVerbs:"🏃 Глаголы", digitalGadgets:"📱 Гаджеты", feelingsMoods:"😊 Чувства",
+  transportation:"🚗 Транспорт", theBody:"🧍 Тело", weather:"🌦️ Погода", travel:"✈️ Путешествия", geographicalFeatures:"🏔️ Природа", entertainment:"🎥 Развлечения",
+  moviesTheater:"🎬 Кино и театр", tools:"🔨 Инструменты", kitchenImplements:"🍴 Кухня", applyingJob:"💼 Поиск работы", resumeWords:"📄 Резюме", goingOut:"🎭 Досуг", entertainmentActivities:"🎵 Активности", myWords:"⭐ Мои слова"
+};
+let dictActiveCat = 'all';
+
 function openDictSearch() {
   playClick();
-  document.getElementById("dictOverlay").classList.add("active");
+  showScreen('dictScreen');
+  dictActiveCat = 'all';
+  renderDictChips();
+  dictSearch(document.getElementById("dictSearchInput").value || "");
   setTimeout(()=>document.getElementById("dictSearchInput").focus(), 150);
 }
 function closeDictSearch() {
-  document.getElementById("dictOverlay").classList.remove("active");
+  showScreen('menuScreen');
 }
 function clearDictSearch() {
   document.getElementById("dictSearchInput").value = "";
   dictSearch("");
 }
+function renderDictChips() {
+  const chipsEl = document.getElementById("dictCatChips");
+  const cats = Object.keys(categories).filter(c => c !== 'myWords' || (categories.myWords && categories.myWords.length));
+  let html = `<div class="dict-chip ${dictActiveCat==='all'?'active':''}" onclick="setDictCat('all')">Все</div>`;
+  cats.forEach(c => {
+    html += `<div class="dict-chip ${dictActiveCat===c?'active':''}" onclick="setDictCat('${c}')">${DICT_CAT_LABELS[c]||c}</div>`;
+  });
+  chipsEl.innerHTML = html;
+}
+function setDictCat(cat) {
+  playClick();
+  dictActiveCat = cat;
+  renderDictChips();
+  dictSearch(document.getElementById("dictSearchInput").value || "");
+}
+function dictItemHtml(r) {
+  const safeEn = r.en.replace(/'/g,"\\'").replace(/"/g,'&quot;');
+  return `
+    <div class="dict-result-item">
+      <div class="dict-result-text">
+        <div class="dict-result-en">${r.en}</div>
+        <div class="dict-result-ru">${r.ru}</div>
+      </div>
+      <div class="dict-result-actions">
+        <span class="dict-result-cat">${DICT_CAT_LABELS[r.cat]||r.cat}</span>
+        <button class="dict-speak-btn" onclick="speakDictWord('${safeEn}')" title="Прослушать">🔊</button>
+      </div>
+    </div>`;
+}
+function speakDictWord(text) {
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "en-US"; u.rate = 0.9;
+  speechSynthesis.speak(u);
+}
 function dictSearch(q) {
   const resultsEl = document.getElementById("dictResults");
   const countEl = document.getElementById("dictCount");
   q = q.trim().toLowerCase();
-  if (!q) {
-    resultsEl.innerHTML = '<div class="dict-no-result">Начни вводить слово для поиска</div>';
-    countEl.textContent = "—";
-    return;
-  }
-  const catLabels = {
-    jobs:"💼 Профессии", workplaces:"🏭 Места работы", dailyRoutines:"🌅 Распорядок",
-    activities:"📅 Занятия", aroundTown:"🏙️ Город", directions:"🗺️ Ориентирование", adjectives:"🎨 Прилагательные", scenery:"🌄 Природа", aroundHouse:"🏠 Дом",
-    householdObjects:"🍽️ Предметы быта", foodDrink:"🍎 Еда и напитки", foodContainers:"📦 Упаковка", clothes:"👕 Одежда", myWords:"⭐ Мои слова"
-  };
+
   let results = [];
   Object.entries(categories).forEach(([cat, words]) => {
     if (!Array.isArray(words)) return;
+    if (dictActiveCat !== 'all' && cat !== dictActiveCat) return;
     words.forEach(w => {
       const matchRu = w.ru && w.ru.toLowerCase().includes(q);
       const matchEn = w.en && w.en.toLowerCase().includes(q);
-      if (matchRu || matchEn) results.push({...w, cat});
+      if (!q || matchRu || matchEn) results.push({...w, cat});
     });
   });
+
   countEl.textContent = results.length;
   if (!results.length) {
-    resultsEl.innerHTML = `<div class="dict-no-result">Ничего не найдено по «${q}»</div>`;
+    resultsEl.innerHTML = `<div class="dict-no-result">Ничего не найдено${q ? ' по «'+q+'»' : ''}</div>`;
     return;
   }
-  resultsEl.innerHTML = results.slice(0,30).map(r => `
-    <div class="dict-result-item">
-      <div>
-        <div style="font-weight:800;color:var(--text);">${r.en}</div>
-        <div class="dict-result-ru">${r.ru}</div>
-      </div>
-      <span class="dict-result-cat">${catLabels[r.cat]||r.cat}</span>
-    </div>`).join("");
+
+  // Без поискового запроса группируем по темам — удобнее листать и учить
+  if (!q) {
+    const groups = {};
+    results.forEach(r => { (groups[r.cat] = groups[r.cat] || []).push(r); });
+    resultsEl.innerHTML = Object.entries(groups).map(([cat, words]) => `
+      <div class="dict-group-title">${DICT_CAT_LABELS[cat]||cat} <span class="dict-group-count">${words.length}</span></div>
+      ${words.map(dictItemHtml).join("")}
+    `).join("");
+  } else {
+    resultsEl.innerHTML = results.map(dictItemHtml).join("");
+  }
 }
 
 // ════════════════════════════════════
@@ -6639,9 +6697,9 @@ function renderCatStats() {
   let raw = {};
   try { raw = JSON.parse(localStorage.getItem("etu_cat_stats")) || {}; } catch(e){}
   const catLabels = {
-    jobs:"💼 Профессии", workplaces:"🏭 Места работы", dailyRoutines:"🌅 Распорядок",
-    activities:"📅 Занятия", aroundTown:"🏙️ Город", directions:"🗺️ Ориентирование", adjectives:"🎨 Прилагательные", scenery:"🌄 Природа", aroundHouse:"🏠 Дом",
-    householdObjects:"🍽️ Предметы быта", foodDrink:"🍎 Еда и напитки", foodContainers:"📦 Упаковка", clothes:"👕 Одежда", myWords:"⭐ Мои слова"
+    presentContinuousVerbs:"🏃 Глаголы", digitalGadgets:"📱 Гаджеты", feelingsMoods:"😊 Чувства",
+    transportation:"🚗 Транспорт", theBody:"🧍 Тело", weather:"🌦️ Погода", travel:"✈️ Путешествия", geographicalFeatures:"🏔️ Природа", entertainment:"🎥 Развлечения",
+    moviesTheater:"🎬 Кино и театр", tools:"🔨 Инструменты", kitchenImplements:"🍴 Кухня", applyingJob:"💼 Поиск работы", resumeWords:"📄 Резюме", goingOut:"🎭 Досуг", entertainmentActivities:"🎵 Активности", myWords:"⭐ Мои слова"
   };
   const entries = Object.entries(raw).filter(([k,v])=>(v.total||0)>=3)
     .sort((a,b)=>b[1].total-a[1].total);
